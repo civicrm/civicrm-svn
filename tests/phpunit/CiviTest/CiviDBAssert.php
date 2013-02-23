@@ -89,7 +89,9 @@ class CiviDBAssert {
     }
   }
 
-  // Request a record from the DB by seachColumn+searchValue. Success if a record is found.
+  /**
+   * Request a record from the DB by seachColumn+searchValue. Success if a record is found.
+   */
   function assertDBNotNull(&$testCase, $daoName, $searchValue, $returnColumn, $searchColumn, $message) {
     if (empty($searchValue)) {
       $testCase->fail("empty value passed to assertDBNotNull");
@@ -100,19 +102,25 @@ class CiviDBAssert {
     return $value;
   }
 
-  // Request a record from the DB by seachColumn+searchValue. Success if returnColumn value is NULL.
+  /**
+   * Request a record from the DB by seachColumn+searchValue. Success if returnColumn value is NULL.
+   */
   function assertDBNull(&$testCase, $daoName, $searchValue, $returnColumn, $searchColumn, $message) {
     $value = CRM_Core_DAO::getFieldValue($daoName, $searchValue, $returnColumn, $searchColumn);
     $testCase->assertNull($value, $message);
   }
 
-  // Request a record from the DB by id. Success if row not found.
+  /**
+   * Request a record from the DB by id. Success if row not found.
+   */
   function assertDBRowNotExist(&$testCase, $daoName, $id, $message) {
     $value = CRM_Core_DAO::getFieldValue($daoName, $id, 'id', 'id');
     $testCase->assertNull($value, $message);
   }
 
-  // Compare a single column value in a retrieved DB record to an expected value
+  /**
+   * Compare a single column value in a retrieved DB record to an expected value
+   */
   function assertDBCompareValue(&$testCase, $daoName, $searchValue, $returnColumn, $searchColumn,
     $expectedValue, $message
   ) {
@@ -120,7 +128,9 @@ class CiviDBAssert {
     $testCase->assertEquals($value, $expectedValue, $message);
   }
 
-  // Compare all values in a single retrieved DB record to an array of expected values
+  /**
+   * Compare all values in a single retrieved DB record to an array of expected values
+   */
   function assertDBCompareValues(&$testCase, $daoName, $searchParams, $expectedValues) {
     //get the values from db
     $dbValues = array();
@@ -142,4 +152,3 @@ class CiviDBAssert {
     }
   }
 }
-

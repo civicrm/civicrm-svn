@@ -1,13 +1,13 @@
 <?php
 class PCPBlock extends PHPUnit_Framework_Testcase {
-  /*
-     * Helper function to create a PCP Block for Contribution Page
-     *
-     * @param  int $contributionPageId - id of the Contribution Page
-     * to be deleted
-     * @return array of created pcp block
-     *
-     */
+  /**
+   * Helper function to create a PCP Block for Contribution Page
+   *
+   * @param  int $contributionPageId - id of the Contribution Page
+   * to be deleted
+   * @return array of created pcp block
+   *
+   */
   function create($contributionPageId) {
     $profileParams = array(
       'group_type' => 'Individual,Contact',
@@ -50,10 +50,7 @@ class PCPBlock extends PHPUnit_Framework_Testcase {
       ),
     );
 
-
     foreach ($fieldsParams as $value) {
-
-
       // we assume api v3.
       $value['version'] = 3;
       $value['uf_group_id'] = $profileId;
@@ -85,15 +82,16 @@ class PCPBlock extends PHPUnit_Framework_Testcase {
     $blockPCP = CRM_Contribute_BAO_PCP::add($params);
     return array('blockId' => $blockPCP->id, 'profileId' => $profileId);
   }
-  /*
-     * Helper function to delete a PCP related stuff viz. Profile, PCP Block Entry
-     *
-     * @param  array key value pair
-     * pcpBlockId - id of the PCP Block Id, profileID - id of Supporter Profile
-     * to be deleted
-     * @return boolean true if success, false otherwise
-     *
-     */
+
+  /**
+   * Helper function to delete a PCP related stuff viz. Profile, PCP Block Entry
+   *
+   * @param  array key value pair
+   * pcpBlockId - id of the PCP Block Id, profileID - id of Supporter Profile
+   * to be deleted
+   * @return boolean true if success, false otherwise
+   *
+   */
   function delete($params) {
 
     $delete_params = array('id' => $params['profileId']);
@@ -116,5 +114,3 @@ class PCPBlock extends PHPUnit_Framework_Testcase {
     return FALSE;
   }
 }
-
-

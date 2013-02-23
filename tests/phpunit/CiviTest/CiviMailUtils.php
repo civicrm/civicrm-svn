@@ -37,7 +37,7 @@
  *  $mut->stop();
  *
  *
- *  @package CiviCRM
+ * @package CiviCRM
  */
 
 require_once 'ezc/Base/src/ezc_bootstrap.php';
@@ -45,31 +45,31 @@ require_once 'ezc/autoload/mail_autoload.php';
 
 class CiviMailUtils extends PHPUnit_Framework_TestCase {
 
-  /*
-   * current outbound email option
+  /**
+   * @var mixed current outbound email option
    */
-  protected $_outBound_option = null;
+  protected $_outBound_option = NULL;
 
-  /*
-   * is this a webtest
+  /**
+   * @var bool is this a webtest
    */
-  protected $_webtest = false;
+  protected $_webtest = FALSE;
 
-  /*
+  /**
    * Constructor
    *
    * @param $unit_test object The currently running test
    * @param $startImmediately bool Start writing to db now or wait until start() is called
    */
-  function __construct( &$unit_test, $startImmediately = true ) {
+  function __construct(&$unit_test, $startImmediately = TRUE) {
     $this->_ut = $unit_test;
 
     // Check if running under webtests or not
-    if ( is_subclass_of( $unit_test, 'CiviSeleniumTestCase' ) ) {
-        $this->_webtest = true;
+    if (is_subclass_of($unit_test, 'CiviSeleniumTestCase')) {
+      $this->_webtest = TRUE;
     }
 
-    if ( $startImmediately ) {
+    if ($startImmediately) {
       $this->start();
     }
   }
@@ -78,7 +78,7 @@ class CiviMailUtils extends PHPUnit_Framework_TestCase {
    * Start writing emails to db instead of current option
    */
   function start() {
-    if ( $this->_webtest ) {
+    if ($this->_webtest) {
       // Change outbound mail setting
       $this->_ut->open($this->_ut->sboxPath . "civicrm/admin/setting/smtp?reset=1");
       $this->_ut->waitForElementPresent("_qf_Smtp_next");
@@ -93,7 +93,8 @@ class CiviMailUtils extends PHPUnit_Framework_TestCase {
       // Is there supposed to be a status message displayed when outbound email settings are changed?
       // assert something?
 
-    } else {
+    }
+    else {
 
       // save current setting for outbound option, then change it
       $mailingBackend = CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME,
@@ -115,7 +116,7 @@ class CiviMailUtils extends PHPUnit_Framework_TestCase {
   }
 
   function stop() {
-    if ( $this->_webtest ) {
+    if ($this->_webtest) {
 
       $this->_ut->open($this->_ut->sboxPath . "civicrm/admin/setting/smtp?reset=1");
       $this->_ut->waitForElementPresent("_qf_Smtp_next");
@@ -126,7 +127,8 @@ class CiviMailUtils extends PHPUnit_Framework_TestCase {
       // Is there supposed to be a status message displayed when outbound email settings are changed?
       // assert something?
 
-    } else {
+    }
+    else {
 
       $mailingBackend = CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME,
         'mailing_backend'
@@ -141,28 +143,28 @@ class CiviMailUtils extends PHPUnit_Framework_TestCase {
     }
   }
 
-  function getMostRecentEmail( $type = 'raw' ) {
+  function getMostRecentEmail($type = 'raw') {
     $msg = '';
 
     // Check if running under webtests or not
-    if ( $this->_webtest ) {
+    if ($this->_webtest) {
 
-      $this->_ut->open( $this->_ut->sboxPath . 'civicrm/mailing/browse/archived?reset=1' );
+      $this->_ut->open($this->_ut->sboxPath . 'civicrm/mailing/browse/archived?reset=1');
       // I don't understand but for some reason we have to load the page twice for a recent mailing to appear.
       $this->_ut->waitForPageToLoad("30000");
-      $this->_ut->open( $this->_ut->sboxPath . 'civicrm/mailing/browse/archived?reset=1' );
-      $this->_ut->waitForElementPresent( 'css=td.crm-mailing-name' );
+      $this->_ut->open($this->_ut->sboxPath . 'civicrm/mailing/browse/archived?reset=1');
+      $this->_ut->waitForElementPresent('css=td.crm-mailing-name');
 
       // This should select the first "Report" link in the table, which is sorted by Completion Date descending, so in theory is the most recent email. Not sure of a more robust way at the moment.
-      $this->_ut->click( 'xpath=//tr[contains(@id, "crm-mailing_")]//a[text()="Report"]' );
+      $this->_ut->click('xpath=//tr[contains(@id, "crm-mailing_")]//a[text()="Report"]');
 
       // Also not sure how robust this is, but there isn't a good
       // identifier for this link either.
-      $this->_ut->waitForElementPresent( 'xpath=//a[contains(text(), "View complete message")]' );
-      $this->_ut->click( 'xpath=//a[contains(text(), "View complete message")]' );
+      $this->_ut->waitForElementPresent('xpath=//a[contains(text(), "View complete message")]');
+      $this->_ut->click('xpath=//a[contains(text(), "View complete message")]');
 
-      $this->_ut->waitForPopUp( null, 30000 );
-      $this->_ut->selectPopUp( null );
+      $this->_ut->waitForPopUp(NULL, 30000);
+      $this->_ut->selectPopUp(NULL);
       /*
        * FIXME:
        *
@@ -175,9 +177,10 @@ class CiviMailUtils extends PHPUnit_Framework_TestCase {
       //$msg = $this->_ut->getHtmlSource();
       $msg = $this->_ut->getBodyText();
       $this->_ut->close();
-      $this->_ut->selectWindow( null );
+      $this->_ut->selectWindow(NULL);
 
-    } else {
+    }
+    else {
       $dao = CRM_Core_DAO::executeQuery('SELECT headers, body FROM civicrm_mailing_spool ORDER BY id DESC LIMIT 1');
       if ($dao->fetch()) {
         $msg = $dao->headers . "\n\n" . $dao->body;
@@ -185,13 +188,13 @@ class CiviMailUtils extends PHPUnit_Framework_TestCase {
       $dao->free();
     }
 
-    switch ( $type ) {
-    case 'raw':
-      // nothing to do
-      break;
-    case 'ezc':
-      $msg = $this->convertToEzc($msg);
-      break;
+    switch ($type) {
+      case 'raw':
+        // nothing to do
+        break;
+      case 'ezc':
+        $msg = $this->convertToEzc($msg);
+        break;
     }
     return $msg;
   }
@@ -203,16 +206,17 @@ class CiviMailUtils extends PHPUnit_Framework_TestCase {
   function getAllMessages($type = 'raw') {
     $msgs = array();
 
-    if ( $this->_webtest ) {  
+    if ($this->_webtest) {
       throw new Exception("Not implementated: getAllMessages for WebTest");
-    } else {
+    }
+    else {
       $dao = CRM_Core_DAO::executeQuery('SELECT headers, body FROM civicrm_mailing_spool ORDER BY id');
       while ($dao->fetch()) {
         $msgs[] = $dao->headers . "\n\n" . $dao->body;
       }
       $dao->free();
     }
-    
+
     switch ($type) {
       case 'raw':
         // nothing to do
@@ -230,9 +234,9 @@ class CiviMailUtils extends PHPUnit_Framework_TestCase {
   function getSelectedOutboundOption() {
     $selectedOption = CRM_Mailing_Config::OUTBOUND_OPTION_MAIL;
     // Is there a better way to do this? How do you get the currently selected value of a radio button in selenium?
-    for( $i = 0; $i <= 5; $i++ ) {
-      if ( $i != CRM_Mailing_Config::OUTBOUND_OPTION_MOCK ) {
-        if ( $this->_ut->getValue( 'xpath=//input[@name="outBound_option" and @value="' . $i . '"]' ) == "on" ) {
+    for ($i = 0; $i <= 5; $i++) {
+      if ($i != CRM_Mailing_Config::OUTBOUND_OPTION_MOCK) {
+        if ($this->_ut->getValue('xpath=//input[@name="outBound_option" and @value="' . $i . '"]') == "on") {
           $selectedOption = $i;
           break;
         }
@@ -246,39 +250,40 @@ class CiviMailUtils extends PHPUnit_Framework_TestCase {
    * Included for backward compatibility with existing tests.
    */
 
-  /*
+  /**
    * Check contents of mail log
    * @param array $strings strings that should be included
    * @param array $absentStrings strings that should not be included
    *
    */
-  function checkMailLog($strings, $absentStrings = array(), $prefix = ''){
-    $mail = $this->getMostRecentEmail( 'raw' );
+  function checkMailLog($strings, $absentStrings = array(), $prefix = '') {
+    $mail = $this->getMostRecentEmail('raw');
     foreach ($strings as $string) {
-    $this->_ut->assertContains($string, $mail, "$string .  not found in  $mail  $prefix");
+      $this->_ut->assertContains($string, $mail, "$string .  not found in  $mail  $prefix");
     }
     foreach ($absentStrings as $string) {
-    $this->_ut->assertEmpty(strstr($mail,$string),"$string  incorrectly found in $mail $prefix");;
+      $this->_ut->assertEmpty(strstr($mail, $string), "$string  incorrectly found in $mail $prefix");
+      ;
     }
     return $mail;
   }
 
-  /*
+  /**
    * Check that mail log is empty
    */
-  function assertMailLogEmpty($prefix = ''){
-    $mail = $this->getMostRecentEmail( 'raw' );
+  function assertMailLogEmpty($prefix = '') {
+    $mail = $this->getMostRecentEmail('raw');
     $this->_ut->assertEmpty($mail, 'mail sent when it should not have been ' . $prefix);
   }
 
   /**
    * Assert that $expectedRecipients (and no else) have received emails
    *
-   * @param array $expectedRecipients array($msgPos => array($recipPos => $emailAddr)) 
+   * @param array $expectedRecipients array($msgPos => array($recipPos => $emailAddr))
    */
   function assertRecipients($expectedRecipients) {
     $recipients = array();
-    foreach($this->getAllMessages('ezc') as $message) {
+    foreach ($this->getAllMessages('ezc') as $message) {
       $recipients[] = CRM_Utils_Array::collect('email', $message->to);
     }
     sort($recipients);
@@ -286,29 +291,31 @@ class CiviMailUtils extends PHPUnit_Framework_TestCase {
     $this->_ut->assertEquals(
       $expectedRecipients,
       $recipients,
-      "Incorrect recipients: " . print_r(array('expected'=>$expectedRecipients, 'actual'=>$recipients), TRUE)
+      "Incorrect recipients: " . print_r(array('expected' => $expectedRecipients, 'actual' => $recipients), TRUE)
     );
   }
+
   /**
    * Remove any sent messages from the log
    */
   function clearMessages() {
-    if ( $this->_webtest ) {
+    if ($this->_webtest) {
       throw new Exception("Not implementated: clearMessages for WebTest");
-    } else {
+    }
+    else {
       CRM_Core_DAO::executeQuery('DELETE FROM civicrm_mailing_spool ORDER BY id DESC LIMIT 1');
     }
   }
-  
+
   /**
    * @param string $msg email header and body
    * @return ezcMail
    */
   private function convertToEzc($msg) {
-      $set = new ezcMailVariableSet($msg);
-      $parser = new ezcMailParser();
-      $mail = $parser->parseMail($set);
-      $this->_ut->assertNotEmpty($mail, 'Cannot parse mail');
-      return $mail[0];  
+    $set = new ezcMailVariableSet($msg);
+    $parser = new ezcMailParser();
+    $mail = $parser->parseMail($set);
+    $this->_ut->assertNotEmpty($mail, 'Cannot parse mail');
+    return $mail[0];
   }
 }

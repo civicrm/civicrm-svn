@@ -1,17 +1,17 @@
 <?php
 class ContributionPage extends PHPUnit_Framework_Testcase {
-  /*
-     * Helper function to create
-     * a Contribution Page
-     *
-     * @return $contributionPage id of created Contribution Page
-     */
+  /**
+   * Helper function to create
+   * a Contribution Page
+   *
+   * @return $contributionPage id of created Contribution Page
+   */
   static function create($id = NULL) {
     require_once "CRM/Contribute/BAO/ContributionPage.php";
     $params = array(
       'title' => 'Help Test CiviCRM!',
       'intro_text' => 'Created for Test Coverage Online Contribution Page',
-                        'financial_type_id'     => 1,
+      'financial_type_id' => 1,
       'payment_processor_id' => $id,
       'is_monetary' => 1,
       'is_allow_other_amount' => 1,
@@ -32,14 +32,13 @@ class ContributionPage extends PHPUnit_Framework_Testcase {
     return $contributionPage->id;
   }
 
-  /*
-     * Helper function to delete a Contribution Page
-     * 
-     * @param  int $contributionPageId - id of the Contribution Page
-     * to be deleted
-     * @return boolean true if Contribution Page deleted, false otherwise
-     * 
-     */
+  /**
+   * Helper function to delete a Contribution Page
+   *
+   * @param  int $contributionPageId - id of the Contribution Page
+   * to be deleted
+   * @return boolean true if Contribution Page deleted, false otherwise
+   */
   static function delete($contributionPageId) {
     require_once "CRM/Contribute/DAO/ContributionPage.php";
     $cp = new CRM_Contribute_DAO_ContributionPage();
@@ -50,6 +49,3 @@ class ContributionPage extends PHPUnit_Framework_Testcase {
     return $result;
   }
 }
-
-
-

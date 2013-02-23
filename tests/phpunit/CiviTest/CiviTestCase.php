@@ -86,9 +86,7 @@ class CiviTestCase extends PHPUnit_Framework_Testcase {
       $config = CRM_Core_Config::singleton();
     }
 
-    if (strpos($url,
-        $config->userFrameworkBaseURL . 'civicrm/'
-      ) === FALSE) {
+    if (strpos($url, $config->userFrameworkBaseURL . 'civicrm/') === FALSE) {
       return FALSE;
     }
 

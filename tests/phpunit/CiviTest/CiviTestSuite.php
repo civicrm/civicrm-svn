@@ -4,10 +4,10 @@
  *
  *  (PHP 5)
  *
- *   @copyright Copyright CiviCRM LLC (C) 2009
- *   @license   http://www.fsf.org/licensing/licenses/agpl-3.0.html
+ * @copyright Copyright CiviCRM LLC (C) 2009
+ * @license   http://www.fsf.org/licensing/licenses/agpl-3.0.html
  *              GNU Affero General Public License version 3
- *   @package   CiviCRM
+ * @package   CiviCRM
  *
  *   This file is part of CiviCRM
  *
@@ -27,14 +27,14 @@
  */
 
 /**
- *  Include parent class definition
+ * Include parent class definition
  */
 require_once 'PHPUnit/Framework/TestSuite.php';
 
 /**
- *  Parent class for test suites
+ * Parent class for test suites
  *
- *  @package   CiviCRM
+ * @package   CiviCRM
  */
 class CiviTestSuite extends PHPUnit_Framework_TestSuite {
 
@@ -76,7 +76,8 @@ class CiviTestSuite extends PHPUnit_Framework_TestSuite {
    *  suppress failed test error issued by phpunit when it finds
    *  a test suite with no tests
    */
-  function testNothing() {}
+  function testNothing() {
+  }
 
   /**
    *
@@ -100,12 +101,12 @@ class CiviTestSuite extends PHPUnit_Framework_TestSuite {
   /**
    *  Add all test classes *Test and all test suites *Tests in subdirectories
    *
-   *  @param  &object Test suite object to add tests to
-   *  @param  object  Directory to scan
-   *  @return Test suite has been updated
+   * @param  &object Test suite object to add tests to
+   * @param  object  Directory to scan
+   * @return Test suite has been updated
    */
   protected function addAllTests(PHPUnit_Framework_TestSuite & $suite,
-    $myfile, SplFileInfo$dirInfo
+                                 $myfile, SplFileInfo $dirInfo
   ) {
     //echo get_class($this)."::addAllTests($myfile,".$dirInfo->getRealPath().")\n";
     if (!$dirInfo->isReadable()
@@ -137,8 +138,8 @@ class CiviTestSuite extends PHPUnit_Framework_TestSuite {
         require_once $fileInfo->getRealPath();
         $newClassNames = get_declared_classes();
         foreach (array_diff($newClassNames,
-            $oldClassNames
-          ) as $name) {
+          $oldClassNames
+                 ) as $name) {
           if (preg_match('/Tests$/', $name)) {
             $addTests[] = $name . '::suite';
           }
@@ -163,7 +164,7 @@ class CiviTestSuite extends PHPUnit_Framework_TestSuite {
       }
     }
     //$addAllTests = CRM_Utils_Array::crmArraySortByField($addAllTests, '1');
-    usort($addAllTests, function($a, $b) {
+    usort($addAllTests, function ($a, $b) {
       return strnatcmp($a->getRealPath(), $b->getRealPath());
     });
     foreach ($addAllTests as $addAllTest) {
@@ -188,8 +189,8 @@ class CiviTestSuite extends PHPUnit_Framework_TestSuite {
         require_once $fileInfo->getRealPath();
         $newClassNames = get_declared_classes();
         foreach (array_diff($newClassNames,
-            $oldClassNames
-          ) as $name) {
+          $oldClassNames
+                 ) as $name) {
           if (preg_match('/Test$/', $name)) {
             $addTestSuites[] = $name;
           }
@@ -200,7 +201,7 @@ class CiviTestSuite extends PHPUnit_Framework_TestSuite {
     foreach ($addTestSuites as $addTestSuite) {
       $suite->addTestSuite($addTestSuite);
     }
-    
+
     // print_r(array($prefix, 'addTests' => $addTests, 'addAllTests' => $addAllTests, 'addTestSuites' => $addTestSuites));
   }
 }

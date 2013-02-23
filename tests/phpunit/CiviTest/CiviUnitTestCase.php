@@ -1133,11 +1133,11 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
       // 'note'                   => 'Donating for Nobel Cause', *Fixme
     );
 
-    if ($isFee){
+    if ($isFee) {
       $params['fee_amount'] = 5.00;
       $params['net_amount'] = 95.00;
     }
-    
+
     $result = civicrm_api('contribution', 'create', $params);
     if (CRM_Utils_Array::value('is_error', $result) ||
       !CRM_Utils_Array::value('id', $result)
@@ -1478,7 +1478,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
       return $result['result']->id;
     }
     else {
-      return null;
+      return NULL;
     }
   }
 
@@ -2158,7 +2158,7 @@ AND    ( TABLE_NAME LIKE 'civicrm_value_%' )
         $keys[CRM_Utils_Array::Value('name', $settings, $field)] = CRM_Utils_Array::value('name', $settings, $field);
       }
 
-      if (CRM_Utils_Array::value('type', $settings)  == CRM_Utils_Type::T_DATE) {
+      if (CRM_Utils_Array::value('type', $settings) == CRM_Utils_Type::T_DATE) {
         $dateFields[] = $field;
       }
     }
