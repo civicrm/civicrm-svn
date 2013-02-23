@@ -101,7 +101,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     $this->type('edit-name', $username);
     $this->type('edit-pass', $password);
     $this->click('edit-submit');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
   }
 
   /**
@@ -237,7 +237,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     }
     $this->waitForElementPresent('_qf_Contact_upload_view-bottom');
     $this->click('_qf_Contact_upload_view-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     return $email;
   }
 
@@ -255,7 +255,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     }
 
     $this->click('_qf_Contact_upload_view');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     return $email;
   }
 
@@ -272,7 +272,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
       $this->type('email_1_email', $email);
     }
     $this->click('_qf_Contact_upload_view');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     return $email;
   }
 
@@ -545,7 +545,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
       $this->fail("$processorType processortype not found.");
     }
     $this->open($this->sboxPath . 'civicrm/admin/paymentProcessor?action=add&reset=1&pp=' . $pid);
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->type('name', $processorName);
     $this->select('financial_account_id', "label={$financialAccount}");
 
@@ -553,7 +553,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
       $this->type($f, $v);
     }
     $this->click('_qf_PaymentProcessor_next-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     // Is new processor created?
     $this->assertTrue($this->isTextPresent($processorName), 'Processor name not found in selector after adding payment processor (webTestAddPaymentProcessor).');
 
@@ -670,7 +670,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
     //save the data.
     $this->click('_qf_RelationshipType_next-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //does data saved.
     $this->assertTrue($this->isTextPresent('The Relationship Type has been saved.'),
@@ -678,7 +678,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     );
 
     $this->open($this->sboxPath . 'civicrm/admin/reltype?reset=1');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //validate data on selector.
     $data = $params;
@@ -834,7 +834,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
     $this->click('_qf_Amount_next');
     $this->waitForElementPresent('_qf_Amount_next-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $text = "'Amount' information has been saved.";
     $this->assertTrue($this->isTextPresent($text), 'Missing text: ' . $text);
 
@@ -877,7 +877,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         }
       }
       $this->click('_qf_MembershipBlock_next');
-      $this->waitForPageToLoad('30000');
+      $this->waitForPageToLoad($this->getTimeoutMsec());
       $this->waitForElementPresent('_qf_MembershipBlock_next-bottom');
       $text = "'MembershipBlock' information has been saved.";
       $this->assertTrue($this->isTextPresent($text), 'Missing text: ' . $text);
@@ -898,7 +898,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
     $this->click('_qf_ThankYou_next');
     $this->waitForElementPresent('_qf_ThankYou_next-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $text = "'ThankYou' information has been saved.";
     $this->assertTrue($this->isTextPresent($text), 'Missing text: ' . $text);
 
@@ -916,7 +916,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
       //$this->click('_qf_Contribute_next');
       $this->click('_qf_Contribute_next-bottom');
-      $this->waitForPageToLoad('30000');
+      $this->waitForPageToLoad($this->getTimeoutMsec());
       $text = "'Friend' information has been saved.";
       $this->assertTrue($this->isTextPresent($text), 'Missing text: ' . $text);
     }
@@ -937,7 +937,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
       $this->click('_qf_Custom_next-bottom');
       //$this->waitForElementPresent('_qf_Custom_next-bottom');
 
-      $this->waitForPageToLoad('30000');
+      $this->waitForPageToLoad($this->getTimeoutMsec());
       $text = "'Custom' information has been saved.";
       $this->assertTrue($this->isTextPresent($text), 'Missing text: ' . $text);
     }
@@ -956,7 +956,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
       $this->click('_qf_Premium_next');
       $this->waitForElementPresent('_qf_Premium_next-bottom');
 
-      $this->waitForPageToLoad('30000');
+      $this->waitForPageToLoad($this->getTimeoutMsec());
       $text = "'Premium' information has been saved.";
       $this->assertTrue($this->isTextPresent($text), 'Missing text: ' . $text);
     }
@@ -976,7 +976,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
       $this->click('_qf_Widget_next');
       $this->waitForElementPresent('_qf_Widget_next-bottom');
 
-      $this->waitForPageToLoad('30000');
+      $this->waitForPageToLoad($this->getTimeoutMsec());
       $text = "'Widget' information has been saved.";
       $this->assertTrue($this->isTextPresent($text), 'Missing text: ' . $text);
     }
@@ -996,7 +996,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
       $this->click('_qf_Contribute_next-bottom');
       //$this->waitForElementPresent('_qf_PCP_next-bottom');
-      $this->waitForPageToLoad('30000');
+      $this->waitForPageToLoad($this->getTimeoutMsec());
       $text = "'Pcp' information has been saved.";
       $this->assertTrue($this->isTextPresent($text), 'Missing text: ' . $text);
     }
@@ -1044,7 +1044,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     }
 
     $this->open($this->sboxPath . 'civicrm/contact/deduperules?action=update&id=' . $strictRuleId);
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent('_qf_DedupeRules_next-bottom');
 
     $count = 0;
@@ -1059,7 +1059,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
       $this->type('threshold', $threshold);
       // click save
       $this->click('_qf_DedupeRules_next-bottom');
-      $this->waitForPageToLoad('30000');
+      $this->waitForPageToLoad($this->getTimeoutMsec());
       return;
     }
 
@@ -1073,7 +1073,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
     // click save
     $this->click('_qf_DedupeRules_next-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
   }
 
   function webtestAddMembershipType($period_type = 'rolling', $duration_interval = 1, $duration_unit = 'year', $auto_renew = 'no') {
@@ -1161,7 +1161,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
     // Clicking save.
     $this->click('_qf_Edit_upload-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Is status message correct?
     $this->assertElementContainsText('crm-notification-container', "The Group '$groupName' has been saved.");
@@ -1572,7 +1572,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
       $this->click("xpath=id('ltype')/div/table/tbody/tr/td[1][text()='$financialType[name]']/../td[7]/span[2]/ul/li[2]/a");
       $this->waitForElementPresent("_qf_FinancialType_next");
       $this->click("_qf_FinancialType_next");
-      $this->waitForPageToLoad('30000');
+      $this->waitForPageToLoad($this->getTimeoutMsec());
       $this->assertTrue($this->isTextPresent('Selected financial type has been deleted.'), 'Missing text: ' . 'Selected financial type has been deleted.');
       return;
     }
@@ -1582,7 +1582,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     else {
       $this->click("xpath=id('ltype')/div/table/tbody/tr/td[1][text()='$financialType[oldname]']/../td[7]/span/a[text()='Edit']");
     }
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->type('name', $financialType['name']);
     if ($option == 'new') {
       $this->type('description', $financialType['name'] . ' description');
@@ -1603,7 +1603,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     }
 
     $this->click('_qf_FinancialType_next');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     if ($option == 'new') {
       $text = "The financial type '{$financialType['name']}' has been added. You can add Financial Accounts to this Financial Type now.";
     }
@@ -1616,7 +1616,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
   function changePermissions($permission) {
     $this->open($this->sboxPath . "civicrm/logout?reset=1");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->webtestLogin(TRUE);
     $this->changeAdminLinks();
     $this->waitForElementPresent('edit-submit');
@@ -1624,12 +1624,12 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
       $this->check($value);
     }
     $this->click('edit-submit');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent('The changes have been saved.'));
     $this->open($this->sboxPath . "user/logout");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->webtestLogin();
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
   }
 
   function addProfile($profileTitle, $profileFields) {
@@ -1711,7 +1711,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     sleep(2);
     $this->select('financial_account_id', "label={$financialAccountTitle}");
     $this->click('_qf_FinancialTypeAccount_next');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $text = 'The financial type Account has been saved.';
     $this->assertTrue($this->isTextPresent($text), 'Missing text: ' . $text);
     return $financialType['name'];
@@ -1727,7 +1727,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     $this->type("cost", $cost);
     $this->select("financial_type_id", "label=$financialType");
     $this->click("_qf_ManagePremiums_upload-bottom");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
   }
 
   function addPaymentInstrument($label, $financialAccount) {
@@ -1736,7 +1736,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     $this->type("label", $label);
     $this->select("financial_account_id", "value=$financialAccount");
     $this->click("_qf_Options_next-bottom");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
   }
 
   /**
