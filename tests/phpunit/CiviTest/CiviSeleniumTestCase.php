@@ -1745,7 +1745,9 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
    * @return string, timeout expressed in milliseconds
    */
   function getTimeoutMsec() {
-    return '30000';
+    // note: existing local versions of CiviSeleniumSettings may not declare $timeout, so use @
+    $timeout = ($this->settings && @$this->settings->timeout) ? ($this->settings->timeout * 1000) : 30000;
+    return (string) $timeout; // don't know why, but all our old code used a string
   }
 }
 
