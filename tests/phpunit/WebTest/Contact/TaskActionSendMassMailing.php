@@ -147,7 +147,7 @@ class WebTest_Contact_TaskActionSendMassMailing extends CiviSeleniumTestCase {
 
     // directly send schedule mailing -- not working right now
     $this->open($this->sboxPath . "civicrm/mailing/queue&reset=1");
-    $this->waitForPageToLoad("300000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //click report link of created mailing
     $this->click("xpath=//table//tbody/tr[td[1]/text()='$mailingName']/descendant::a[text()='Report']");

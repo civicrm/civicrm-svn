@@ -54,9 +54,9 @@ class WebTest_Release_InstallScript extends WebTest_Release_ReleaseTestCase {
     $this->type("drupal_database", $this->settings->drupalDBName);
 
     $this->click("xpath=//input[@value='Re-check requirements']");
-    $this->waitForPageToLoad(30000);
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click("install_button");
-    $this->waitForPageToLoad(30000);
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     //      $this->assertTrue($this->isTextPresent("this will take a few minutes"));
     $this->waitForTextPresent("CiviCRM has been successfully installed");
     $this->open($this->sboxPath . "civicrm/dashboard?reset=1");

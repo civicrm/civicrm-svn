@@ -1237,7 +1237,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
     // Clicking save.
     $this->click("_qf_Activity_upload-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Is status message correct?
     $this->assertTrue($this->isTextPresent("Activity '$subject' has been saved."), "Status message didn't show up after saving!");
@@ -1371,7 +1371,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
     // Go directly to the URL
     $this->open($this->sboxPath . "civicrm/admin/financial/financialAccount?reset=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->click("link=Add Financial Account");
     $this->waitForElementPresent('_qf_FinancialAccount_cancel-botttom');
@@ -1433,7 +1433,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
       $this->uncheck('is_default');
     }
     $this->click('_qf_FinancialAccount_next-botttom');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
   }
 
 
@@ -1454,12 +1454,12 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
   ) {
     if ($firstName) {
       $this->open($this->sboxPath . "civicrm/admin/financial/financialAccount?reset=1");
-      $this->waitForPageToLoad("30000");
+      $this->waitForPageToLoad($this->getTimeoutMsec());
     }
 
     $this->waitForElementPresent("xpath=//table/tbody//tr/td[1][text()='{$editfinancialAccount}']/../td[9]/span/a[text()='Edit']");
     $this->click("xpath=//table/tbody//tr/td[1][text()='{$editfinancialAccount}']/../td[9]/span/a[text()='Edit']");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->waitForElementPresent('_qf_FinancialAccount_cancel-botttom');
 
@@ -1526,7 +1526,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
       $this->uncheck('is_active');
     }
     $this->click('_qf_FinancialAccount_next-botttom');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
   }
 
 
@@ -1636,7 +1636,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     // Go directly to the URL of the screen that you will be testing (New Profile).
     $this->open($this->sboxPath . "civicrm/admin/uf/group?reset=1");
 
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click('link=Add Profile');
 
     // Add membership custom data field to profile
@@ -1649,7 +1649,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
     foreach ($profileFields as $field) {
       $this->waitForElementPresent('field_name_0');
-      // $this->waitForPageToLoad("30000");
+      // $this->waitForPageToLoad($this->getTimeoutMsec());
       $this->click("id=field_name_0");
       $this->select("id=field_name_0", "label=" . $field['type']);
       $this->waitForElementPresent('field_name_1');
@@ -1658,7 +1658,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
       $this->waitForElementPresent('label');
       $this->type("id=label", $field['label']);
       $this->click("id=_qf_Field_next_new-top");
-      $this->waitForPageToLoad("30000");
+      $this->waitForPageToLoad($this->getTimeoutMsec());
       //$this->assertTrue($this->isTextPresent("Your CiviCRM Profile Field '" . $field['name'] . "' has been saved to '" . $profileTitle . "'. You can add another profile field."));
     }
   }

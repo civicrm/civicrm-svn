@@ -107,7 +107,7 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent("xpath=//div[@id='current-relationships']//div//table/tbody//tr/td[9]/span/a[text()='View']");
     $this->click("xpath=//div[@id='current-relationships']//div//table/tbody//tr/td[9]/span/a[text()='View']");
 
-    $this->waitForPageToLoad("300000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->webtestVerifyTabularData(
       array(
         'Description' => $description,
@@ -195,7 +195,7 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent("xpath=//div[@id='current-relationships']//div//table/tbody//tr/td[9]/span/a[text()='View']");
     $this->click("xpath=//div[@id='current-relationships']//div//table/tbody//tr/td[9]/span/a[text()='View']");
 
-    $this->waitForPageToLoad("300000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->webtestVerifyTabularData(
       array(
         'Description' => $description,
@@ -292,7 +292,7 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent("xpath=//div[@id='current-relationships']//div//table/tbody//tr/td[9]/span/a[text()='View']");
     $this->click("xpath=//div[@id='current-relationships']//div//table/tbody//tr/td[9]/span/a[text()='View']");
 
-    $this->waitForPageToLoad("300000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->webtestVerifyTabularData(
       array(
         'Description' => $description,
@@ -361,7 +361,7 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent("xpath=//div[@id='current-relationships']//div//table/tbody//tr/td[9]/span/a[text()='View']");
     $this->click("xpath=//div[@id='current-relationships']//div//table/tbody//tr/td[9]/span/a[text()='View']");
 
-    $this->waitForPageToLoad("300000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->webtestVerifyTabularData(
       array(
         'Description' => $description,

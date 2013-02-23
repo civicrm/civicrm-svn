@@ -310,7 +310,7 @@ class WebTest_Case_CaseCustomFieldsTest extends CiviSeleniumTestCase {
     $this->type("{$cusId_2}", $custMname);
     $this->type("{$cusId_3}", $custLname);
     $this->click("_qf_Advanced_refresh");
-    $this->waitForPageToLoad("300000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent('1 Contact'));
   }
 }

@@ -375,13 +375,13 @@ class WebTest_Event_AddParticipationTest extends CiviSeleniumTestCase {
     $this->assertTrue($this->isTextPresent("A TEST transaction will be submitted"), "test mode status 'A TEST transaction will be submitted' missing");
     $this->_fillParticipantDetails($firstName, $lastName, $processorId);
     $this->click('_qf_Participant_upload_new-bottom');
-    $this->waitForPageToLoad(30000);
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     
     $this->assertTrue($this->isTextPresent("Register New Participant"), "Page title 'Register New Participant' missing");
     $this->assertTrue($this->isTextPresent("A TEST transaction will be submitted"), "test mode status 'A TEST transaction will be submitted' missing");
     $this->_fillParticipantDetails($firstName, $lastName2, $processorId);
     $this->click('_qf_Participant_upload_new-bottom');
-    $this->waitForPageToLoad(30000);
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     
     //searching the paricipants
     $this->open($this->sboxPath . 'civicrm/event/search?reset=1');

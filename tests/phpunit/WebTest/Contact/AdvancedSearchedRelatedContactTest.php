@@ -57,10 +57,10 @@ class WebTest_Contact_AdvancedSearchedRelatedContactTest extends CiviSeleniumTes
 
     $this->_testAddFees(FALSE, FALSE, $paymentProcessorId);
     $this->open($this->sboxPath . "civicrm/event/manage?reset=1");
-    $this->waitForPageToLoad("300000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->type('title', $eventTitle);
     $this->click('_qf_SearchEvent_refresh');
-    $this->waitForPageToLoad("300000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $Id = explode('_', $this->getAttribute("xpath=//div[@id='event_status_id']/div[3]/table/tbody/tr@id"));
     $eventId = $Id[1];
 
@@ -97,12 +97,12 @@ class WebTest_Contact_AdvancedSearchedRelatedContactTest extends CiviSeleniumTes
     $this->type("sort_name", $sortName);
     $this->select("contact_type", "value=Individual");
     $this->click("_qf_Basic_refresh");
-    $this->waitForPageToLoad("300000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("xpath=//form[@id='Basic']/div[3]/div/div[2]/table/tbody/tr/");
 
     // click through to the Relationship view screen
     $this->click("xpath=//form[@id='Basic']/div[3]/div/div[2]/table/tbody/tr/td[11]/span/a[text()='View']");
-    $this->waitForPageToLoad("300000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click("css=li#tab_participant a");
 
     // wait for add Event link
@@ -111,7 +111,7 @@ class WebTest_Contact_AdvancedSearchedRelatedContactTest extends CiviSeleniumTes
     $this->waitForElementPresent("_qf_Participant_upload-bottom");
     $this->select("event_id", "value={$eventId}");
     $this->click("_qf_Participant_upload-bottom");
-    $this->waitForPageToLoad("300000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->open($this->sboxPath . "civicrm/contact/search/advanced?reset=1");
     $this->waitForPageToLoad($this->getTimeoutMsec());
@@ -233,12 +233,12 @@ class WebTest_Contact_AdvancedSearchedRelatedContactTest extends CiviSeleniumTes
     $this->type("sort_name", $ContactName);
     $this->select("contact_type", "value=Individual");
     $this->click("_qf_Basic_refresh");
-    $this->waitForPageToLoad("300000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("xpath=//form[@id='Basic']/div[3]/div/div[2]/table/tbody/tr/");
 
     // click through to the Contribution view screen
     $this->click("xpath=//form[@id='Basic']/div[3]/div/div[2]/table/tbody/tr/td[11]/span/a[text()='View']");
-    $this->waitForPageToLoad("300000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->click("css=li#tab_rel a");
 
@@ -273,7 +273,7 @@ class WebTest_Contact_AdvancedSearchedRelatedContactTest extends CiviSeleniumTes
     $this->waitForElementPresent("xpath=//div[@id='current-relationships']//div//table/tbody//tr/td[9]/span/a[text()='View']");
     $this->click("xpath=//div[@id='current-relationships']//div//table/tbody//tr/td[9]/span/a[text()='View']");
 
-    $this->waitForPageToLoad("300000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->webtestVerifyTabularData(
       array(
         'Description' => $description,
@@ -287,7 +287,7 @@ class WebTest_Contact_AdvancedSearchedRelatedContactTest extends CiviSeleniumTes
 
     //search related contact using Advanced Search
     $this->open($this->sboxPath . "civicrm/contact/search/advanced?reset=1");
-    $this->waitForPageToLoad("300000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Advanced_refresh");
     $this->select("component_mode", "label=Related Contacts");
     $this->select("display_relationship_type", "label={$relType}");
@@ -295,7 +295,7 @@ class WebTest_Contact_AdvancedSearchedRelatedContactTest extends CiviSeleniumTes
     $this->waitForElementPresent("event_type");
     $this->type("event_type", "Conference");
     $this->click("_qf_Advanced_refresh");
-    $this->waitForPageToLoad("300000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent('2 Contacts'));
   }
 
