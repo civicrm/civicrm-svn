@@ -251,7 +251,8 @@ class CRM_Core_BAO_CMSUser {
    *
    * @param object  $form
    * @param integer $gid id of group of profile
-   * @param string $emailPresent true, if the profile field has email(primary)
+   * @param bool $emailPresent true if the profile field has email(primary)
+   * @return FALSE|void WTF
    *
    * @access public
    * @static

@@ -25,6 +25,9 @@
  +--------------------------------------------------------------------+
 */
 
+/**
+ * Metadata for an extension (e.g. the extension's "info.xml" file)
+ */
 class CRM_Extension_Info {
 
   /**
