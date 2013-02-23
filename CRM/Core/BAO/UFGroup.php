@@ -260,13 +260,19 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
    * @static
    * @access public
    */
-  static function getFields($id, $register = FALSE, $action = NULL,
-    $visibility     = NULL, $searchable = NULL,
-    $showAll        = FALSE, $restrict = NULL,
+  static function getFields(
+    $id,
+    $register = FALSE,
+    $action = NULL,
+    $visibility     = NULL,
+    $searchable = NULL,
+    $showAll        = FALSE,
+    $restrict = NULL,
     $skipPermission = FALSE,
     $ctype          = NULL,
     $permissionType = CRM_Core_Permission::CREATE,
-    $orderBy        = 'field_name', $orderProfiles = NULL
+    $orderBy        = 'field_name',
+    $orderProfiles = NULL
   ) {
     if (!is_array($id)) {
       $id = CRM_Utils_Type::escape($id, 'Positive');
@@ -400,7 +406,14 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
    * @param int $permissionType eg CRM_Core_Permission::CREATE
    * @return array
    */
-  protected static function formatUFField($group, $field, $customFields, $addressCustomFields, $importableFields, $permissionType = CRM_Core_Permission::CREATE) {
+  protected static function formatUFField(
+    $group,
+    $field,
+    $customFields,
+    $addressCustomFields,
+    $importableFields,
+    $permissionType = CRM_Core_Permission::CREATE
+  ) {
     $name = $field->field_name;
     $title = $field->label;
 

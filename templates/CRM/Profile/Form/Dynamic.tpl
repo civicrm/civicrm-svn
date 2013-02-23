@@ -23,7 +23,8 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{* Profile forms when embedded in CMS account create (mode=1) or cms account edit (mode=8) or civicrm/profile (mode=4) pages *}
+{* Profile forms when embedded in CMS account create (mode=1) or
+    cms account edit (mode=8) or civicrm/profile (mode=4) pages *}
 {if ($context eq 'multiProfileDialog')}
 {literal}
 <script type="text/javascript">

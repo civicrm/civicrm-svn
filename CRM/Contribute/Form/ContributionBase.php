@@ -688,8 +688,12 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form {
 
           if ($onBehalf) {
             if (!empty($fieldTypes) && in_array($field['field_type'], $fieldTypes)) {
-              CRM_Core_BAO_UFGroup::buildProfile($this, $field, CRM_Profile_Form::MODE_CREATE,
-                $contactID, TRUE
+              CRM_Core_BAO_UFGroup::buildProfile(
+                $this,
+                $field,
+                CRM_Profile_Form::MODE_CREATE,
+                $contactID,
+                TRUE
               );
               $this->_fields['onbehalf'][$key] = $field;
             }
@@ -698,7 +702,13 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form {
             }
           }
           else {
-            CRM_Core_BAO_UFGroup::buildProfile($this, $field, CRM_Profile_Form::MODE_CREATE, $contactID, TRUE);
+            CRM_Core_BAO_UFGroup::buildProfile(
+              $this,
+              $field,
+              CRM_Profile_Form::MODE_CREATE,
+              $contactID,
+              TRUE
+            );
             $this->_fields[$key] = $field;
           }
           if ($field['add_captcha']) {

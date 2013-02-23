@@ -193,7 +193,7 @@ define( 'CIVICRM_DOMAIN_ID'      , 1 );
 /**
  * For Wordpress users if your public pages are using a different template than the home page
  * you should set the name of the template with the below constant
- * This will be moved to a DB setting in 4.3, check CRM-10682
+ * This will be moved to a DB setting in a future version, check CRM-10682
  */
 // define( 'CIVICRM_UF_WP_BASEPAGE', 'YOUR TEMPLATE NAME HERE');
 

@@ -358,9 +358,7 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
     // call the form hook
     // also call the hook function so any modules can set thier own custom defaults
     // the user can do both the form and set default values with this hook
-    CRM_Utils_Hook::buildForm(get_class($this),
-      $this
-    );
+    CRM_Utils_Hook::buildForm(get_class($this), $this);
 
     $this->addRules();
   }
