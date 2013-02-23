@@ -1082,5 +1082,22 @@ SELECT  id
     return self::$_memberBatchEntryFields;
   }
 
+  static function checkForCustomData($params) {
+    $query = "
+SELECT   id 
+FROM     civicrm_uf_field 
+WHERE    uf_group_id = %1 AND
+         field_type = %2 AND 
+         field_name LIKE 'custom%'
+";
+    $p = array(1 => array($params['uf_group_id'], 'Integer'),
+      2 => array($params['field_type'], 'String'));
+    $dao = CRM_Core_DAO::executeQuery($query, $p);
+    while ($dao->fetch()) {
+      return TRUE;
+    }
+    return FALSE;
+  }
+
 }
 

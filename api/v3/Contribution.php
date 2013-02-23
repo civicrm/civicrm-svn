@@ -231,6 +231,7 @@ function _civicrm_api3_contribution_get_spec(&$params) {
  */
 function _civicrm_api3_contribute_format_params($params, &$values, $create = FALSE) {
 //legacy way of formatting from v2 api - v3 way is to define metadata & do it in the api layer
+    require_once 'api/v3/utils.php';
   _civicrm_api3_filter_fields_for_bao('Contribution', $params, $values);
 
   foreach ($params as $key => $value) {
