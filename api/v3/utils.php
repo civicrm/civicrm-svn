@@ -779,9 +779,9 @@ function _civicrm_api3_dao_to_array($dao, $params = NULL, $uniqueFields = TRUE, 
 /**
  * Converts an object to an array
  *
- * @param  object   $dao           (reference )object to convert
- * @param  array    $dao           (reference )array
- * @param array  $uniqueFields
+ * @param  object   $dao           (reference) object to convert
+ * @param  array    $values        (reference) array
+ * @param  array    $uniqueFields
  *
  * @return array
  * @static void

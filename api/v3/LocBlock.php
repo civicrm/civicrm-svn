@@ -47,11 +47,38 @@
  * @access public
  */
 function civicrm_api3_loc_block_create($params) {
+  $entities = array();
+  // Call the appropriate api to create entities if any are passed in the params
+  // This is basically chaining but in reverse - we create the sub-entities first
+  $items = array('address', 'email', 'phone', 'im');
+  foreach ($items as $item) {
+    foreach (array('', '_2') as $suf) {
+      $key = $item . $suf;
+      if (!empty($params[$key]) && is_array($params[$key])) {
+        $info = $params[$key];
+        // If all we get is an id don't bother calling the api
+        if (count($info) == 1 && !empty($info['id'])) {
+          $params[$key . '_id'] = $info['id'];
+        }
+        // Bother calling the api
+        else {
+          $info['version'] = 3;
+          $info['contact_id'] = CRM_Utils_Array::value('contact_id', $info, 'null');
+          $result = civicrm_api($item, 'create', $info);
+          if (!empty($result['is_error'])) {
+            return $result;
+          }
+          $entities[$key] = $result['values'][$result['id']];
+          $params[$key . '_id'] = $result['id'];
+        }
+      }
+    }
+  }
   $dao = new CRM_Core_DAO_LocBlock();
   $dao->copyValues($params);
   $dao->save();
   if (!empty($dao->id)) {
-    $values = array();
+    $values = array($dao->id => $entities);
     _civicrm_api3_object_to_array($dao, $values[$dao->id]);
     return civicrm_api3_create_success($values, $params, 'loc_block', 'create', $dao);
   }

@@ -38,15 +38,46 @@ class api_v3_LocBlockTest extends CiviUnitTestCase {
       'phone_id' => $phone['id'],
       'email_id' => $email['id'],
     );
-    $result = civicrm_api($this->_entity, 'create', $params);print_r($result);
+    $result = civicrm_api($this->_entity, 'create', $params);
     $id = $result['id'];
     $this->documentMe($params, $result, __FUNCTION__, __FILE__);
     $this->assertAPISuccess($result, 'In line ' . __LINE__);
     $this->assertEquals(1, $result['count'], 'In line ' . __LINE__);
     $this->assertNotNull($result['values'][$id]['id'], 'In line ' . __LINE__);
     $this->getAndCheck($params, $id, $this->_entity);
+  }
+
+  public function testCreateLocBlockEntities() {
+    $params = array(
+      'version' => $this->_apiversion,
+      'email' => array(
+        'location_type_id' => 1,
+        'email' => 'test2@loc.block',
+      ),
+      'phone' => array(
+        'location_type_id' => 1,
+        'phone' => '987654321',
+      ),
+      'phone_2' => array(
+        'location_type_id' => 1,
+        'phone' => '456-7890',
+      ),
+      'address' => array(
+        'location_type_id' => 1,
+        'street_address' => '987654321',
+      ),
+    );
+    $result = civicrm_api($this->_entity, 'create', $params);
+    $id = $result['id'];
+    $this->documentMe($params, $result, __FUNCTION__, __FILE__, 'Create entities and location block in 1 api call', NULL, 'createEntities');
+    $this->assertAPISuccess($result, 'In line ' . __LINE__);
+    $this->assertEquals(1, $result['count'], 'In line ' . __LINE__);
+    $this->assertNotNull($result['values'][$id]['email_id'], 'In line ' . __LINE__);
+    $this->assertNotNull($result['values'][$id]['phone_id'], 'In line ' . __LINE__);
+    $this->assertNotNull($result['values'][$id]['phone_2_id'], 'In line ' . __LINE__);
+    $this->assertNotNull($result['values'][$id]['address_id'], 'In line ' . __LINE__);
     // Delete block
-    $result = civicrm_api($this->_entity, 'create', array(
+    $result = civicrm_api($this->_entity, 'delete', array(
       'version' => $this->_apiversion,
       'id' => $id,
     ));
