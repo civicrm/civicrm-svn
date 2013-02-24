@@ -62,7 +62,7 @@ class WebTest_Contact_AdvanceSearchPaneTest extends CiviSeleniumTestCase {
 
       $this->click('_qf_Advanced_refresh');
 
-      $this->waitForPageToLoad('60000');
+      $this->waitForPageToLoad(2 * $this->getTimeoutMsec());
 
       // check the opened panes.
       $this->_checkOpenedPanes(array($pane));
@@ -99,7 +99,7 @@ class WebTest_Contact_AdvanceSearchPaneTest extends CiviSeleniumTestCase {
 
     $this->click('_qf_Advanced_refresh');
 
-    $this->waitForPageToLoad('60000');
+    $this->waitForPageToLoad(2 * $this->getTimeoutMsec());
 
     // check all opened panes.
     $this->_checkOpenedPanes(array_keys($allpanes));

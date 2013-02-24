@@ -128,7 +128,7 @@ class WebTest_Contact_TagSetSearchTest extends CiviSeleniumTestCase {
     $this->waitForTextPresent($tag2);
 
     $this->click("_qf_Advanced_refresh");
-    $this->waitForPageToLoad("60000");
+    $this->waitForPageToLoad(2 * $this->getTimeoutMsec());
 
     // Check result.
     $this->assertTrue($this->isTextPresent("2 Contacts"));

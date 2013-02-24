@@ -118,7 +118,7 @@ class WebTest_Contact_AdvancedSearchedRelatedContactTest extends CiviSeleniumTes
 
     $this->type("sort_name", $sortName);
     $this->click('_qf_Advanced_refresh');
-    $this->waitForPageToLoad('60000');
+    $this->waitForPageToLoad(2 * $this->getTimeoutMsec());
 
     $this->assertTrue($this->isTextPresent('1 Contact'));
 
@@ -126,7 +126,7 @@ class WebTest_Contact_AdvancedSearchedRelatedContactTest extends CiviSeleniumTes
     $this->select("component_mode", "label=Related Contacts");
     $this->select("display_relationship_type", $relType);
     $this->click('_qf_Advanced_refresh');
-    $this->waitForPageToLoad('60000');
+    $this->waitForPageToLoad(2 * $this->getTimeoutMsec());
 
     $this->assertTrue($this->isTextPresent('2 Contacts'));
 

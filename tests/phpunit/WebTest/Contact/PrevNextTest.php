@@ -108,7 +108,7 @@ class WebTest_Contact_PrevNextTest extends CiviSeleniumTestCase {
 
     $this->select('group', "label={$groupName}");
     $this->click("_qf_Basic_refresh");
-    $this->waitForPageToLoad("60000");
+    $this->waitForPageToLoad(2 * $this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent("3 Contacts"));
 
     $this->click("xpath=//div[@class='crm-search-results']//table/tbody/tr[1]/td[3]/a");

@@ -125,7 +125,7 @@ class WebTest_Contact_ProfileChecksumTest extends CiviSeleniumTestCase {
 
     // Go to edit profile page of the created contact.
     $this->open($this->sboxPath . "civicrm/profile/edit?id={$contactId}&gid={$profileId}&reset=1&cs={$cs}");
-    $this->waitForPageToLoad('60000');
+    $this->waitForPageToLoad(2 * $this->getTimeoutMsec());
     $this->assertStringsPresent(array($profileName));
 
     // Check all profile fields, update their values.
@@ -140,7 +140,7 @@ class WebTest_Contact_ProfileChecksumTest extends CiviSeleniumTestCase {
     }
     // Save profile.
     $this->click("_qf_Edit_next");
-    $this->waitForPageToLoad('60000');
+    $this->waitForPageToLoad(2 * $this->getTimeoutMsec());
 
     // Check profile view page.
     $this->assertStringsPresent(array($profileName));
@@ -157,7 +157,7 @@ class WebTest_Contact_ProfileChecksumTest extends CiviSeleniumTestCase {
     // Go directly to the URL of the screen that you will be
     // testing (Add new profile ).
     $this->open($this->sboxPath . 'civicrm/admin/uf/group?reset=1');
-    $this->waitForPageToLoad('60000');
+    $this->waitForPageToLoad(2 * $this->getTimeoutMsec());
     $this->click('newCiviCRMProfile-top');
     $this->waitForElementPresent('_qf_Group_next-top');
 

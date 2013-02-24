@@ -132,7 +132,7 @@ class WebTest_Contact_PrivacyOptionSearchTest extends CiviSeleniumTestCase {
     $this->waitForTextPresent('Do not email');
 
     $this->click("_qf_Advanced_refresh");
-    $this->waitForPageToLoad("60000");
+    $this->waitForPageToLoad(2 * $this->getTimeoutMsec());
 
     $this->assertTrue($this->isTextPresent("No matches found"));
 
@@ -152,7 +152,7 @@ class WebTest_Contact_PrivacyOptionSearchTest extends CiviSeleniumTestCase {
     $this->waitForTextPresent('Do not email');
 
     $this->click("_qf_Advanced_refresh");
-    $this->waitForPageToLoad("60000");
+    $this->waitForPageToLoad(2 * $this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent("2 Contacts"));
     $this->assertTrue($this->isTextPresent("$lname1, $fname1"));
     $this->assertTrue($this->isTextPresent("$lname2, $fname2"));
@@ -175,7 +175,7 @@ class WebTest_Contact_PrivacyOptionSearchTest extends CiviSeleniumTestCase {
     $this->select('privacy_operator', 'value=AND');
 
     $this->click("_qf_Advanced_refresh");
-    $this->waitForPageToLoad("60000");
+    $this->waitForPageToLoad(2 * $this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent("1 Contact"));
     $this->assertTrue($this->isTextPresent("$lname2, $fname2"));
   }
