@@ -66,6 +66,11 @@ class CRM_Contact_Form_Inline_Demographics extends CRM_Contact_Form_Inline {
 
     $params['contact_type'] = 'Individual';
     $params['contact_id'] = $this->_contactId;
+
+    if (!empty($this->_contactSubType)) {
+      $params['contact_sub_type'] = $this->_contactSubType;
+    }
+
     CRM_Contact_BAO_Contact::create($params);
 
     $this->response();

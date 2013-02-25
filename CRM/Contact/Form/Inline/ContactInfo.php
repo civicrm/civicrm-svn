@@ -84,6 +84,11 @@ class CRM_Contact_Form_Inline_ContactInfo extends CRM_Contact_Form_Inline {
     // Process / save contact info
     $params['contact_type'] = $this->_contactType;
     $params['contact_id']   = $this->_contactId;
+
+    if (!empty($this->_contactSubType)) {
+      $params['contact_sub_type'] = $this->_contactSubType;
+    }
+
     CRM_Contact_BAO_Contact::create($params);
 
     $this->response();

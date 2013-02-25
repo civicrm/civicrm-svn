@@ -49,16 +49,30 @@ abstract class CRM_Contact_Form_Inline extends CRM_Core_Form {
   public $_contactType;
 
   /**
+   * Sub type of contact being edited
+   */
+  public $_contactSubType;
+
+  /**
    * Common preprocess: fetch contact ID and contact type
    */
   public function preProcess() {
     $this->_contactId = CRM_Utils_Request::retrieve('cid', 'Positive', $this, TRUE, NULL, $_REQUEST);
     $this->assign('contactId', $this->_contactId);
 
-    // Get contact type
+    // get contact type and subtype
     if (empty($this->_contactType)) {
-      $this->_contactType = CRM_Contact_BAO_Contact::getContactType($this->_contactId);
+      $contactTypeInfo = CRM_Contact_BAO_Contact::getContactTypes($this->_contactId);
+      $this->_contactType = $contactTypeInfo[0];
+
+      // check if subtype is set
+      if (isset($contactTypeInfo[1])) {
+        // unset contact type which is 0th element
+        unset($contactTypeInfo[0]);
+        $this->_contactSubType = $contactTypeInfo;
+      }
     }
+
     $this->assign('contactType', $this->_contactType);
   }
 
