@@ -81,26 +81,28 @@ var CRM = CRM || {};
     });
   };
 
-  var defaults = {
-    success: function(result, settings) {
-      return true;
-    },
-    error: function(result, settings) {
-      $().crmError(result.error_message, ts('Error'));
-      return false;
-    },
-    callBack: function(result,settings) {
-      if (result.is_error == 1) {
-        return settings.error.call(this, result, settings);
-      }
-      return settings.success.call(this, result, settings);
-    },
-    ajaxURL: 'civicrm/ajax/rest',
-  };
-
+  /**
+   * AJAX api
+   */
   CRM.api = function(entity, action, params, options) {
+    // Default settings
+    var settings = {
+      success: function(result, settings) {
+        return true;
+      },
+      error: function(result, settings) {
+        $().crmError(result.error_message, ts('Error'));
+        return false;
+      },
+      callBack: function(result, settings) {
+        if (result.is_error == 1) {
+          return settings.error.call(this, result, settings);
+        }
+        return settings.success.call(this, result, settings);
+      },
+      ajaxURL: 'civicrm/ajax/rest',
+    };
     action = action.toLowerCase();
-    var settings = defaults;
     // Default success handler
     switch (action) {
       case "update":
@@ -197,7 +199,7 @@ var CRM = CRM || {};
       minChars:1
       }, options
     );
-    var contactUrl = CRM.url(defaults.ajaxURL, params);
+    var contactUrl = CRM.url('civicrm/ajax/rest', params);
 
     return this.each(function() {
       var selector = this;
@@ -211,7 +213,7 @@ var CRM = CRM || {};
             return options.formatItem(data,i,max,value,term);
           },
           parse: function(data){ return options.parse(data);},
-    			  width: options.width,
+          width: options.width,
           delay:options.delay,
           max:25,
           dataType:'json',
