@@ -392,8 +392,9 @@ function createRelationship( relType, contactID, relID, rowNumber, relTypeName )
         cj.post( postUrl, { rel_contact: v1, rel_type: relType, contact_id: sourceContact, rel_id: relID, case_id: caseID, key: {/literal}"{crmKey name='civicrm/ajax/relation'}"{literal} },
           function( data ) {
             if ( data.status == 'process-relationship-success' ) {
-              // here ideally we need to reload datatable, for now reloading the page
-              window.location.reload();
+              // reloading datatable
+              var oTable = cj('#caseRoles-selector').dataTable();
+              oTable.fnDraw();
             }
             else {
               var relTypeAdminLink = {/literal}"{crmURL p='civicrm/admin/reltype' q='reset=1' h=0 }"{literal};
@@ -718,8 +719,9 @@ function addRole() {
             dataType : "json",
             success  : function( values ) {
                     if ( values.status == 'process-relationship-success' ) {
-                      // here ideally we need to reload datatable, for now reloading the page
-                      window.location.reload();
+                      // reloading datatable
+                      var oTable = cj('#caseRoles-selector').dataTable();
+                      oTable.fnDraw();
               } else {
                    var relTypeName = cj("#role_type :selected").text();
                    var relTypeAdminLink = {/literal}"{crmURL p='civicrm/admin/reltype' q='reset=1' h=0 }"{literal};
