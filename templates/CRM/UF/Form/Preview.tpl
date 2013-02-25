@@ -46,6 +46,10 @@
           {if $field.skipDisplay}
             {continue}
           {/if}
+          {if $field.field_type eq "Formatting"}
+            {$field.help_pre}
+            {continue}
+          {/if}
           {if $field.groupTitle != $fieldset}
             {if $fieldset != $zeroField}
               </table>
@@ -65,10 +69,6 @@
               <div class="messages help">{$field.groupHelpPre}</div>
             {/if}
           <table class="form-layout-compressed" id="table-1">
-          {/if}
-          {if $field.field_type eq "Formatting"}
-            {$field.help_pre}
-            {continue}
           {/if}
           {* Show explanatory text for field if not in 'view' mode *}
           {if $field.help_pre && $action neq 4}
