@@ -339,7 +339,7 @@ AND    domain_id    = %4
       $conflict = CRM_Core_DAO::singleValueQuery($sql, $params);
 
       if (!$conflict) {
-        CRM_Core_BAO_UFMatch::create((array) $ufmatch);
+        $ufmatch = CRM_Core_BAO_UFMatch::create((array) $ufmatch);
         $ufmatch->free();
         $newContact = TRUE;
         $transaction->commit();
