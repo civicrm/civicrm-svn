@@ -332,7 +332,7 @@ class CRM_Core_BAO_Address extends CRM_Core_DAO_Address {
     }
 
     if (isset($params['country_id'])) {
-      if (!trim($params['country_id'])) {
+      if (empty($params['country_id'])) {
         $params['country_id'] = 'null';
       }
       elseif (!is_numeric($params['country_id']) ||

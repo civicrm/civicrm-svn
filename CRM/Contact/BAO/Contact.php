@@ -1917,21 +1917,21 @@ ORDER BY civicrm_email.is_primary DESC";
             if (is_numeric($value) && ((int ) $value) >= 1000) {
               $data['address'][$loc]['state_province_id'] = $value;
             }
+            elseif (empty($value)) {
+              $data['address'][$loc]['state_province_id'] = '';
+            }
             else {
-              if (!empty($value)) {
-                $data['address'][$loc]['state_province'] = $value;
-              }
-              else {
-                $data['address'][$loc]['state_province_id'] = '';
-              }
+              $data['address'][$loc]['state_province'] = $value;
             }
           }
           elseif ($fieldName === 'country') {
             // CRM-3393
-            if (is_numeric($value) &&
-              ((int ) $value) >= 1000
+            if (is_numeric($value) && ((int ) $value) >= 1000
             ) {
               $data['address'][$loc]['country_id'] = $value;
+            }
+            elseif (empty($value)) {
+              $data['address'][$loc]['country_id'] = '';
             }
             else {
               $data['address'][$loc]['country'] = $value;
