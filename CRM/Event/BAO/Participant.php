@@ -625,28 +625,33 @@ GROUP BY  participant.event_id
       $tmpFields = CRM_Event_DAO_Participant::import();
 
       $note = array(
-        'participant_note' => array('title' => 'Participant Note',
+        'participant_note' => array(
+          'title' => 'Participant Note',
           'name' => 'participant_note',
           'headerPattern' => '/(participant.)?note$/i',
         ));
 
       $participantStatus = array(
-        'participant_status' => array('title' => 'Participant Status',
+        'participant_status' => array(
+          'title' => 'Participant Status',
           'name' => 'participant_status',
           'data_type' => CRM_Utils_Type::T_STRING,
         ));
 
       $participantRole = array(
-        'participant_role' => array('title' => 'Participant Role',
+        'participant_role' => array(
+          'title' => 'Participant Role',
           'name' => 'participant_role',
           'data_type' => CRM_Utils_Type::T_STRING,
         ));
 
       $eventType = array(
-        'event_type' => array('title' => 'Event Type',
+        'event_type' => array(
+          'title' => 'Event Type',
           'name' => 'event_type',
           'data_type' => CRM_Utils_Type::T_STRING,
         ));
+
       $tmpContactField = $contactFields = array();
       $contactFields = array( );
       if (!$onlyParticipant) {
@@ -680,7 +685,7 @@ GROUP BY  participant.event_id
         }
       }
       $extIdentifier = CRM_Utils_Array::value('external_identifier', $contactFields);
-      if ( $extIdentifier ) {
+      if ($extIdentifier) {
         $tmpContactField['external_identifier'] = $extIdentifier;
         $tmpContactField['external_identifier']['title'] =
           CRM_Utils_Array::value('title', $extIdentifier) . ' (match to contact)';
@@ -696,8 +701,6 @@ GROUP BY  participant.event_id
       $fields = array_merge($fields, $tmpContactField);
       $fields = array_merge($fields, $tmpFields);
       $fields = array_merge($fields, $note, $participantStatus, $participantRole, $eventType);
-      //$fields = array_merge($fields, $optionFields);
-
       $fields = array_merge($fields, CRM_Core_BAO_CustomField::getFieldsForImport('Participant'));
 
       self::$_importableFields = $fields;
