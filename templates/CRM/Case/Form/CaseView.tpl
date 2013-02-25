@@ -321,7 +321,6 @@
         cj.post( postUrl, {contactID: contactID,caseID: caseID,
           key: {/literal}"{crmKey name='civicrm/case/ajax/addclient'}"{literal} },
           function( data ) {
-            var resourceBase   = {/literal}"{$config->resourceBase}"{literal};
           },
           'json'
         );
@@ -341,7 +340,7 @@
   }
 
 function createRelationship( relType, contactID, relID, rowNumber, relTypeName ) {
-    cj("#dialog").show( );
+  cj("#dialog").show( );
 
   cj("#dialog").dialog({
     title: "Assign Case Role",
@@ -390,44 +389,21 @@ function createRelationship( relType, contactID, relID, rowNumber, relTypeName )
         }
 
         var postUrl = {/literal}"{crmURL p='civicrm/ajax/relation' h=0 }"{literal};
-                cj.post( postUrl, { rel_contact: v1, rel_type: relType, contact_id: sourceContact, rel_id: relID, case_id: caseID, key: {/literal}"{crmKey name='civicrm/ajax/relation'}"{literal} },
-                    function( data ) {
-                        var resourceBase   = {/literal}"{$config->resourceBase}"{literal};
+        cj.post( postUrl, { rel_contact: v1, rel_type: relType, contact_id: sourceContact, rel_id: relID, case_id: caseID, key: {/literal}"{crmKey name='civicrm/ajax/relation'}"{literal} },
+          function( data ) {
+            if ( data.status == 'process-relationship-success' ) {
+              // here ideally we need to reload datatable, for now reloading the page
+              window.location.reload();
+            }
+            else {
+              var relTypeAdminLink = {/literal}"{crmURL p='civicrm/admin/reltype' q='reset=1' h=0 }"{literal};
+              var errorMsg = '{/literal}{ts escape="js" 1="' + relTypeName + '" 2="' + relTypeAdminLink + '" }The relationship type definition for the %1 case role is not valid for the client and / or staff contact types. You can review and edit relationship types at <a href="%2">Administer >> Option Lists >> Relationship Types</a>{/ts}{literal}.';
 
-      var html = '';
-      if ( data.status == 'process-relationship-success' ) {
-                            var contactViewUrl = {/literal}"{crmURL p='civicrm/contact/view' q='action=view&reset=1&cid=' h=0 }"{literal};
-                            var deleteUrl      = {/literal}"{crmURL p='civicrm/contact/view/rel' q="action=delete&reset=1&cid=`$contactID`&caseID=`$caseID`&id=" h=0 }"{literal};
-                            var html = '<a href=' + contactViewUrl + data.cid +' title="view contact record">' +  data.name +'</a>';
-                            cj('#relName_' + rowNumber ).html( html );
-                            html = '';
-                            html = '<a onclick="createRelationship( ' + relType +','+ data.cid +', ' + data.rel_id +', ' + rowNumber +', \''+ relTypeName +'\' ); return false" title="edit case role" href="#"><div class="icon edit-icon" ></div></a> &nbsp;&nbsp; <a href=' + deleteUrl + data.rel_id +' onclick = "if (confirm(\'{/literal}{ts escape="js"}Are you sure you want to delete this relationship{/ts}{literal}?\') ) this.href +=\'&confirmed=1\'; else return false;"><div title="remove contact from case role" class="icon delete-icon"></div></a>';
-                            cj('#edit_' + rowNumber ).html( html );
-
-      } else {
-         html = '<img src="' +resourceBase+'i/edit.png" title="edit case role" onclick="createRelationship( ' + relType +','+ data.cid +', ' + data.rel_id +', ' + rowNumber +', \''+ relTypeName +'\' );">&nbsp;&nbsp;';
-         var relTypeAdminLink = {/literal}"{crmURL p='civicrm/admin/reltype' q='reset=1' h=0 }"{literal};
-         var errorMsg = '{/literal}{ts escape="js" 1="' + relTypeName + '" 2="' + relTypeAdminLink + '" }The relationship type definition for the %1 case role is not valid for the client and / or staff contact types. You can review and edit relationship types at <a href="%2">Administer >> Option Lists >> Relationship Types</a>{/ts}{literal}.';
-
-         //display error message.
-         cj().crmError(errorMsg);
-      }
-
-                        html = '';
-                        if ( data.phone ) {
-                            html = data.phone;
-                        }
-                        cj('#phone_' + rowNumber ).html( html );
-
-                        html = '';
-                        if ( data.email ) {
-                            var activityUrl = {/literal}"{crmURL p='civicrm/contact/view/activity' q="atype=3&action=add&reset=1&caseid=`$caseID`&cid=" h=0 }"{literal};
-                            html = '<a href=' + activityUrl + data.cid + '><div title="compose and send an email" class="icon email-icon"></div></a>&nbsp;';
-                        }
-                        cj('#email_' + rowNumber ).html( html );
-
-                        }, 'json'
-                    );
+              //display error message.
+              cj().crmError(errorMsg);
+            }
+          }, 'json'
+        );
 
         cj(this).dialog("close");
         cj(this).dialog("destroy");
@@ -442,46 +418,45 @@ function createRelationship( relType, contactID, relID, rowNumber, relTypeName )
   });
 }
 
-function viewRelatedCases( mainCaseID, contactID ) {
-  cj("#view-related-cases").show( );
-     cj("#view-related-cases").dialog({
-        title: "Related Cases",
-        modal: true,
-        width : "680px",
-        height: 'auto',
-        resizable: true,
-        bgiframe: true,
-        overlay: {
-            opacity: 0.5,
-            background: "black"
-        },
+  function viewRelatedCases( mainCaseID, contactID ) {
+    cj("#view-related-cases").show( );
+    cj("#view-related-cases").dialog({
+      title: "Related Cases",
+      modal: true,
+      width : "680px",
+      height: 'auto',
+      resizable: true,
+      bgiframe: true,
+      overlay: {
+        opacity: 0.5,
+        background: "black"
+      },
 
-        beforeclose: function(event, ui) {
-            cj(this).dialog("destroy");
-        },
+      beforeclose: function(event, ui) {
+        cj(this).dialog("destroy");
+      },
 
-        open:function() {
+      open:function() {
+        var dataUrl = {/literal}"{crmURL p='civicrm/contact/view/case' h=0 q="snippet=4" }"{literal};
+          dataUrl = dataUrl + '&id=' + mainCaseID + '&cid=' +contactID + '&relatedCases=true&action=view&context=case&selectedChild=case';
 
-      var dataUrl = {/literal}"{crmURL p='civicrm/contact/view/case' h=0 q="snippet=4" }"{literal};
-      dataUrl = dataUrl + '&id=' + mainCaseID + '&cid=' +contactID + '&relatedCases=true&action=view&context=case&selectedChild=case';
-
-       cj.ajax({
-                      url     : dataUrl,
-                 async   : false,
-                 success : function(html){
-                                cj("#related-cases-content" ).html( html );
-                     }
-           });
-        },
-
-        buttons: {
-            "Done": function() {
-                cj(this).dialog("close");
-                cj(this).dialog("destroy");
+          cj.ajax({
+            url     : dataUrl,
+            async   : false,
+            success : function(html){
+              cj("#related-cases-content" ).html( html );
             }
+          });
+        },
+
+      buttons: {
+        "Done": function() {
+          cj(this).dialog("close");
+          cj(this).dialog("destroy");
         }
+      }
     });
-}
+  }
 
 cj(document).ready(function(){
    cj("#view-activity").hide( );
@@ -489,34 +464,33 @@ cj(document).ready(function(){
 </script>
 {/literal}
 
-{if $hasAccessToAllCases}
-<div class="crm-accordion-wrapper collapsed crm-case-other-relationships-block">
- <div class="crm-accordion-header">
-  {ts}Other Relationships{/ts}
- </div><!-- /.crm-accordion-header -->
- <div class="crm-accordion-body">
+  {if $hasAccessToAllCases}
+  <div class="crm-accordion-wrapper collapsed crm-case-other-relationships-block">
+    <div class="crm-accordion-header">
+      {ts}Other Relationships{/ts}
+    </div><!-- /.crm-accordion-header -->
+    <div class="crm-accordion-body">
 
-  {if $clientRelationships}
-    <div class="crm-submit-buttons">
-    <a class="button" href="#" onClick="window.location='{crmURL p='civicrm/contact/view/rel' q="action=add&reset=1&cid=`$contactId`&caseID=`$caseID`"}'; return false;">
-    <span><div class="icon add-icon"></div>{ts}Add client relationship{/ts}</a></span>
-    </div>
-     <table id="clientRelationships-selector"  class="report-layout">
-         <thead><tr>
+      {if $clientRelationships}
+        <div class="crm-submit-buttons">
+          <a class="button" href="#" onClick="window.location='{crmURL p='civicrm/contact/view/rel' q="action=add&reset=1&cid=`$contactId`&caseID=`$caseID`"}'; return false;">
+          <span><div class="icon add-icon"></div>{ts}Add client relationship{/ts}</a></span>
+        </div>
+        <table id="clientRelationships-selector"  class="report-layout">
+          <thead><tr>
             <th>{ts}Client Relationship{/ts}</th>
-             <th>{ts}Name{/ts}</th>
-             <th>{ts}Phone{/ts}</th>
-             <th>{ts}Email{/ts}</th>
-         </tr></thead>
-    </table>
-  {else}
-    <div class="messages status no-popup">
-      <div class="icon inform-icon"></div>
+            <th>{ts}Name{/ts}</th>
+            <th>{ts}Phone{/ts}</th>
+            <th>{ts}Email{/ts}</th>
+          </tr></thead>
+        </table>
+        {else}
+        <div class="messages status no-popup">
+          <div class="icon inform-icon"></div>
           {capture assign=crmURL}{crmURL p='civicrm/contact/view/rel' q="action=add&reset=1&cid=`$contactId`&caseID=`$caseID`"}{/capture}
           {ts 1=$crmURL}There are no Relationships entered for this client. You can <a accesskey="N" href='%1'>add one</a>.{/ts}
-    </div>
-  {/if}
-
+        </div>
+      {/if}
  {literal}
  <script type="text/javascript">
  cj( function ( ) {
@@ -524,80 +498,80 @@ cj(document).ready(function(){
  });
 
  function buildCaseClientRelationships( filterSearch ) {
-     if( filterSearch ) {
-         oTable.fnDestroy();
-     }
-     var count   = 0;
-     var columns = '';
-     var sourceUrl = {/literal}"{crmURL p='civicrm/ajax/clientrelationships' h=0 q='snippet=4&caseID='}{$caseID}"{literal};
-             sourceUrl = sourceUrl + '&cid={/literal}{$contactID}{literal}';
-             sourceUrl = sourceUrl + '&userID={/literal}{$userID}{literal}';
+   if( filterSearch ) {
+     oTable.fnDestroy();
+   }
+   var count   = 0;
+   var columns = '';
+   var sourceUrl = {/literal}"{crmURL p='civicrm/ajax/clientrelationships' h=0 q='snippet=4&caseID='}{$caseID}"{literal};
+   sourceUrl = sourceUrl + '&cid={/literal}{$contactID}{literal}';
+   sourceUrl = sourceUrl + '&userID={/literal}{$userID}{literal}';
 
-         cj('#clientRelationships-selector th').each( function( ) {
-           if ( cj(this).attr('id') != 'nosort' ) {
-         columns += '{"sClass": "' + cj(this).attr('class') +'"},';
-       } else {
-         columns += '{ "bSortable": false },';
-       }
-       count++;
-     });
+    cj('#clientRelationships-selector th').each( function( ) {
+      if ( cj(this).attr('id') != 'nosort' ) {
+        columns += '{"sClass": "' + cj(this).attr('class') +'"},';
+      } else {
+        columns += '{ "bSortable": false },';
+      }
+      count++;
+    });
 
-     columns    = columns.substring(0, columns.length - 1 );
-     eval('columns =[' + columns + ']');
+    columns    = columns.substring(0, columns.length - 1 );
+    eval('columns =[' + columns + ']');
 
-     oTable = cj('#clientRelationships-selector').dataTable({
-             "bFilter"    : false,
-             "bAutoWidth" : false,
-             "aaSorting"  : [],
-             "aoColumns"  : columns,
-             "bProcessing": true,
-             "bJQueryUI": true,
-             "asStripClasses" : [ "odd-row", "even-row" ],
-             "sPaginationType": "full_numbers",
-             "sDom"       : '<"crm-datatable-pager-top"lfp>rt<"crm-datatable-pager-bottom"ip>',
-             "bServerSide": true,
-             "sAjaxSource": sourceUrl,
-             "iDisplayLength": 10,
-             "fnDrawCallback": function() { setClientRelationshipsSelectorClass(); },
-             "fnServerData": function ( sSource, aoData, fnCallback ) {
+    oTable = cj('#clientRelationships-selector').dataTable({
+      "bFilter"    : false,
+      "bAutoWidth" : false,
+      "aaSorting"  : [],
+      "aoColumns"  : columns,
+      "bProcessing": true,
+      "bJQueryUI": true,
+      "asStripClasses" : [ "odd-row", "even-row" ],
+      "sPaginationType": "full_numbers",
+      "sDom"       : '<"crm-datatable-pager-top"lfp>rt<"crm-datatable-pager-bottom"ip>',
+      "bServerSide": true,
+      "sAjaxSource": sourceUrl,
+      "iDisplayLength": 10,
+      "fnDrawCallback": function() { setClientRelationshipsSelectorClass(); },
+      "fnServerData": function ( sSource, aoData, fnCallback ) {
 
-                 cj.ajax( {
-                 "dataType": 'json',
-                 "type": "POST",
-                 "url": sSource,
-                 "data": aoData,
-                 "success": fnCallback
-                 } );
-                 }
-             });
+        cj.ajax( {
+          "dataType": 'json',
+          "type": "POST",
+          "url": sSource,
+          "data": aoData,
+          "success": fnCallback
+        } );
+      }
+    });
  }
 
- function setClientRelationshipsSelectorClass( ) {
-     cj("#clientRelationships-selector td:last-child").each( function( ) {
-        cj(this).parent().addClass(cj(this).text() );
-     });
- }
+  function setClientRelationshipsSelectorClass( ) {
+    cj("#clientRelationships-selector td:last-child").each( function( ) {
+      cj(this).parent().addClass(cj(this).text() );
+    });
+  }
  </script>
  {/literal}
   <br />
 
   {if $globalRelationships}
     <div class="crm-submit-buttons">
-        <a class="button" href="#"  onClick="window.location='{crmURL p='civicrm/group/search' q="reset=1&context=amtg&amtgID=`$globalGroupInfo.id`"}'; return false;">
-        <span><div class="icon add-icon"></div>{ts 1=$globalGroupInfo.title}Add members to %1{/ts}</a></span>
+      <a class="button" href="#"  onClick="window.location='{crmURL p='civicrm/group/search' q="reset=1&context=amtg&amtgID=`$globalGroupInfo.id`"}'; return false;">
+      <span><div class="icon add-icon"></div>{ts 1=$globalGroupInfo.title}Add members to %1{/ts}</a></span>
     </div>
-     <table id="globalRelationships-selector"  class="report-layout">
-         <thead><tr>
-             <th>{$globalGroupInfo.title}</th>
-             <th>{ts}Phone{/ts}</th>
-             <th>{ts}Email{/ts}</th>
-         </tr></thead>
+    <table id="globalRelationships-selector"  class="report-layout">
+      <thead><tr>
+        <th>{$globalGroupInfo.title}</th>
+        <th>{ts}Phone{/ts}</th>
+        <th>{ts}Email{/ts}</th>
+      </tr></thead>
     </table>
-  {elseif $globalGroupInfo.id}
+    {elseif $globalGroupInfo.id}
     <div class="messages status no-popup">
       <div class="icon inform-icon"></div>&nbsp;
-          {capture assign=crmURL}{crmURL p='civicrm/group/search' q="reset=1&context=amtg&amtgID=`$globalGroupInfo.id`"}{/capture}
-          {ts 1=$crmURL 2=$globalGroupInfo.title}The group %2 has no members. You can <a href='%1'>add one</a>.{/ts}
+      {capture assign=crmURL}{crmURL p='civicrm/group/search' q="reset=1&context=amtg&amtgID=`$globalGroupInfo.id`"}{/capture}
+      {ts 1=$crmURL 2=$globalGroupInfo.title}The group %2 has no members. You can <a href='%1'>add one</a>.{/ts}
     </div>
   {/if}
 
@@ -609,59 +583,59 @@ cj(document).ready(function(){
  });
 
  function buildCaseGlobalRelationships( filterSearch ) {
-     if( filterSearch ) {
-         oTable.fnDestroy();
-     }
-     var count   = 0;
-     var columns = '';
-     var sourceUrl = {/literal}"{crmURL p='civicrm/ajax/globalrelationships' h=0 q='snippet=4&caseID='}{$caseID}"{literal};
-             sourceUrl = sourceUrl + '&cid={/literal}{$contactID}{literal}';
-             sourceUrl = sourceUrl + '&userID={/literal}{$userID}{literal}';
+   if( filterSearch ) {
+     oTable.fnDestroy();
+   }
+   var count   = 0;
+   var columns = '';
+   var sourceUrl = {/literal}"{crmURL p='civicrm/ajax/globalrelationships' h=0 q='snippet=4&caseID='}{$caseID}"{literal};
+   sourceUrl = sourceUrl + '&cid={/literal}{$contactID}{literal}';
+   sourceUrl = sourceUrl + '&userID={/literal}{$userID}{literal}';
 
-         cj('#globalRelationships-selector th').each( function( ) {
-           if ( cj(this).attr('id') != 'nosort' ) {
-         columns += '{"sClass": "' + cj(this).attr('class') +'"},';
-       } else {
-         columns += '{ "bSortable": false },';
-       }
-       count++;
-     });
+    cj('#globalRelationships-selector th').each( function( ) {
+      if ( cj(this).attr('id') != 'nosort' ) {
+        columns += '{"sClass": "' + cj(this).attr('class') +'"},';
+      } else {
+        columns += '{ "bSortable": false },';
+      }
+      count++;
+    });
 
-     columns    = columns.substring(0, columns.length - 1 );
-     eval('columns =[' + columns + ']');
+    columns    = columns.substring(0, columns.length - 1 );
+    eval('columns =[' + columns + ']');
 
-     oTable = cj('#globalRelationships-selector').dataTable({
-             "bFilter"    : false,
-             "bAutoWidth" : false,
-             "aaSorting"  : [],
-             "aoColumns"  : columns,
-             "bProcessing": true,
-             "bJQueryUI": true,
-             "asStripClasses" : [ "odd-row", "even-row" ],
-             "sPaginationType": "full_numbers",
-             "sDom"       : '<"crm-datatable-pager-top"lfp>rt<"crm-datatable-pager-bottom"ip>',
-             "bServerSide": true,
-             "sAjaxSource": sourceUrl,
-             "iDisplayLength": 10,
-             "fnDrawCallback": function() { setGlobalRelationshipsSelectorClass(); },
-             "fnServerData": function ( sSource, aoData, fnCallback ) {
+    oTable = cj('#globalRelationships-selector').dataTable({
+      "bFilter"    : false,
+      "bAutoWidth" : false,
+      "aaSorting"  : [],
+      "aoColumns"  : columns,
+      "bProcessing": true,
+      "bJQueryUI": true,
+      "asStripClasses" : [ "odd-row", "even-row" ],
+      "sPaginationType": "full_numbers",
+      "sDom"       : '<"crm-datatable-pager-top"lfp>rt<"crm-datatable-pager-bottom"ip>',
+      "bServerSide": true,
+      "sAjaxSource": sourceUrl,
+      "iDisplayLength": 10,
+      "fnDrawCallback": function() { setGlobalRelationshipsSelectorClass(); },
+      "fnServerData": function ( sSource, aoData, fnCallback ) {
 
-                 cj.ajax( {
-                 "dataType": 'json',
-                 "type": "POST",
-                "url": sSource,
-                 "data": aoData,
-                 "success": fnCallback
-                 } );
-                 }
-             });
+        cj.ajax( {
+          "dataType": 'json',
+          "type": "POST",
+          "url": sSource,
+          "data": aoData,
+          "success": fnCallback
+        } );
+      }
+    });
  }
 
- function setGlobalRelationshipsSelectorClass( ) {
-     cj("#globalRelationships-selector td:last-child").each( function( ) {
-        cj(this).parent().addClass(cj(this).text() );
-     });
- }
+  function setGlobalRelationshipsSelectorClass( ) {
+    cj("#globalRelationships-selector td:last-child").each( function( ) {
+      cj(this).parent().addClass(cj(this).text() );
+    });
+  }
  </script>
  {/literal}
  </div><!-- /.crm-accordion-body -->
@@ -744,7 +718,8 @@ function addRole() {
             dataType : "json",
             success  : function( values ) {
                     if ( values.status == 'process-relationship-success' ) {
-                                window.location.reload();
+                      // here ideally we need to reload datatable, for now reloading the page
+                      window.location.reload();
               } else {
                    var relTypeName = cj("#role_type :selected").text();
                    var relTypeAdminLink = {/literal}"{crmURL p='civicrm/admin/reltype' q='reset=1' h=0 }"{literal};
@@ -1095,20 +1070,19 @@ function buildCaseActivities( filterSearch ) {
 }
 
 function setSelectorClass( ) {
-    cj("#activities-selector td:last-child").each( function( ) {
-       cj(this).parent().addClass(cj(this).text() );
-    });
+  cj("#activities-selector td:last-child").each( function( ) {
+    cj(this).parent().addClass(cj(this).text() );
+  });
 }
 
 function printCaseReport( ) {
+  var asn = 'standard_timeline';
+  var dataUrl = {/literal}"{crmURL p='civicrm/case/report/print' q='all=1&redact=0' h='0'}"{literal};
+  dataUrl     = dataUrl + '&cid={/literal}{$contactID}{literal}'
+  + '&caseID={/literal}{$caseID}{literal}'
+  + '&asn={/literal}' + asn + '{literal}';
 
-    var asn = 'standard_timeline';
-    var dataUrl = {/literal}"{crmURL p='civicrm/case/report/print' q='all=1&redact=0' h='0'}"{literal};
-    dataUrl     = dataUrl + '&cid={/literal}{$contactID}{literal}'
-                  + '&caseID={/literal}{$caseID}{literal}'
-                  + '&asn={/literal}' + asn + '{literal}';
-
-    window.location = dataUrl;
+  window.location = dataUrl;
 }
 
 </script>
