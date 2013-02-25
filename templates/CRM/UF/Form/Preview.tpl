@@ -146,6 +146,7 @@
                 {/if}
               {/if}
             </td>
+            </tr>
           {/if}
         {* Show explanatory text for field if not in 'view' mode *}
           {if $field.help_post && $action neq 4}
