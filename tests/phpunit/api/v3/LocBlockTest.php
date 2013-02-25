@@ -72,10 +72,18 @@ class api_v3_LocBlockTest extends CiviUnitTestCase {
     $this->documentMe($params, $result, __FUNCTION__, __FILE__, 'Create entities and location block in 1 api call', NULL, 'createEntities');
     $this->assertAPISuccess($result, 'In line ' . __LINE__);
     $this->assertEquals(1, $result['count'], 'In line ' . __LINE__);
-    $this->assertNotNull($result['values'][$id]['email_id'], 'In line ' . __LINE__);
-    $this->assertNotNull($result['values'][$id]['phone_id'], 'In line ' . __LINE__);
-    $this->assertNotNull($result['values'][$id]['phone_2_id'], 'In line ' . __LINE__);
-    $this->assertNotNull($result['values'][$id]['address_id'], 'In line ' . __LINE__);
+
+    // Now check our results using the return param 'all'
+    $getParams = array('version' => $this->_apiversion, 'id' => $id, 'return' => 'all');
+    $result = civicrm_api($this->_entity, 'getsingle', $getParams);
+    $this->documentMe($getParams, $result, __FUNCTION__, __FILE__, 'Get entities and location block in 1 api call', NULL, 'get');
+    $this->assertNotNull($result['email_id'], 'In line ' . __LINE__);
+    $this->assertNotNull($result['phone_id'], 'In line ' . __LINE__);
+    $this->assertNotNull($result['phone_2_id'], 'In line ' . __LINE__);
+    $this->assertNotNull($result['address_id'], 'In line ' . __LINE__);
+    $this->assertEquals($params['email']['email'], $result['email']['email'],  'In line ' . __LINE__);
+    $this->assertEquals($params['phone_2']['phone'], $result['phone_2']['phone'],  'In line ' . __LINE__);
+    $this->assertEquals($params['address']['street_address'], $result['address']['street_address'],  'In line ' . __LINE__);
     // Delete block
     $result = civicrm_api($this->_entity, 'delete', array(
       'version' => $this->_apiversion,

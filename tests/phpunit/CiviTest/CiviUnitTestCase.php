@@ -1975,12 +1975,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     else {
       $fnPrefix = strtolower(preg_replace('/(?<! )(?<!^)[A-Z]/', '_$0', $entity));
     }
-    require_once 'CRM/Core/Smarty.php';
     $smarty = CRM_Core_Smarty::singleton();
     $smarty->assign('testfunction', $function);
     $function = $fnPrefix . "_" . strtolower($action);
-    require_once 'CRM/Core/Smarty.php';
-    $smarty = CRM_Core_Smarty::singleton();
     $smarty->assign('function', $function);
     $smarty->assign('fnPrefix', $fnPrefix);
     $smarty->assign('params', $params);
@@ -1988,7 +1985,6 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     $smarty->assign('filename', basename($filename));
     $smarty->assign('description', $description);
     $smarty->assign('result', $result);
-    // $smarty->registerPlugin("modifier","print_array", "print_array");
 
     $smarty->assign('action', $action);
     if (empty($subfile)) {

@@ -312,15 +312,9 @@
   border-top: 1px solid #696969;
 }
 
-/*
-** Size the verticle heights in crm-containers by class.
-*/
+/* Size the verticle heights in crm-containers by class. */
 .crm-container .ht-one {
   height: 1em;
-}
-
-.crm-container .ht-two {
-  height: 2em;
 }
 
 .crm-container .add-remove-link,
@@ -329,16 +323,16 @@
   font-size: .9em;
 }
 
-/*
-** Ensures max-width is reset to css default for the images in the maps
-*/
+/* Ensures max-width is reset to css default for the images in the maps */
 #Map img {
   max-width: none;
 }
 
-/*
-** CRM form layout classes (from www.realworldstyle.com)
-*/
+.crm-container .required {
+  color: inherit;
+}
+
+/* CRM form layout classes (from www.realworldstyle.com) */
 .crm-container .spacer {
   clear: left;
   height: 5px;

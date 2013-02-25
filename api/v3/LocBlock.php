@@ -50,6 +50,7 @@ function civicrm_api3_loc_block_create($params) {
   $entities = array();
   // Call the appropriate api to create entities if any are passed in the params
   // This is basically chaining but in reverse - we create the sub-entities first
+  // This exists because chainging does not work in reverse, or with keys like 'email_2'
   $items = array('address', 'email', 'phone', 'im');
   foreach ($items as $item) {
     foreach (array('', '_2') as $suf) {
@@ -96,6 +97,26 @@ function civicrm_api3_loc_block_create($params) {
  * @access public
  */
 function civicrm_api3_loc_block_get($params) {
+  $options = _civicrm_api3_get_options_from_params($params);
+  // If a return param has been set then fetch the appropriate fk objects
+  // This is a helper because api chaining does not work with a key like 'email_2'
+  if (!empty($options['return'])) {
+    $values = array();
+    $items = array('address', 'email', 'phone', 'im');
+    $returnAll = !empty($options['return']['all']);
+    foreach (_civicrm_api3_basic_get('CRM_Core_DAO_LocBlock', $params, FALSE) as $val) {
+      foreach ($items as $item) {
+        foreach (array('', '_2') as $suf) {
+          $key = $item . $suf;
+          if (!empty($val[$key . '_id']) && ($returnAll || !empty($options['return'][$key]))) {
+            $val[$key] = civicrm_api($item, 'getsingle', array('version' => 3, 'id' => $val[$key . '_id']));
+          }
+        }
+      }
+      $values[$val['id']] = $val;
+    }
+    return civicrm_api3_create_success($values, $params, 'loc_block', 'get');
+  }
   return _civicrm_api3_basic_get('CRM_Core_DAO_LocBlock', $params);
 }
 
