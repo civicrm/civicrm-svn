@@ -82,6 +82,10 @@ class CRM_Admin_Form_Setting_Smtp extends CRM_Admin_Form_Setting {
    * @return None
    */
   public function postProcess() {
+    // flush caches so we reload details for future requests
+    // CRM-11967
+    CRM_Utils_System::flushCache();
+
     $formValues = $this->controller->exportValues($this->_name);
 
     $buttonName = $this->controller->getButtonName();
