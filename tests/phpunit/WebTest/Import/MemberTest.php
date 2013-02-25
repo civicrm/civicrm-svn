@@ -40,9 +40,6 @@ class WebTest_Import_MemberTest extends ImportCiviSeleniumTestCase {
 
     $this->webtestLogin();
 
-    // make sure default strict dedupe rules are in place
-    $this->webtestStrictDedupeRuleDefault("Individual");
-
     // Get membership import data for Individuals.
     list($headers, $rows, $fieldMapper) = $this->_memberIndividualCSVData();
 

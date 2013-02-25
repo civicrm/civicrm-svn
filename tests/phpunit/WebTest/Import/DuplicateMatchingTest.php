@@ -70,9 +70,6 @@ class WebTest_Import_DuplicateMatchingTest extends ImportCiviSeleniumTestCase {
     $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertElementContainsText('crm-notification-container', "Contact Saved");
 
-    // Reset Individual strict dedupe rule for contact email (default)
-    $this->webtestStrictDedupeRuleDefault();
-
     $existingContact = array(
       'first_name' => $firstName,
       'last_name' => $lastName,
