@@ -82,18 +82,10 @@ class CRM_Utils_Token {
       'address',
       'email',
     ),
-    'subscribe' => array(
-      'group',
-    ),
-    'unsubscribe' => array(
-      'group',
-    ),
-    'resubscribe' => array(
-      'group',
-    ),
-    'welcome' => array(
-      'group',
-    ),
+    'subscribe' => array( 'group' ),
+    'unsubscribe' => array( 'group' ),
+    'resubscribe' => array( 'group' ),
+    'welcome' => array( 'group' ),
   );
 
   /**
@@ -382,13 +374,12 @@ class CRM_Utils_Token {
    */
   public static function &replaceMailingTokens($str, &$mailing, $html = FALSE, $knownTokens = NULL, $escapeSmarty = FALSE) {
     $key = 'mailing';
-    if (!$knownTokens ||
-      !isset($knownTokens[$key])
-    ) {
+    if (!$knownTokens || !isset($knownTokens[$key])) {
       return $str;
     }
 
-    $str = preg_replace(self::tokenRegex($key),
+    $str = preg_replace(
+      self::tokenRegex($key),
       'self::getMailingTokenReplacement(\'\\1\',$mailing,$escapeSmarty)', $str
     );
     return $str;
@@ -490,7 +481,14 @@ class CRM_Utils_Token {
    * @access public
    * @static
    */
-  public static function &replaceActionTokens($str, &$addresses, &$urls, $html = FALSE, $knownTokens = NULL, $escapeSmarty = FALSE) {
+  public static function &replaceActionTokens(
+    $str,
+    &$addresses,
+    &$urls,
+    $html = FALSE,
+    $knownTokens = NULL,
+    $escapeSmarty = FALSE
+  ) {
     $key = 'action';
     // here we intersect with the list of pre-configured valid tokens
     // so that we remove anything we do not recognize
@@ -701,8 +699,13 @@ class CRM_Utils_Token {
    * @access public
    * @static
    */
-  public static function &replaceUnsubscribeTokens($str, &$domain, &$groups, $html,
-    $contact_id, $hash
+  public static function &replaceUnsubscribeTokens(
+    $str,
+    &$domain,
+    &$groups,
+    $html,
+    $contact_id,
+    $hash
   ) {
     if (self::token_match('unsubscribe', 'group', $str)) {
       if (!empty($groups)) {
