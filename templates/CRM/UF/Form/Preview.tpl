@@ -66,7 +66,11 @@
             {/if}
           <table class="form-layout-compressed" id="table-1">
           {/if}
-        {* Show explanatory text for field if not in 'view' mode *}
+          {if $field.field_type eq "Formatting"}
+            {$field.help_pre}
+            {continue}
+          {/if}
+          {* Show explanatory text for field if not in 'view' mode *}
           {if $field.help_pre && $action neq 4}
             <tr><td>&nbsp;</td><td class="description">{$field.help_pre}</td></tr>
           {/if}

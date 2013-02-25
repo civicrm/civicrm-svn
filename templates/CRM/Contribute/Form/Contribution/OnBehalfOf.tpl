@@ -37,8 +37,12 @@
   {/if}
 
 <div id="select_org" class="crm-section">
-  {foreach from=$form.onbehalf item=field key=fieldName}
+  {foreach from=$onBehalfOfFields item=onBehaldField key=fieldName}
     {if $onBehalfOfFields.$fieldName.skipDisplay}
+      {continue}
+    {/if}
+    {if $onBehalfOfFields.$fieldName.field_type eq "Formatting"}
+      {$onBehalfOfFields.$fieldName.help_pre}
       {continue}
     {/if}
     <div class="crm-section {$onBehalfOfFields.$fieldName.name}-section">
@@ -47,9 +51,9 @@
       {/if}
 
       {if ( $fieldName eq 'organization_name' ) and $organizationName}
-        <div id='org_name' class="label">{$field.label}</div>
+        <div id='org_name' class="label">{$form.onbehalf.$fieldName.label}</div>
         <div class="content">
-          {$field.html|crmAddClass:big}
+          {$form.onbehalf.$fieldName.html|crmAddClass:big}
           <span>
                 ( <a id='createNewOrg' href="javascript:createNew( );">{ts}Enter a new organization{/ts}</a> )
             </span>
@@ -62,7 +66,7 @@
         </div>
         {else}
         {if $onBehalfOfFields.$fieldName.options_per_line != 0}
-          <div class="label option-label">{$field.label}</div>
+          <div class="label option-label">{$form.onbehalf.$fieldName.label}</div>
           <div class="content 3">
             {assign var="count" value="1"}
             {strip}
@@ -74,7 +78,7 @@
                   {if $index < 10}
                     {assign var="index" value=`$index+1`}
                     {else}
-                    <td class="labels font-light">{$field.$key.html}</td>
+                    <td class="labels font-light">{$form.onbehalf.$fieldName.$key.html}</td>
                     {if $count == $onBehalfOfFields.$fieldName.options_per_line}
                     </tr>
                     <tr>
@@ -92,9 +96,9 @@
             {/if}
           </div>
           {else}
-          <div class="label">{$field.label}</div>
+          <div class="label">{$form.onbehalf.$fieldName.label}</div>
           <div class="content">
-            {$field.html}
+            {$form.onbehalf.$fieldName.html}
             {if $fieldName eq 'organization_name'}
               <div id="id-onbehalf-orgname-help" class="description">{ts}Start typing the name of an organization that you have saved previously to use it again. Otherwise click "Enter a new organization" above.{/ts}</div>
             {/if}
