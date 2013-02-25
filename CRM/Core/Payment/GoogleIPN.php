@@ -193,7 +193,7 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
       return;
     }
 
-    if (!$this->getInput($input, $ids)) {
+    if (!$this->getInput($input, $ids, $dataRoot)) {
       return FALSE;
     }
 
@@ -209,10 +209,10 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
              * lets make use of it by passing the eventID/membershipTypeID to next level.
              * And change trxn_id to google-order-number before finishing db update */
 
-      if ($ids['event']) {
+      if (CRM_Utils_Array::value('event', $ids)) {
         $contribution->trxn_id = $ids['event'] . CRM_Core_DAO::VALUE_SEPARATOR . $ids['participant'];
       }
-      elseif ($ids['membership']) {
+      elseif (CRM_Utils_Array::value('membership', $ids)) {
         $contribution->trxn_id = $ids['membership'][0] . CRM_Core_DAO::VALUE_SEPARATOR . $ids['related_contact'] . CRM_Core_DAO::VALUE_SEPARATOR . $ids['onbehalf_dupe_alert'];
       }
     }
@@ -272,10 +272,13 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
       );
     }
     else {
+      $ids['related_contact'] = NULL;
+      $ids['onbehalf_dupe_alert'] = NULL;
+      if ($contribution->trxn_id) {
       list($ids['membership'], $ids['related_contact'], $ids['onbehalf_dupe_alert']) = explode(CRM_Core_DAO::VALUE_SEPARATOR,
         $contribution->trxn_id
       );
-
+      }
       foreach (array(
         'membership', 'related_contact', 'onbehalf_dupe_alert') as $fld) {
         if (!is_numeric($ids[$fld])) {
@@ -412,7 +415,7 @@ WHERE  contribution_recur_id = {$ids['contributionRecur']}
    * @static
    */
   function getContext($privateData, $orderNo, $root, $response, $serial) {
-    $contributionID = $privateData['contributionID'];
+    $contributionID = CRM_Utils_Array::value('contributionID', $privateData);
     $contribution = new CRM_Contribute_DAO_Contribution();
     if ($root == 'new-order-notification') {
       $contribution->id = $contributionID;
@@ -501,10 +504,13 @@ WHERE  contribution_recur_id = {$ids['contributionRecur']}
     // Retrieve the root and data from the xml response
     $response = new GoogleResponse();
     list($root, $data) = $response->GetParsedXML($xml_response);
-
     // lets retrieve the private-data & order-no
+    $privateData = NULL;
+    if (array_key_exists('shopping-cart', $data[$root])) {
     $privateData = $data[$root]['shopping-cart']['merchant-private-data']['VALUE'];
-    if (empty($privateData)) {
+    }
+    if (empty($privateData) && array_key_exists('order-summary', $data[$root])
+        && array_key_exists('shopping-cart', $data[$root]['order-summary'])) {
       $privateData = $data[$root]['order-summary']['shopping-cart']['merchant-private-data']['VALUE'];
     }
     $privateData = $privateData ? self::stringToArray($privateData) : '';
@@ -614,7 +620,7 @@ WHERE  contribution_recur_id = {$ids['contributionRecur']}
     }
   }
 
-  function getInput(&$input, &$ids) {
+  function getInput(&$input, &$ids, $dataRoot) {
     if (!$this->getBillingID($ids)) {
       return FALSE;
     }
@@ -632,7 +638,9 @@ WHERE  contribution_recur_id = {$ids['contributionRecur']}
     );
 
     foreach ($lookup as $name => $googleName) {
+      if (array_key_exists($googleName, $dataRoot['buyer-billing-address'])) {
       $value = $dataRoot['buyer-billing-address'][$googleName]['VALUE'];
+      }
       $input[$name] = $value ? $value : NULL;
     }
     return TRUE;
