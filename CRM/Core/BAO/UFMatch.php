@@ -141,7 +141,7 @@ class CRM_Core_BAO_UFMatch extends CRM_Core_DAO_UFMatch {
     //make sure we have session w/ consistent ids.
     $ufID     = $ufmatch->uf_id;
     $userID   = $ufmatch->contact_id;
-    $ufUniqID = isset($ufmatch->user_unique_id) ? $ufmatch->user_unique_id : '';
+    $ufUniqID = '';
     if ($isUserLoggedIn) {
       $loggedInUserUfID = CRM_Utils_System::getLoggedInUfID();
       //are we processing logged in user.
@@ -177,17 +177,6 @@ class CRM_Core_BAO_UFMatch extends CRM_Core_DAO_UFMatch {
         $displayName,
         $otherRecent
       );
-    }
-
-    if ($update) {
-      // the only information we care about is uniqId, so lets check that
-      if (!isset($ufmatch->user_unique_id) ||
-        $uniqId != $ufmatch->user_unique_id
-      ) {
-        // uniqId has changed, so we need to update that everywhere
-        $ufmatch->user_unique_id = $uniqId;
-        $ufmatch->save();
-      }
     }
   }
 
@@ -303,7 +292,6 @@ AND    domain_id = %2
           $params['household_name'] = $uniqId;
         }
 
-
         if (!$ctype) {
           $ctype = "Individual";
         }
@@ -341,7 +329,8 @@ OR     uf_name      = %2
 OR     uf_id        = %3 )
 AND    domain_id    = %4
 ";
-      $params = array(1 => array($ufmatch->contact_id, 'Integer'),
+      $params = array(
+        1 => array($ufmatch->contact_id, 'Integer'),
         2 => array($ufmatch->uf_name, 'String'),
         3 => array($ufmatch->uf_id, 'Integer'),
         4 => array($ufmatch->domain_id, 'Integer'),
@@ -353,7 +342,6 @@ AND    domain_id    = %4
         CRM_Core_BAO_UFMatch::create((array) $ufmatch);
         $ufmatch->free();
         $newContact = TRUE;
-
         $transaction->commit();
       }
       else {
@@ -422,15 +410,12 @@ AND    domain_id    = %4
     }
 
     if (!$update) {
-
       return;
-
     }
+
     // save the updated ufmatch object
     $ufmatch->uf_name = $ufName;
     $ufmatch->save();
-
-
     $config->userSystem->updateCMSName($ufmatch->uf_id, $ufName);
   }
 
@@ -467,7 +452,8 @@ AND    domain_id    = %4
         $query = "UPDATE  civicrm_email
                      SET email = %1
                      WHERE id =  %2";
-        $p = array(1 => array($emailAddress, 'String'),
+        $p = array(
+          1 => array($emailAddress, 'String'),
           2 => array($emailID, 'Integer'),
         );
         $dao = CRM_Core_DAO::executeQuery($query, $p);
@@ -620,14 +606,10 @@ AND    domain_id    = %4
   static function isDuplicateUser($email) {
     $session = CRM_Core_Session::singleton();
     $contactID = $session->get('userID');
-    if (!empty($email) &&
-      isset($contactID)
-    ) {
+    if (!empty($email) && isset($contactID)) {
       $dao = new CRM_Core_DAO_UFMatch();
       $dao->uf_name = $email;
-      if ($dao->find(TRUE) &&
-        $contactID != $dao->contact_id
-      ) {
+      if ($dao->find(TRUE) && $contactID != $dao->contact_id) {
         return TRUE;
       }
     }
@@ -664,7 +646,6 @@ AND    domain_id    = %4
         );
       }
     }
-
     return $ufValues[$ufID];
   }
 }
