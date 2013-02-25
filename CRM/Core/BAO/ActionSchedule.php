@@ -106,53 +106,44 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule {
       $key                 = CRM_Utils_Array::value('id', $value);
       $entityMapping[$key] = CRM_Utils_Array::value('entity', $value);
 
-      if ($entityValue == 'activity_type' &&
-        $value['entity'] == 'civicrm_activity'
-      ) {
-        $val = ts('Activity');
-      }
-      elseif ($entityValue == 'event_type' &&
-        $value['entity'] == 'civicrm_participant'
-      ) {
-        $val = ts('Event Type');
-      }
-      elseif ($entityValue == 'civicrm_event' &&
-        $value['entity'] == 'civicrm_participant'
-      ) {
-        $val = ts('Event Name');
-      }
-      elseif ($entityValue == 'event_template' &&
-        $value['entity'] == 'civicrm_participant'
-      ) {
-        $val = ts('Event Template');
-      }
-      elseif ($entityValue == 'civicrm_membership_type' &&
-        $value['entity'] == 'civicrm_membership'
-      ) {
-        $val = ts('Membership');
-      }
-      $sel1[$key] = $val;
-
+      $sel1Val = null;
       switch ($entityValue) {
         case 'activity_type':
+          if ($value['entity'] == 'civicrm_activity') {
+            $sel1Val = ts('Activity');
+          }
           $sel2[$key] = $valueLabel + $activityType;
           break;
 
         case 'event_type':
+          if ($value['entity'] == 'civicrm_participant') {
+            $sel1Val = ts('Event Type');
+          }
           $sel2[$key] = $valueLabel + $eventType;
           break;
 
         case 'event_template':
+          if ($value['entity'] == 'civicrm_participant') {
+            $sel1Val = ts('Event Template');
+          }
           $sel2[$key] = $valueLabel + $eventTemplate;
           break;
+
         case 'civicrm_event':
+          if ($value['entity'] == 'civicrm_participant') {
+            $sel1Val = ts('Event Name');
+          }
           $sel2[$key] = $valueLabel + $event;
           break;
 
         case 'civicrm_membership_type':
+          if ($value['entity'] == 'civicrm_membership') {
+            $sel1Val = ts('Membership');
+          }
           $sel2[$key] = $valueLabel + $membershipType;
           break;
       }
+      $sel1[$key] = $sel1Val;
 
       if ($key == $id) {
         if ($startDate = CRM_Utils_Array::value('entity_date_start', $value)) {
