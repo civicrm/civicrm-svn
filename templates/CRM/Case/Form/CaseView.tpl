@@ -339,85 +339,85 @@
     });
   }
 
-function createRelationship( relType, contactID, relID, rowNumber, relTypeName ) {
-  cj("#dialog").show( );
+  function createRelationship( relType, contactID, relID, rowNumber, relTypeName ) {
+    cj("#dialog").show( );
 
-  cj("#dialog").dialog({
-    title: "Assign Case Role",
-    modal: true,
-    bgiframe: true,
-    close: function(event, ui) { cj("#rel_contact").unautocomplete( ); },
-    overlay: {
-      opacity: 0.5,
-      background: "black"
-    },
-
-    open:function() {
-      /* set defaults if editing */
-      cj("#rel_contact").val( "" );
-      cj("#rel_contact_id").val( null );
-      if ( contactID ) {
-        cj("#rel_contact_id").val( contactID );
-        cj("#rel_contact").val( cj("#relName_" + rowNumber).text( ) );
-      }
-
-      var contactUrl = {/literal}"{crmURL p='civicrm/ajax/rest' q='className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=caseview' h=0 }"{literal};
-
-      cj("#rel_contact").autocomplete( contactUrl, {
-        width: 260,
-        selectFirst: false,
-                          matchContains: true
-      });
-
-      cj("#rel_contact").focus();
-      cj("#rel_contact").result(function(event, data, formatted) {
-        cj("input[id=rel_contact_id]").val(data[1]);
-      });
-    },
-
-    buttons: {
-      "Ok": function() {
-
-        var sourceContact = {/literal}"{$contactID}"{literal};
-        var caseID        = {/literal}"{$caseID}"{literal};
-
-        var v1 = cj("#rel_contact_id").val( );
-
-        if ( !cj("#rel_contact").val( ) || !v1 ) {
-          cj("#rel_contact").crmError('{/literal}{ts escape="js"}Select valid contact from the list{/ts}{literal}.');
-          return false;
-        }
-
-        var postUrl = {/literal}"{crmURL p='civicrm/ajax/relation' h=0 }"{literal};
-        cj.post( postUrl, { rel_contact: v1, rel_type: relType, contact_id: sourceContact, rel_id: relID, case_id: caseID, key: {/literal}"{crmKey name='civicrm/ajax/relation'}"{literal} },
-          function( data ) {
-            if ( data.status == 'process-relationship-success' ) {
-              // reloading datatable
-              var oTable = cj('#caseRoles-selector').dataTable();
-              oTable.fnDraw();
-            }
-            else {
-              var relTypeAdminLink = {/literal}"{crmURL p='civicrm/admin/reltype' q='reset=1' h=0 }"{literal};
-              var errorMsg = '{/literal}{ts escape="js" 1="' + relTypeName + '" 2="' + relTypeAdminLink + '" }The relationship type definition for the %1 case role is not valid for the client and / or staff contact types. You can review and edit relationship types at <a href="%2">Administer >> Option Lists >> Relationship Types</a>{/ts}{literal}.';
-
-              //display error message.
-              cj().crmError(errorMsg);
-            }
-          }, 'json'
-        );
-
-        cj(this).dialog("close");
-        cj(this).dialog("destroy");
+    cj("#dialog").dialog({
+      title: "Assign Case Role",
+      modal: true,
+      bgiframe: true,
+      close: function(event, ui) { cj("#rel_contact").unautocomplete( ); },
+      overlay: {
+        opacity: 0.5,
+        background: "black"
       },
 
-      "Cancel": function() {
-        cj(this).dialog("close");
-        cj(this).dialog("destroy");
-      }
-    }
+      open:function() {
+        /* set defaults if editing */
+        cj("#rel_contact").val("");
+        cj("#rel_contact_id").val(null);
+        if (contactID) {
+          cj("#rel_contact_id").val(contactID);
+          cj("#rel_contact").val(cj("#relName_" + rowNumber).text( ));
+        }
 
-  });
-}
+        var contactUrl = {/literal}"{crmURL p='civicrm/ajax/rest' q='className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=caseview' h=0 }"{literal};
+
+        cj("#rel_contact").autocomplete( contactUrl, {
+          width: 260,
+          selectFirst: false,
+          matchContains: true
+        });
+
+        cj("#rel_contact").focus();
+        cj("#rel_contact").result(function(event, data, formatted) {
+          cj("input[id=rel_contact_id]").val(data[1]);
+        });
+      },
+
+      buttons: {
+        "Ok": function() {
+
+          var sourceContact = {/literal}"{$contactID}"{literal};
+          var caseID        = {/literal}"{$caseID}"{literal};
+
+          var v1 = cj("#rel_contact_id").val( );
+
+          if ( !cj("#rel_contact").val( ) || !v1 ) {
+            cj("#rel_contact").crmError('{/literal}{ts escape="js"}Select valid contact from the list{/ts}{literal}.');
+            return false;
+          }
+
+          var postUrl = {/literal}"{crmURL p='civicrm/ajax/relation' h=0 }"{literal};
+          cj.post( postUrl, { rel_contact: v1, rel_type: relType, contact_id: sourceContact,
+            rel_id: relID, case_id: caseID, key: {/literal}"{crmKey name='civicrm/ajax/relation'}"{literal} },
+            function( data ) {
+              if ( data.status == 'process-relationship-success' ) {
+                // reloading datatable
+                var oTable = cj('#caseRoles-selector').dataTable();
+                oTable.fnDraw();
+              }
+              else {
+                var relTypeAdminLink = {/literal}"{crmURL p='civicrm/admin/reltype' q='reset=1' h=0 }"{literal};
+                var errorMsg = '{/literal}{ts escape="js" 1="' + relTypeName + '" 2="' + relTypeAdminLink + '"}The relationship type definition for the %1 case role is not valid for the client and / or staff contact types. You can review and edit relationship types at <a href="%2">Administer >> Option Lists >> Relationship Types</a>{/ts}{literal}.';
+
+                //display error message.
+                cj().crmError(errorMsg);
+              }
+            }, 'json'
+          );
+
+          cj(this).dialog("close");
+          cj(this).dialog("destroy");
+        },
+
+        "Cancel": function() {
+          cj(this).dialog("close");
+          cj(this).dialog("destroy");
+        }
+      }
+    });
+  }
 
   function viewRelatedCases( mainCaseID, contactID ) {
     cj("#view-related-cases").show( );
@@ -459,7 +459,7 @@ function createRelationship( relType, contactID, relID, rowNumber, relTypeName )
     });
   }
 
-cj(document).ready(function(){
+cj(function(){
    cj("#view-activity").hide( );
 });
 </script>
@@ -494,9 +494,9 @@ cj(document).ready(function(){
       {/if}
  {literal}
  <script type="text/javascript">
- cj( function ( ) {
-    buildCaseClientRelationships( false );
- });
+   cj(function( ) {
+      buildCaseClientRelationships( false );
+   });
 
  function buildCaseClientRelationships( filterSearch ) {
    if( filterSearch ) {
@@ -511,7 +511,8 @@ cj(document).ready(function(){
     cj('#clientRelationships-selector th').each( function( ) {
       if ( cj(this).attr('id') != 'nosort' ) {
         columns += '{"sClass": "' + cj(this).attr('class') +'"},';
-      } else {
+      }
+      else {
         columns += '{ "bSortable": false },';
       }
       count++;
@@ -596,7 +597,8 @@ cj(document).ready(function(){
     cj('#globalRelationships-selector th').each( function( ) {
       if ( cj(this).attr('id') != 'nosort' ) {
         columns += '{"sClass": "' + cj(this).attr('class') +'"},';
-      } else {
+      }
+      else {
         columns += '{ "bSortable": false },';
       }
       count++;
@@ -658,7 +660,7 @@ cj(document).ready(function(){
 
 cj("#addRoleDialog").hide( );
 function addRole() {
-    cj("#addRoleDialog").show( );
+  cj("#addRoleDialog").show( );
 
   cj("#addRoleDialog").dialog({
     title: "Add Role",
@@ -692,13 +694,12 @@ function addRole() {
 
     buttons: {
       "Ok": function() {
-
         var sourceContact = {/literal}"{$contactID}"{literal};
         var caseID        = {/literal}"{$caseID}"{literal};
         var relID         = null;
 
         var v2 = cj("#role_type").val();
-        if ( !v2 ) {
+        if (!v2) {
           cj("#role_type").crmError('{/literal}{ts escape="js"}Select valid type from the list{/ts}{literal}.');
           return false;
         }
@@ -709,39 +710,41 @@ function addRole() {
           return false;
         }
 
-               /* send synchronous request so that disabling any actions for slow servers*/
+        /* send synchronous request so that disabling any actions for slow servers*/
         var postUrl = {/literal}"{crmURL p='civicrm/ajax/relation' h=0 }"{literal};
-        var data = 'rel_contact='+ v1 + '&rel_type='+ v2 + '&contact_id='+sourceContact + '&rel_id='+ relID + '&case_id=' + caseID + "&key={/literal}{crmKey name='civicrm/ajax/relation'}{literal}";
-                    cj.ajax({ type     : "POST",
-            url      : postUrl,
-            data     : data,
-            async    : false,
-            dataType : "json",
-            success  : function( values ) {
-                    if ( values.status == 'process-relationship-success' ) {
-                      // reloading datatable
-                      var oTable = cj('#caseRoles-selector').dataTable();
-                      oTable.fnDraw();
-              } else {
-                   var relTypeName = cj("#role_type :selected").text();
-                   var relTypeAdminLink = {/literal}"{crmURL p='civicrm/admin/reltype' q='reset=1' h=0 }"{literal};
-                     var errorMsg = '{/literal}{ts escape="js" 1="' + relTypeName + '" 2="' + relTypeAdminLink + '"  }The relationship type definition for the %1 case role is not valid for the client and / or staff contact types. You can review and edit relationship types at <a href="%2">Administer >> Option Lists >> Relationship Types</a>{/ts}{literal}.';
+        var data = 'rel_contact='+ v1 + '&rel_type='+ v2 + '&contact_id='+sourceContact + '&rel_id='+ relID
+          + '&case_id=' + caseID + "&key={/literal}{crmKey name='civicrm/ajax/relation'}{literal}";
+        cj.ajax({ type     : "POST",
+          url      : postUrl,
+          data     : data,
+          async    : false,
+          dataType : "json",
+          success  : function( values ) {
+            if (values.status == 'process-relationship-success') {
+              // reloading datatable
+              var oTable = cj('#caseRoles-selector').dataTable();
+              oTable.fnDraw();
+            }
+            else {
+              var relTypeName = cj("#role_type :selected").text();
+              var relTypeAdminLink = {/literal}"{crmURL p='civicrm/admin/reltype' q='reset=1' h=0 }"{literal};
+              var errorMsg = '{/literal}{ts escape="js" 1="' + relTypeName + '" 2="' + relTypeAdminLink + '"  }The relationship type definition for the %1 case role is not valid for the client and / or staff contact types. You can review and edit relationship types at <a href="%2">Administer >> Option Lists >> Relationship Types</a>{/ts}{literal}.';
 
-                      //display error message.
-                      cj().crmError(errorMsg);
-              }
-                  }
-               });
-               cj(this).dialog("close");
-               cj(this).dialog("destroy");
-       },
+              //display error message.
+              cj().crmError(errorMsg);
+            }
+          }
+        });
+
+        cj(this).dialog("close");
+        cj(this).dialog("destroy");
+      },
 
       "Cancel": function() {
         cj(this).dialog("close");
         cj(this).dialog("destroy");
       }
     }
-
   });
 }
 
@@ -764,110 +767,111 @@ function addRole() {
     {assign var="tagExits" value=1}
   {/if}
 
-  {foreach from=$tagsetInfo_case item=displayTagset}
-      {if $displayTagset.entityTagsArray}
-          <div class="crm-block crm-content-block crm-case-caseview-display-tagset">
-              &nbsp;&nbsp;{$displayTagset.parentName}:
-              {foreach from=$displayTagset.entityTagsArray item=val name="tagsetList"}
-                  &nbsp;{$val.name}{if !$smarty.foreach.tagsetList.last},{/if}
-              {/foreach}
-          </div>
-        {assign var="tagExits" value=1}
-      {/if}
-  {/foreach}
+   {foreach from=$tagsetInfo_case item=displayTagset}
+     {if $displayTagset.entityTagsArray}
+       <div class="crm-block crm-content-block crm-case-caseview-display-tagset">
+         &nbsp;&nbsp;{$displayTagset.parentName}:
+         {foreach from=$displayTagset.entityTagsArray item=val name="tagsetList"}
+           &nbsp;{$val.name}{if !$smarty.foreach.tagsetList.last},{/if}
+         {/foreach}
+       </div>
+       {assign var="tagExits" value=1}
+     {/if}
+   {/foreach}
 
-  {if !$tagExits }
-    <div class="status">
-        {ts}There are no tags currently assigned to this case.{/ts}
-    </div>
-  {/if}
+   {if !$tagExits }
+     <div class="status">
+       {ts}There are no tags currently assigned to this case.{/ts}
+     </div>
+   {/if}
 
   <div class="crm-submit-buttons"><input type="button" class="form-submit" onClick="javascript:addTags()" value={if $tagExits}"{ts}Edit Tags{/ts}"{else}"{ts}Add Tags{/ts}"{/if} /></div>
 
  </div><!-- /.crm-accordion-body -->
 </div><!-- /.crm-accordion-wrapper -->
 
-    <div id="manageTags">
-        <div class="label">{$form.case_tag.label}</div>
-        <div class="view-value"><div class="crm-select-container">{$form.case_tag.html}</div>
-        <br/>
-        <div style="text-align:left;">{include file="CRM/common/Tag.tpl" tagsetType='case'}</div>
-        <br/>
-        <div class="clear"></div>
-    </div>
+<div id="manageTags">
+  <div class="label">{$form.case_tag.label}</div>
+  <div class="view-value"><div class="crm-select-container">{$form.case_tag.html}</div>
+    <br/>
+    <div style="text-align:left;">{include file="CRM/common/Tag.tpl" tagsetType='case'}</div>
+    <br/>
+    <div class="clear"></div>
+  </div>
 </div>
 
 {literal}
 <script type="text/javascript">
 cj("#manageTags select[multiple]").crmasmSelect({
-    addItemTarget: 'bottom',
-    animate: true,
-    highlight: true,
-    sortable: true,
-    respectParents: true
+  addItemTarget: 'bottom',
+  animate: true,
+  highlight: true,
+  sortable: true,
+  respectParents: true
 });
 
 cj("#manageTags").hide( );
 function addTags() {
-    cj("#manageTags").show( );
+  cj("#manageTags").show( );
 
-    cj("#manageTags").dialog({
-        title: "{/literal}{ts escape='js'}Change Case Tags{/ts}{literal}",
-        modal: true,
-        height: 'auto',
-        width: 'auto',
-        buttons: {
-            "Save": function() {
-                var tagsChecked = '';
-                var caseID      = {/literal}{$caseID}{literal};
+  cj("#manageTags").dialog({
+    title: "{/literal}{ts escape='js'}Change Case Tags{/ts}{literal}",
+    modal: true,
+    height: 'auto',
+    width: 'auto',
+    buttons: {
+      "Save": function() {
+        var tagsChecked = '';
+        var caseID      = {/literal}{$caseID}{literal};
 
-                cj("#manageTags #tags option").each( function() {
-                    if ( cj(this).prop('selected') ) {
-                        if ( !tagsChecked ) {
-                            tagsChecked = cj(this).val() + '';
-                        } else {
-                            tagsChecked = tagsChecked + ',' + cj(this).val();
-                        }
-                    }
-                });
-
-                var tagList = '';
-                cj("#manageTags input[name^=case_taglist]").each( function( ) {
-                    if ( !tagsChecked ) {
-                        tagsChecked = cj(this).val() + '';
-                    } else {
-                        tagsChecked = tagsChecked + ',' + cj(this).val();
-                    }
-                });
-
-                var postUrl = {/literal}"{crmURL p='civicrm/case/ajax/processtags' h=0 }"{literal};
-                var data = 'case_id=' + caseID + '&tag=' + tagsChecked + '&key=' + {/literal}"{crmKey name='civicrm/case/ajax/processtags'}"{literal};
-
-                cj.ajax({ type: "POST", url: postUrl, data: data, async: false });
-                cj(this).dialog("close");
-                cj(this).dialog("destroy");
-
-                // Temporary workaround for problems with SSL connections being too
-                // slow. The relationship doesn't get created because the page reload
-                // happens before the ajax call.
-                // In general this reload needs improvement, which is already on the list for phase 2.
-                var sdate = (new Date()).getTime();
-                var curDate = sdate;
-                while(curDate-sdate < 2000) {
-                    curDate = (new Date()).getTime();
-                }
-
-                //due to caching issues we use redirection rather than reload
-                document.location = {/literal}'{crmURL q="action=view&reset=1&id=$caseID&cid=$contactID&context=$context" h=0 }'{literal};
-            },
-
-            "Cancel": function() {
-                cj(this).dialog("close");
-                cj(this).dialog("destroy");
+        cj("#manageTags #tags option").each( function() {
+          if ( cj(this).prop('selected') ) {
+            if ( !tagsChecked ) {
+              tagsChecked = cj(this).val() + '';
             }
+            else {
+              tagsChecked = tagsChecked + ',' + cj(this).val();
+            }
+          }
+        });
+
+        var tagList = '';
+        cj("#manageTags input[name^=case_taglist]").each( function( ) {
+          if ( !tagsChecked ) {
+            tagsChecked = cj(this).val() + '';
+          }
+          else {
+            tagsChecked = tagsChecked + ',' + cj(this).val();
+          }
+        });
+
+        var postUrl = {/literal}"{crmURL p='civicrm/case/ajax/processtags' h=0 }"{literal};
+        var data = 'case_id=' + caseID + '&tag=' + tagsChecked + '&key=' + {/literal}"{crmKey name='civicrm/case/ajax/processtags'}"{literal};
+
+        cj.ajax({ type: "POST", url: postUrl, data: data, async: false });
+        cj(this).dialog("close");
+        cj(this).dialog("destroy");
+
+        // Temporary workaround for problems with SSL connections being too
+        // slow. The relationship doesn't get created because the page reload
+        // happens before the ajax call.
+        // In general this reload needs improvement, which is already on the list for phase 2.
+        var sdate = (new Date()).getTime();
+        var curDate = sdate;
+        while(curDate-sdate < 2000) {
+          curDate = (new Date()).getTime();
         }
 
-    });
+        //due to caching issues we use redirection rather than reload
+        document.location = {/literal}'{crmURL q="action=view&reset=1&id=$caseID&cid=$contactID&context=$context" h=0 }'{literal};
+      },
+
+      "Cancel": function() {
+        cj(this).dialog("close");
+        cj(this).dialog("destroy");
+      }
+    }
+  });
 }
 
 </script>
