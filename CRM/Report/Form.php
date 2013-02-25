@@ -252,14 +252,22 @@ class CRM_Report_Form extends CRM_Core_Form {
     if ($this->_groupFilter) {
       $this->buildGroupFilter();
     }
+
+    // Get all custom groups
+    $allGroups = CRM_Core_PseudoConstant::customGroup();
+
+    // Get the custom groupIds for which the user have VIEW permission
+    require_once 'CRM/ACL/API.php';
+    $permCustomGroupIds = CRM_ACL_API::group(CRM_Core_Permission::VIEW, NULL, 'civicrm_custom_group', $allGroups, NULL);
+
     // do not allow custom data for reports if user don't have
     // permission to access custom data.
-    if (!empty($this->_customGroupExtends) && !CRM_Core_Permission::check('access all custom data')) {
+    if (!empty($this->_customGroupExtends) && !CRM_Core_Permission::check('access all custom data') && empty($permCustomGroupIds)) {
       $this->_customGroupExtends = array();
     }
 
     // merge custom data columns to _columns list, if any
-    $this->addCustomDataToColumns();
+    $this->addCustomDataToColumns(TRUE, $permCustomGroupIds);
 
     // add / modify display columns, filters ..etc
     CRM_Utils_Hook::alterReportVar('columns', $this->_columns, $this);
@@ -2553,20 +2561,24 @@ WHERE cg.extends IN ('" . implode("','", $this->_customGroupExtends) . "') AND
     list($this->_aclFrom, $this->_aclWhere) = CRM_Contact_BAO_Contact_Permission::cacheClause($tableAlias);
   }
 
-  function addCustomDataToColumns($addFields = TRUE) {
+  function addCustomDataToColumns($addFields = TRUE, $permCustomGroupIds = array()) {
     if (empty($this->_customGroupExtends)) {
       return;
     }
     if (!is_array($this->_customGroupExtends)) {
       $this->_customGroupExtends = array($this->_customGroupExtends);
     }
-
+    $customGroupWhere = '';
+    if (!empty($permCustomGroupIds)) {
+      $customGroupWhere = "cg.id IN (".implode(',' , $permCustomGroupIds).") AND";
+    }
     $sql = "
 SELECT cg.table_name, cg.title, cg.extends, cf.id as cf_id, cf.label,
        cf.column_name, cf.data_type, cf.html_type, cf.option_group_id, cf.time_format
 FROM   civicrm_custom_group cg
 INNER  JOIN civicrm_custom_field cf ON cg.id = cf.custom_group_id
 WHERE cg.extends IN ('" . implode("','", $this->_customGroupExtends) . "') AND
+      {$customGroupWhere}
       cg.is_active = 1 AND
       cf.is_active = 1 AND
       cf.is_searchable = 1
