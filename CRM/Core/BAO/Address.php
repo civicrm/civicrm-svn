@@ -52,9 +52,7 @@ class CRM_Core_BAO_Address extends CRM_Core_DAO_Address {
    * @static
    */
   static function create(&$params, $fixAddress, $entity = NULL) {
-    if (!isset($params['address']) ||
-      !is_array($params['address'])
-    ) {
+    if (!isset($params['address']) || !is_array($params['address'])) {
       return;
     }
 
@@ -322,7 +320,7 @@ class CRM_Core_BAO_Address extends CRM_Core_DAO_Address {
     //special check to ignore non numeric values if they are not
     //detected by formRule(sometimes happens due to internet latency), also allow user to unselect state/country
     if (isset($params['state_province_id'])) {
-      if (!trim($params['state_province_id'])) {
+      if (empty($params['state_province_id'])) {
         $params['state_province_id'] = 'null';
       }
       elseif (!is_numeric($params['state_province_id']) ||

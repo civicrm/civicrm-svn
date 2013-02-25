@@ -1252,9 +1252,13 @@ class CRM_Profile_Form extends CRM_Core_Form {
       $params['customRecordValues'][$this->_recordId] = array_keys($this->_multiRecordFields);
     }
 
-    $this->_id = CRM_Contact_BAO_Contact::createProfileContact($params, $profileFields,
-      $this->_id, $addToGroupId,
-      $this->_gid, $this->_ctype,
+    $this->_id = CRM_Contact_BAO_Contact::createProfileContact(
+      $params,
+      $profileFields,
+      $this->_id,
+      $addToGroupId,
+      $this->_gid,
+      $this->_ctype,
       TRUE
     );
 

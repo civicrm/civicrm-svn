@@ -1914,13 +1914,16 @@ ORDER BY civicrm_email.is_primary DESC";
         else {
           if ($fieldName === 'state_province') {
             // CRM-3393
-            if (is_numeric($value) &&
-              ((int ) $value) >= 1000
-            ) {
+            if (is_numeric($value) && ((int ) $value) >= 1000) {
               $data['address'][$loc]['state_province_id'] = $value;
             }
             else {
-              $data['address'][$loc]['state_province'] = $value;
+              if (!empty($value)) {
+                $data['address'][$loc]['state_province'] = $value;
+              }
+              else {
+                $data['address'][$loc]['state_province_id'] = '';
+              }
             }
           }
           elseif ($fieldName === 'country') {
