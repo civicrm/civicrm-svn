@@ -42,8 +42,8 @@ class WebTest_Import_ContributionTest extends ImportCiviSeleniumTestCase {
 
     // Create and import csv from provided data and check imported data.
     $fieldMapper = array(
-      'mapper[0][0]' => 'email',
-                              'mapper[2][0]' => 'financial_type',
+      'mapper[0][0]' => 'contribution_contact_id',
+      'mapper[2][0]' => 'financial_type',
       'mapper[4][0]' => 'total_amount',
     );
     $this->importCSVComponent('Contribution', $headers, $rows, 'Individual', 'Insert new contributions', $fieldMapper);
@@ -87,9 +87,21 @@ class WebTest_Import_ContributionTest extends ImportCiviSeleniumTestCase {
     $firstName2 = substr(sha1(rand()), 0, 7);
     $email2 = 'mail_' . substr(sha1(rand()), 0, 7) . '@example.com';
     $this->webtestAddContact($firstName2, 'Anderson', $email2);
+    
+    $contactInfo = array(
+      array(
+        'first_name' => $firstName1, 
+        'last_name' => 'Anderson'
+      ), 
+      array(
+        'first_name' => $firstName2, 
+        'last_name' => 'Anderson'
+      ),
+    );
+    $cids = $this->_getImportedContactIds($contactInfo);
 
     $headers = array(
-      'email' => 'Email',
+      'contact_id' => 'Contact ID',
       'fee_amount' => 'Fee Amount',
       'financial_type' => 'Financial Type',
       'contribution_status_id' => 'Contribution Status',
@@ -98,16 +110,16 @@ class WebTest_Import_ContributionTest extends ImportCiviSeleniumTestCase {
 
     $rows = array(
       array(
-        'email' => $email1,
+        'contact_id' => $cids[0],
         'fee_amount' => '200',
-                             'financial_type'         => 'Donation',
+        'financial_type'         => 'Donation',
         'contribution_status_id' => 'Completed',
         'total_amount' => '200',
       ),
       array(
-        'email' => $email2,
+        'contact_id' => $cids[1],
         'fee_amount' => '400',
-                             'financial_type'         => 'Donation',
+        'financial_type'         => 'Donation',
         'contribution_status_id' => 'Completed',
         'total_amount' => '400',
       ),
