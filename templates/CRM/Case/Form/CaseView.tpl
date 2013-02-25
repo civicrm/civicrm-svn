@@ -28,67 +28,67 @@
 {* here we are showing related cases w/ jquery dialog *}
 <div class="crm-block crm-form-block crm-case-caseview-form-block">
 {if $showRelatedCases}
-  <table class="report">
-    <tr class="columnheader">
-      <th>{ts}Client Name{/ts}</th>
-      <th>{ts}Case Type{/ts}</th>
-      <th></th>
-    </tr>
-
-    {foreach from=$relatedCases item=row key=caseId}
-      <tr>
-        <td class="crm-case-caseview-client_name label">{$row.client_name}</td>
-        <td class="crm-case-caseview-case_type label">{$row.case_type}</td>
-        <td class="label">{$row.links}</td>
-      </tr>
-    {/foreach}
-  </table>
-
-{else}
-
-  <h3>{ts}Case Summary{/ts}</h3>
-  <table class="report">
-  {if $multiClient}
-  <tr class="crm-case-caseview-client">
-    <td colspan="4" class="label">
-    {ts}Clients:{/ts}
-    {foreach from=$caseRoles.client item=client name=clients}
-      <a href="{crmURL p='civicrm/contact/view' q="action=view&reset=1&cid=`$client.contact_id`"}" title="{ts}view contact record{/ts}">{$client.display_name}</a>{if not $smarty.foreach.clients.last}, &nbsp; {/if}
-        {/foreach}
-    <a href="#" title="{ts}add new client to the case{/ts}" onclick="addClient( );return false;">
-      <span class="icon edit-icon"></span>
-    </a>
-    {if $hasRelatedCases}
-      <div class="crm-block relatedCases-link"><a href='#' onClick='viewRelatedCases( {$caseID}, {$contactID} ); return false;'>{ts}Related Cases{/ts}</a></div>
-    {/if}
-    </td>
+<table class="report">
+  <tr class="columnheader">
+    <th>{ts}Client Name{/ts}</th>
+    <th>{ts}Case Type{/ts}</th>
+    <th></th>
   </tr>
+
+  {foreach from=$relatedCases item=row key=caseId}
+    <tr>
+      <td class="crm-case-caseview-client_name label">{$row.client_name}</td>
+      <td class="crm-case-caseview-case_type label">{$row.case_type}</td>
+      <td class="label">{$row.links}</td>
+    </tr>
+  {/foreach}
+</table>
+
+  {else}
+
+<h3>{ts}Case Summary{/ts}</h3>
+<table class="report">
+  {if $multiClient}
+    <tr class="crm-case-caseview-client">
+      <td colspan="4" class="label">
+        {ts}Clients:{/ts}
+        {foreach from=$caseRoles.client item=client name=clients}
+          <a href="{crmURL p='civicrm/contact/view' q="action=view&reset=1&cid=`$client.contact_id`"}" title="{ts}view contact record{/ts}">{$client.display_name}</a>{if not $smarty.foreach.clients.last}, &nbsp; {/if}
+        {/foreach}
+        <a href="#" title="{ts}add new client to the case{/ts}" onclick="addClient( );return false;">
+          <span class="icon edit-icon"></span>
+        </a>
+        {if $hasRelatedCases}
+          <div class="crm-block relatedCases-link"><a href='#' onClick='viewRelatedCases( {$caseID}, {$contactID} ); return false;'>{ts}Related Cases{/ts}</a></div>
+        {/if}
+      </td>
+    </tr>
   {/if}
   <tr>
-  {if not $multiClient}
-    <td>
-      <table class="form-layout-compressed">
-        {foreach from=$caseRoles.client item=client}
-          <tr class="crm-case-caseview-display_name">
-            <td class="label-left bold" style="padding: 0px; border: none;">{$client.display_name}</td>
-           </tr>
-          {if $client.phone}
-            <tr class="crm-case-caseview-phone">
-              <td class="label-left description" style="padding: 1px">{$client.phone}</td>
+    {if not $multiClient}
+      <td>
+        <table class="form-layout-compressed">
+          {foreach from=$caseRoles.client item=client}
+            <tr class="crm-case-caseview-display_name">
+              <td class="label-left bold" style="padding: 0px; border: none;">{$client.display_name}</td>
             </tr>
-          {/if}
-          {if $client.birth_date}
-            <tr class="crm-case-caseview-birth_date">
-              <td class="label-left description" style="padding: 1px">{ts}DOB{/ts}: {$client.birth_date|crmDate}</td>
-            </tr>
-          {/if}
-        {/foreach}
-      </table>
-      {if $hasRelatedCases}
-        <div class="crm-block relatedCases-link"><a href='#' onClick='viewRelatedCases( {$caseID}, {$contactID} ); return false;'>{ts}Related Cases{/ts}</a></div>
-      {/if}
-    </td>
-  {/if}
+            {if $client.phone}
+              <tr class="crm-case-caseview-phone">
+                <td class="label-left description" style="padding: 1px">{$client.phone}</td>
+              </tr>
+            {/if}
+            {if $client.birth_date}
+              <tr class="crm-case-caseview-birth_date">
+                <td class="label-left description" style="padding: 1px">{ts}DOB{/ts}: {$client.birth_date|crmDate}</td>
+              </tr>
+            {/if}
+          {/foreach}
+        </table>
+        {if $hasRelatedCases}
+          <div class="crm-block relatedCases-link"><a href='#' onClick='viewRelatedCases( {$caseID}, {$contactID} ); return false;'>{ts}Related Cases{/ts}</a></div>
+        {/if}
+      </td>
+    {/if}
     <td class="crm-case=caseview-case_subject label">
       <span class="crm-case-summary-label">{ts}Case Subject{/ts}:</span>&nbsp;{$caseDetails.case_subject}
     </td>
@@ -105,214 +105,211 @@
       <span class="crm-case-summary-label">{ts}Case ID{/ts}:</span>&nbsp;{$caseID}
     </td>
   </tr>
-  </table>
+</table>
   {if $hookCaseSummary}
-    <div id="caseSummary">
-      {foreach from=$hookCaseSummary item=val key=div_id}
-        <div id="{$div_id}"><label>{$val.label}</label><div class="value">{$val.value}</div></div>
-      {/foreach}
-    </div>
+  <div id="caseSummary">
+    {foreach from=$hookCaseSummary item=val key=div_id}
+      <div id="{$div_id}"><label>{$val.label}</label><div class="value">{$val.value}</div></div>
+    {/foreach}
+  </div>
   {/if}
 
-    <table class="form-layout">
-        <tr class="crm-case-caseview-form-block-activity_type_id">
-            <td>{$form.activity_type_id.label}<br />{$form.activity_type_id.html}&nbsp;<input type="button" accesskey="N" value="Go" name="new_activity" onclick="checkSelection( this );"/></td>
-      {if $hasAccessToAllCases}
-            <td>
-                <span class="crm-button"><div class="icon print-icon"></div><input type="button"  value="{ts}Print Case Report{/ts}" name="case_report_all" onclick="printCaseReport( );"/></span>
-            </td>
-        </tr>
-        <tr>
-            <td class="crm-case-caseview-form-block-timeline_id">{$form.timeline_id.label}<br />{$form.timeline_id.html}&nbsp;{$form._qf_CaseView_next.html}</td>
-            <td class="crm-case-caseview-form-block-report_id">{$form.report_id.label}<br />{$form.report_id.html}&nbsp;<input type="button" accesskey="R" value="Go" name="case_report" onclick="checkSelection( this );"/></td>
-        {else}
-            <td></td>
-      {/if}
-        </tr>
+<table class="form-layout">
+<tr class="crm-case-caseview-form-block-activity_type_id">
+  <td>{$form.activity_type_id.label}<br />{$form.activity_type_id.html}&nbsp;<input type="button" accesskey="N" value="Go" name="new_activity" onclick="checkSelection( this );"/></td>
+  {if $hasAccessToAllCases}
+    <td>
+      <span class="crm-button"><div class="icon print-icon"></div><input type="button"  value="{ts}Print Case Report{/ts}" name="case_report_all" onclick="printCaseReport( );"/></span>
+    </td>
+  </tr>
+  <tr>
+    <td class="crm-case-caseview-form-block-timeline_id">{$form.timeline_id.label}<br />{$form.timeline_id.html}&nbsp;{$form._qf_CaseView_next.html}</td>
+    <td class="crm-case-caseview-form-block-report_id">{$form.report_id.label}<br />{$form.report_id.html}&nbsp;<input type="button" accesskey="R" value="Go" name="case_report" onclick="checkSelection( this );"/></td>
+    {else}
+    <td></td>
+  {/if}
+</tr>
 
   {if $mergeCases}
-      <tr class="crm-case-caseview-form-block-merge_case_id">
-         <td colspan='2'><a href="#" onClick='cj("#merge_cases").toggle( ); return false;'>{ts}Merge Case{/ts}</a>
+    <tr class="crm-case-caseview-form-block-merge_case_id">
+      <td colspan='2'><a href="#" onClick='cj("#merge_cases").toggle( ); return false;'>{ts}Merge Case{/ts}</a>
               <span id='merge_cases' class='hide-block'>
                   {$form.merge_case_id.html}&nbsp;{$form._qf_CaseView_next_merge_case.html}
               </span>
-         </td>
-      </tr>
+      </td>
+    </tr>
   {/if}
 
   {if call_user_func(array('CRM_Core_Permission','giveMeAllACLs'))}
-      <tr class="crm-case-caseview-form-block-change_client_id">
-         <td colspan='2'><a href="#" onClick='cj("#change_client").toggle( ); return false;'>{ts}Assign to Another Client{/ts}</a>
+    <tr class="crm-case-caseview-form-block-change_client_id">
+      <td colspan='2'><a href="#" onClick='cj("#change_client").toggle( ); return false;'>{ts}Assign to Another Client{/ts}</a>
           <span id='change_client' class='hide-block'>
               {$form.change_client_id.html|crmAddClass:twenty}&nbsp;{$form._qf_CaseView_next_edit_client.html}
           </span>
-         </td>
-      </tr>
+      </td>
+    </tr>
   {/if}
-    </table>
+</table>
 
 <div id="view-related-cases">
-     <div id="related-cases-content"></div>
+  <div id="related-cases-content"></div>
 </div>
 
 <div class="clear"></div>
 {include file="CRM/Case/Page/CustomDataView.tpl"}
 
 <div class="crm-accordion-wrapper collapsed crm-case-roles-block">
- <div class="crm-accordion-header">
-  {ts}Case Roles{/ts}
- </div><!-- /.crm-accordion-header -->
- <div class="crm-accordion-body">
+  <div class="crm-accordion-header">
+    {ts}Case Roles{/ts}
+  </div><!-- /.crm-accordion-header -->
+  <div class="crm-accordion-body">
 
     {if $hasAccessToAllCases}
-    <div class="crm-submit-buttons">
-      <a class="button" href="#" onClick="Javascript:addRole();return false;"><span><div class="icon add-icon"></div>{ts}Add new role{/ts}</span></a>
-    </div>
+      <div class="crm-submit-buttons">
+        <a class="button" href="#" onClick="Javascript:addRole();return false;"><span><div class="icon add-icon"></div>{ts}Add new role{/ts}</span></a>
+      </div>
     {/if}
-   
-     <table id="caseRoles-selector"  class="report-layout">
-     <thead><tr>
-         <th>{ts}Case Role{/ts}</th>
-         <th>{ts}Name{/ts}</th>
-         <th>{ts}Phone{/ts}</th>
-         <th>{ts}Email{/ts}</th>
-         {if $relId neq 'client' and $hasAccessToAllCases}
-             <th id="nosort">{ts}Actions{/ts}</th>
-         {/if}
-    </tr></thead>
-     </table>
-     
- {literal}
- <script type="text/javascript">
- var oTable;
- 
- cj( function ( ) {
-    buildCaseRoles( false );
- });
- 
- function buildCaseRoles( filterSearch ) {
-   if( filterSearch ) {
-       oTable.fnDestroy();
-   }
-   var count   = 0; 
-   var columns = '';
-   var sourceUrl = {/literal}"{crmURL p='civicrm/ajax/caseroles' h=0 q='snippet=4&caseID='}{$caseID}"{literal};
-           sourceUrl = sourceUrl + '&cid={/literal}{$contactID}{literal}';
-           sourceUrl = sourceUrl + '&userID={/literal}{$userID}{literal}';   
- 
-       cj('#caseRoles-selector th').each( function( ) {
-         if ( cj(this).attr('id') != 'nosort' ) {
-          columns += '{"sClass": "' + cj(this).attr('class') +'"},';
-         } else {
-          columns += '{ "bSortable": false },';
-         }
-         count++; 
-       });
- 
-       columns    = columns.substring(0, columns.length - 1 );
-       eval('columns =[' + columns + ']');
- 
-       oTable = cj('#caseRoles-selector').dataTable({
-               "bFilter"    : false,
-               "bAutoWidth" : false,
-               "aaSorting"  : [],
-               "aoColumns"  : columns,
-               "bProcessing": true,
-               "bJQueryUI": true,
-               "asStripClasses" : [ "odd-row", "even-row" ],
-               "sPaginationType": "full_numbers",
-               "sDom"       : '<"crm-datatable-pager-top"lfp>rt<"crm-datatable-pager-bottom"ip>',  
-               "bServerSide": true,
-               "sAjaxSource": sourceUrl,
-               "iDisplayLength": 10,
-               "fnDrawCallback": function() { setCaseRolesSelectorClass(); },
-               "fnServerData": function ( sSource, aoData, fnCallback ) {
- 
-                 cj.ajax( {
-                 "dataType": 'json', 
-                 "type": "POST", 
-                 "url": sSource, 
-                 "data": aoData, 
-                "success": fnCallback
-                 } ); 
-                 }
-             }); 
- }
- 
- function setCaseRolesSelectorClass( ) {
-     cj("#caseRoles-selector td:last-child").each( function( ) {
-        cj(this).parent().addClass(cj(this).text() );
-     });
- }
 
- function printCaseReport( ) {
-      var asn = 'standard_timeline';
-     var dataUrl = {/literal}"{crmURL p='civicrm/case/report/print' q='all=1&redact=0' h='0'}"{literal};
-     dataUrl     = dataUrl + '&cid={/literal}{$contactID}{literal}' 
-                   + '&caseID={/literal}{$caseID}{literal}'
-                   + '&asn={/literal}' + asn + '{literal}';
- 
-     window.location = dataUrl;
- }
+    <table id="caseRoles-selector"  class="report-layout">
+      <thead><tr>
+        <th>{ts}Case Role{/ts}</th>
+        <th>{ts}Name{/ts}</th>
+        <th>{ts}Phone{/ts}</th>
+        <th>{ts}Email{/ts}</th>
+        {if $relId neq 'client' and $hasAccessToAllCases}
+          <th id="nosort">{ts}Actions{/ts}</th>
+        {/if}
+      </tr></thead>
+    </table>
+
+  {literal}
+  <script type="text/javascript">
+  var oTable;
+
+  cj(function() {
+    buildCaseRoles(false);
+  });
+
+  function buildCaseRoles(filterSearch) {
+    if(filterSearch) {
+      oTable.fnDestroy();
+    }
+    var count   = 0;
+    var columns = '';
+    var sourceUrl = {/literal}"{crmURL p='civicrm/ajax/caseroles' h=0 q='snippet=4&caseID='}{$caseID}"{literal};
+    sourceUrl = sourceUrl + '&cid={/literal}{$contactID}{literal}';
+    sourceUrl = sourceUrl + '&userID={/literal}{$userID}{literal}';
+
+    cj('#caseRoles-selector th').each( function( ) {
+      if ( cj(this).attr('id') != 'nosort' ) {
+        columns += '{"sClass": "' + cj(this).attr('class') +'"},';
+      }
+      else {
+        columns += '{ "bSortable": false },';
+      }
+      count++;
+    });
+
+    columns    = columns.substring(0, columns.length - 1 );
+    eval('columns =[' + columns + ']');
+
+    oTable = cj('#caseRoles-selector').dataTable({
+      "bFilter"    : false,
+      "bAutoWidth" : false,
+      "aaSorting"  : [],
+      "aoColumns"  : columns,
+      "bProcessing": true,
+      "bJQueryUI": true,
+      "asStripClasses" : [ "odd-row", "even-row" ],
+      "sPaginationType": "full_numbers",
+      "sDom"       : '<"crm-datatable-pager-top"lfp>rt<"crm-datatable-pager-bottom"ip>',
+      "bServerSide": true,
+      "sAjaxSource": sourceUrl,
+      "iDisplayLength": 10,
+      "fnDrawCallback": function() { setCaseRolesSelectorClass(); },
+      "fnServerData": function ( sSource, aoData, fnCallback ) {
+        cj.ajax({
+          "dataType": 'json',
+          "type": "POST",
+          "url": sSource,
+          "data": aoData,
+          "success": fnCallback
+        });
+      }
+    });
+  }
+
+  function setCaseRolesSelectorClass( ) {
+    cj("#caseRoles-selector td:last-child").each( function( ) {
+      cj(this).parent().addClass(cj(this).text() );
+    });
+  }
+
+  function printCaseReport( ) {
+    var asn = 'standard_timeline';
+    var dataUrl = {/literal}"{crmURL p='civicrm/case/report/print' q='all=1&redact=0' h='0'}"{literal};
+    dataUrl     = dataUrl + '&cid={/literal}{$contactID}{literal}'
+    + '&caseID={/literal}{$caseID}{literal}'
+    + '&asn={/literal}' + asn + '{literal}';
+
+    window.location = dataUrl;
+  }
   </script>
  {/literal}
- 
- <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
+
+  <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
   {literal}
- <script type="text/javascript">
- cj(function() {
-    cj().crmAccordions(); 
- });
- </script>
- {/literal}
+    <script type="text/javascript">
+      cj(function() {
+        cj().crmAccordions();
+      });
+    </script>
+  {/literal}
  </div><!-- /.crm-accordion-body -->
 </div><!-- /.crm-accordion-wrapper -->
 <div id="dialog">
-     {ts}Begin typing last name of contact.{/ts}<br/>
-     <input type="text" id="rel_contact"/>
-     <input type="hidden" id="rel_contact_id" value="">
+  {ts}Begin typing last name of contact.{/ts}<br/>
+  <input type="text" id="rel_contact"/>
+  <input type="hidden" id="rel_contact_id" value="">
 </div>
 
 {literal}
 <script type="text/javascript">
-var selectedContact = '';
-var caseID = {/literal}"{$caseID}"{literal};
-var contactUrl = {/literal}"{crmURL p='civicrm/ajax/rest' q='className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=newcontact' h=0 }"{literal};
-cj( "#change_client_id").autocomplete( contactUrl, { width : 250, selectFirst : false, matchContains:true
-                            }).result( function(event, data, formatted) { cj( "#contact_id" ).val( data[1] ); selectedContact = data[0];
-                            }).bind( 'click', function( ) { cj( "#contact_id" ).val(''); });
+  var selectedContact = '';
+  var caseID = {/literal}"{$caseID}"{literal};
+  var contactUrl = {/literal}"{crmURL p='civicrm/ajax/rest' q='className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=newcontact' h=0 }"{literal};
+  cj( "#change_client_id").autocomplete( contactUrl, { width : 250, selectFirst : false, matchContains:true
+  }).result( function(event, data, formatted) { cj( "#contact_id" ).val( data[1] ); selectedContact = data[0];
+    }).bind( 'click', function( ) { cj( "#contact_id" ).val(''); });
 
-cj("#dialog").hide( );
+  cj("#dialog").hide( );
 
-function addClient( ) {
+  function addClient( ) {
     cj("#dialog").show( );
 
     cj("#dialog").dialog({
-        title: "Add Client to the Case",
-        modal: true,
-  bgiframe: true,
-  close  : function(event, ui) { cj("#rel_contact").unautocomplete( ); },
-  overlay: { opacity: 0.5, background: "black" },
+      title: "Add Client to the Case",
+      modal: true,
+      bgiframe: true,
+      close  : function(event, ui) { cj("#rel_contact").unautocomplete( ); },
+      overlay: { opacity: 0.5, background: "black" },
 
-  open:function() {
+      open:function() {
+      var contactUrl = {/literal}"{crmURL p='civicrm/ajax/rest' q='className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=caseview' h=0 }"{literal};
+        cj("#rel_contact").autocomplete( contactUrl, {
+          width: 260,
+          selectFirst: false,
+          matchContains: true
+        });
 
-    var contactUrl = {/literal}"{crmURL p='civicrm/ajax/rest' q='className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=caseview' h=0 }"{literal};
+        cj("#rel_contact").focus();
+        cj("#rel_contact").result(function(event, data, formatted) {
+          cj("input[id=rel_contact_id]").val(data[1]);
+        });
+      },
 
-    cj("#rel_contact").autocomplete( contactUrl, {
-      width: 260,
-      selectFirst: false,
-                        matchContains: true
-    });
-
-    cj("#rel_contact").focus();
-    cj("#rel_contact").result(function(event, data, formatted) {
-      cj("input[id=rel_contact_id]").val(data[1]);
-    });
-  },
-
-  buttons: {
-    "Done": function() {
-
+      buttons: {
+      "Done": function() {
         var postUrl = {/literal}"{crmURL p='civicrm/case/ajax/addclient' h=0 }"{literal};
         var caseID        = {/literal}"{$caseID}"{literal};
         var contactID = cj("#rel_contact_id").val( );
@@ -321,32 +318,27 @@ function addClient( ) {
           cj("#rel_contact").crmError('{/literal}{ts escape="js"}Select valid contact from the list{/ts}{literal}.');
           return false;
         }
-
-
-                    cj.post( postUrl,
-           { contactID: contactID,
-                 caseID: caseID,
-                   key: {/literal}"{crmKey name='civicrm/case/ajax/addclient'}"{literal} },
-                             function( data ) {
+        cj.post( postUrl, {contactID: contactID,caseID: caseID,
+          key: {/literal}"{crmKey name='civicrm/case/ajax/addclient'}"{literal} },
+          function( data ) {
             var resourceBase   = {/literal}"{$config->resourceBase}"{literal};
-             },
-                                           'json'
+          },
+          'json'
         );
 
-      cj(this).dialog("close");
-      cj(this).dialog("destroy");
-                  //due to caching issues we use redirection rather than reload
-                  document.location = {/literal}'{crmURL q="action=view&reset=1&id=$caseID&cid=$contactID&context=$context" h=0 }'{literal};
-    },
+          cj(this).dialog("close");
+          cj(this).dialog("destroy");
+          //due to caching issues we use redirection rather than reload
+          document.location = {/literal}'{crmURL q="action=view&reset=1&id=$caseID&cid=$contactID&context=$context" h=0 }'{literal};
+        },
 
-    "Cancel": function() {
-      cj(this).dialog("close");
-      cj(this).dialog("destroy");
-    }
-
+        "Cancel": function() {
+          cj(this).dialog("close");
+          cj(this).dialog("destroy");
+        }
+      }
+    });
   }
-    })
-}
 
 function createRelationship( relType, contactID, relID, rowNumber, relTypeName ) {
     cj("#dialog").show( );
@@ -530,29 +522,29 @@ cj(document).ready(function(){
  cj( function ( ) {
     buildCaseClientRelationships( false );
  });
- 
+
  function buildCaseClientRelationships( filterSearch ) {
      if( filterSearch ) {
          oTable.fnDestroy();
      }
-     var count   = 0; 
+     var count   = 0;
      var columns = '';
      var sourceUrl = {/literal}"{crmURL p='civicrm/ajax/clientrelationships' h=0 q='snippet=4&caseID='}{$caseID}"{literal};
              sourceUrl = sourceUrl + '&cid={/literal}{$contactID}{literal}';
-             sourceUrl = sourceUrl + '&userID={/literal}{$userID}{literal}';   
- 
+             sourceUrl = sourceUrl + '&userID={/literal}{$userID}{literal}';
+
          cj('#clientRelationships-selector th').each( function( ) {
            if ( cj(this).attr('id') != 'nosort' ) {
          columns += '{"sClass": "' + cj(this).attr('class') +'"},';
        } else {
          columns += '{ "bSortable": false },';
        }
-       count++; 
+       count++;
      });
- 
+
      columns    = columns.substring(0, columns.length - 1 );
      eval('columns =[' + columns + ']');
- 
+
      oTable = cj('#clientRelationships-selector').dataTable({
              "bFilter"    : false,
              "bAutoWidth" : false,
@@ -562,31 +554,31 @@ cj(document).ready(function(){
              "bJQueryUI": true,
              "asStripClasses" : [ "odd-row", "even-row" ],
              "sPaginationType": "full_numbers",
-             "sDom"       : '<"crm-datatable-pager-top"lfp>rt<"crm-datatable-pager-bottom"ip>',  
+             "sDom"       : '<"crm-datatable-pager-top"lfp>rt<"crm-datatable-pager-bottom"ip>',
              "bServerSide": true,
              "sAjaxSource": sourceUrl,
              "iDisplayLength": 10,
              "fnDrawCallback": function() { setClientRelationshipsSelectorClass(); },
              "fnServerData": function ( sSource, aoData, fnCallback ) {
- 
+
                  cj.ajax( {
-                 "dataType": 'json', 
-                 "type": "POST", 
-                 "url": sSource, 
-                 "data": aoData, 
+                 "dataType": 'json',
+                 "type": "POST",
+                 "url": sSource,
+                 "data": aoData,
                  "success": fnCallback
-                 } ); 
+                 } );
                  }
-             }); 
+             });
  }
- 
+
  function setClientRelationshipsSelectorClass( ) {
      cj("#clientRelationships-selector td:last-child").each( function( ) {
         cj(this).parent().addClass(cj(this).text() );
      });
- }  
+ }
  </script>
- {/literal}  
+ {/literal}
   <br />
 
   {if $globalRelationships}
@@ -611,33 +603,33 @@ cj(document).ready(function(){
 
  {literal}
  <script type="text/javascript">
- 
+
  cj( function ( ) {
     buildCaseGlobalRelationships( false );
  });
- 
+
  function buildCaseGlobalRelationships( filterSearch ) {
      if( filterSearch ) {
          oTable.fnDestroy();
      }
-     var count   = 0; 
+     var count   = 0;
      var columns = '';
      var sourceUrl = {/literal}"{crmURL p='civicrm/ajax/globalrelationships' h=0 q='snippet=4&caseID='}{$caseID}"{literal};
              sourceUrl = sourceUrl + '&cid={/literal}{$contactID}{literal}';
-             sourceUrl = sourceUrl + '&userID={/literal}{$userID}{literal}';   
- 
+             sourceUrl = sourceUrl + '&userID={/literal}{$userID}{literal}';
+
          cj('#globalRelationships-selector th').each( function( ) {
            if ( cj(this).attr('id') != 'nosort' ) {
          columns += '{"sClass": "' + cj(this).attr('class') +'"},';
        } else {
          columns += '{ "bSortable": false },';
        }
-       count++; 
+       count++;
      });
- 
+
      columns    = columns.substring(0, columns.length - 1 );
      eval('columns =[' + columns + ']');
- 
+
      oTable = cj('#globalRelationships-selector').dataTable({
              "bFilter"    : false,
              "bAutoWidth" : false,
@@ -647,31 +639,31 @@ cj(document).ready(function(){
              "bJQueryUI": true,
              "asStripClasses" : [ "odd-row", "even-row" ],
              "sPaginationType": "full_numbers",
-             "sDom"       : '<"crm-datatable-pager-top"lfp>rt<"crm-datatable-pager-bottom"ip>',  
+             "sDom"       : '<"crm-datatable-pager-top"lfp>rt<"crm-datatable-pager-bottom"ip>',
              "bServerSide": true,
              "sAjaxSource": sourceUrl,
              "iDisplayLength": 10,
              "fnDrawCallback": function() { setGlobalRelationshipsSelectorClass(); },
              "fnServerData": function ( sSource, aoData, fnCallback ) {
- 
+
                  cj.ajax( {
-                 "dataType": 'json', 
-                 "type": "POST", 
-                "url": sSource, 
-                 "data": aoData, 
+                 "dataType": 'json',
+                 "type": "POST",
+                "url": sSource,
+                 "data": aoData,
                  "success": fnCallback
-                 } ); 
+                 } );
                  }
-             }); 
+             });
  }
- 
+
  function setGlobalRelationshipsSelectorClass( ) {
      cj("#globalRelationships-selector td:last-child").each( function( ) {
         cj(this).parent().addClass(cj(this).text() );
      });
- }  
+ }
  </script>
- {/literal}  
+ {/literal}
  </div><!-- /.crm-accordion-body -->
 </div><!-- /.crm-accordion-wrapper -->
 
