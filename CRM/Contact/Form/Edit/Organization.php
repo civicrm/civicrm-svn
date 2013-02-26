@@ -41,7 +41,7 @@
 class CRM_Contact_Form_Edit_Organization {
 
  /**
-   * This function provides the HTML form elements that are specific 
+   * This function provides the HTML form elements that are specific
    * to the Organization Contact Type
    *
    * @param object $form form object
@@ -49,7 +49,7 @@ class CRM_Contact_Form_Edit_Organization {
    * top bar form and 2 for display name edit )
    *
    * @access public
-   * @return void 
+   * @return void
    */
   public static function buildQuickForm(&$form, $inlineEditMode = NULL) {
     $attributes = CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Contact');
@@ -60,13 +60,13 @@ class CRM_Contact_Form_Edit_Organization {
       // Organization_name
       $form->add('text', 'organization_name', ts('Organization Name'), $attributes['organization_name']);
     }
-    
+
     if ( !$inlineEditMode || $inlineEditMode == 2 ) {
       // legal_name
       $form->addElement('text', 'legal_name', ts('Legal Name'), $attributes['legal_name']);
 
       // nick_name
-      $form->addElement('text', 'nick_name', ts('Nick Name'),
+      $form->addElement('text', 'nick_name', ts('Nickname'),
         CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Contact', 'nick_name')
       );
 

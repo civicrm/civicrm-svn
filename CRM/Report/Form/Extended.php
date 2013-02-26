@@ -557,8 +557,8 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
             'title' => ts('Last Name'),
           ),
           'nick_name' => array(
-            'title' => ts('Nick Name'),
-            'alter_display' => 'alterNickName',
+            'title' => ts('Nickname'),
+            'alter_display' => 'alterNickname',
           ),
         ),
         'filters' => array(
@@ -668,7 +668,7 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
    * @param array $options Options for the report
    * - prefix prefix to add (e.g. 'honor' when getting address details for honor contact
    * - prefix_label optional prefix lable eg. "Honoree " for front end
-   * - group_by enable these fields for group by - default false 
+   * - group_by enable these fields for group by - default false
    * - order_by enable these fields for order by
    * - filters enable these fields for filtering
    * - defaults - (is this working?) values to pre-populate
@@ -676,7 +676,7 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
    */
   function getAddressColumns($options = array()) {
     $defaultOptions = array(
-      'prefix' => '', 
+      'prefix' => '',
       'prefix_label' => '',
       'group_by' => false,
       'order_by' => true,
@@ -685,9 +685,9 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
         'country_id' => TRUE
       ),
      );
-     
+
     $options = array_merge($defaultOptions,$options);
-    
+
     $addressFields = array(
       $options['prefix'] . 'civicrm_address' => array(
         'dao' => 'CRM_Core_DAO_Address',
@@ -1178,7 +1178,7 @@ WHERE 	line_item_civireport.id IS NOT NULL
            <span class='crm-editable crmf-nick_name crm-editable-enabled' data-action='create'>
            " . $value . "</span></div>";
   }
-  
+
   /*
    * Retrieve text for contribution type from pseudoconstant
    */

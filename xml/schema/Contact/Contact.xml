@@ -167,13 +167,14 @@
   </field>
   <field>
        <name>nick_name</name>
+       <title>Nickname</title>
        <type>varchar</type>
        <length>128</length>
        <size>BIG</size>
        <import>true</import>
        <headerPattern>/n(ick\s)name|nick$/i</headerPattern>
        <dataPattern>/^\w+$/</dataPattern>
-       <comment>Nick Name.</comment>
+       <comment>Nickname.</comment>
        <fulltext/>
        <add>1.1</add>
   </field>
@@ -223,7 +224,7 @@
   </field>
   <index>
        <name>index_preferred_communication_method</name>
-       <fieldName>preferred_communication_method</fieldName>       
+       <fieldName>preferred_communication_method</fieldName>
        <add>1.6</add>
   </index>
   <field>
@@ -299,7 +300,7 @@
   </field>
   <index>
       <name>index_first_name</name>
-      <fieldName>first_name</fieldName>      
+      <fieldName>first_name</fieldName>
       <add>1.8</add>
   </index>
   <field>
@@ -328,7 +329,7 @@
   </field>
   <index>
       <name>index_last_name</name>
-      <fieldName>last_name</fieldName>      
+      <fieldName>last_name</fieldName>
       <add>1.8</add>
   </index>
   <field>
@@ -346,7 +347,7 @@
   </field>
   <index>
       <name>UI_prefix</name>
-      <fieldName>prefix_id</fieldName>      
+      <fieldName>prefix_id</fieldName>
       <add>1.6</add>
   </index>
   <field>
@@ -364,7 +365,7 @@
   </field>
   <index>
       <name>UI_suffix</name>
-      <fieldName>suffix_id</fieldName>      
+      <fieldName>suffix_id</fieldName>
       <add>1.6</add>
   </index>
   <field>
@@ -490,7 +491,7 @@
   </field>
   <index>
      <name>UI_gender</name>
-     <fieldName>gender_id</fieldName>     
+     <fieldName>gender_id</fieldName>
      <add>1.6</add>
   </index>
   <field>
@@ -552,7 +553,7 @@
   </field>
   <index>
       <name>index_household_name</name>
-      <fieldName>household_name</fieldName>      
+      <fieldName>household_name</fieldName>
       <add>1.8</add>
   </index>
   <field>
@@ -583,7 +584,7 @@
   </field>
   <index>
       <name>index_organization_name</name>
-      <fieldName>organization_name</fieldName>      
+      <fieldName>organization_name</fieldName>
       <add>1.8</add>
   </index>
   <field>

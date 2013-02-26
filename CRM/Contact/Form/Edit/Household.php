@@ -41,7 +41,7 @@
 class CRM_Contact_Form_Edit_Household {
 
  /**
-   * This function provides the HTML form elements that are specific 
+   * This function provides the HTML form elements that are specific
    * to the Household Contact Type
    *
    * @param object $form form object
@@ -49,13 +49,13 @@ class CRM_Contact_Form_Edit_Household {
    * top bar form and 2 for display name edit )
    *
    * @access public
-   * @return void 
+   * @return void
    */
   public static function buildQuickForm(&$form, $inlineEditMode = NULL) {
     $attributes = CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Contact');
 
     $form->applyFilter('__ALL__', 'trim');
-    
+
     if ( !$inlineEditMode || $inlineEditMode == 1 ) {
       // household_name
       $form->add('text', 'household_name', ts('Household Name'), $attributes['household_name']);
@@ -63,10 +63,10 @@ class CRM_Contact_Form_Edit_Household {
 
     if ( !$inlineEditMode || $inlineEditMode == 2 ) {
       // nick_name
-      $form->addElement('text', 'nick_name', ts('Nick Name'), $attributes['nick_name']);
+      $form->addElement('text', 'nick_name', ts('Nickname'), $attributes['nick_name']);
       $form->addElement('text', 'contact_source', ts('Source'), CRM_Utils_Array::value('source', $attributes));
     }
-    
+
     if ( !$inlineEditMode ) {
       $form->add('text', 'external_identifier', ts('External Id'), $attributes['external_identifier'], FALSE);
       $form->addRule('external_identifier',
