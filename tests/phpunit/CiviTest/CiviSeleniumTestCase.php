@@ -1725,7 +1725,9 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     $this->type("min_contribution", $amount);
     $this->type("price", $price);
     $this->type("cost", $cost);
-    $this->select("financial_type_id", "label=$financialType");
+    if ($financialType) {
+      $this->select("financial_type_id", "label={$financialType}");
+    }
     $this->click("_qf_ManagePremiums_upload-bottom");
     $this->waitForPageToLoad($this->getTimeoutMsec());
   }
