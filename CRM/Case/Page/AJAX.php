@@ -100,7 +100,6 @@ class CRM_Case_Page_AJAX {
     $session = CRM_Core_Session::singleton();
 
     $activityParams = array();
-
     $activityParams['source_contact_id'] = $session->get('userID');
     $activityParams['activity_type_id'] = CRM_Core_OptionGroup::getValue('activity_type', 'Change Case Tags', 'name');
     $activityParams['activity_date_time'] = date('YmdHis');
@@ -124,7 +123,6 @@ class CRM_Case_Page_AJAX {
 
   function caseDetails() {
     $caseId    = CRM_Utils_Type::escape($_GET['caseId'], 'Integer');
-    $contactId = CRM_Utils_Type::escape($_GET['contactId'], 'Integer');
     $sql       = "SELECT * FROM civicrm_case where id = %1";
     $dao       = CRM_Core_DAO::executeQuery($sql, array(1 => array($caseId, 'Integer')));
 
@@ -149,7 +147,6 @@ class CRM_Case_Page_AJAX {
   }
 
   function addClient() {
-
     $caseId = CRM_Utils_Type::escape($_POST['caseID'], 'Integer');
     $contactId = CRM_Utils_Type::escape($_POST['contactID'], 'Integer');
 
@@ -158,12 +155,11 @@ class CRM_Case_Page_AJAX {
       'contact_id' => $contactId,
     );
 
-    $result = CRM_Case_BAO_Case::addCaseToContact($params);
+    CRM_Case_BAO_Case::addCaseToContact($params);
 
     $session = CRM_Core_Session::singleton();
 
     $activityParams = array();
-
     $activityParams['source_contact_id'] = $session->get('userID');
     $activityParams['activity_type_id'] = CRM_Core_OptionGroup::getValue('activity_type', 'Add Client To Case', 'name');
     $activityParams['activity_date_time'] = date('YmdHis');

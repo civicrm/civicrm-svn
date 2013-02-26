@@ -924,7 +924,7 @@ LIMIT {$offset}, {$rowCount}
   }
 
   static function relationshipContacts() {
-    $data = $searchValues = $searchRows = array();
+    $searchValues = $searchRows = array();
     $addCount = 0;
 
     $relType          = CRM_Utils_Type::escape($_REQUEST['relType'], 'String');
@@ -967,7 +967,6 @@ LIMIT {$offset}, {$rowCount}
 
       if ($type == 'Individual' || $type == 'Organization' || $type == 'Household') {
         $searchValues[] = array('contact_type', '=', $type, 0, 0);
-        $contactTypeAdded = TRUE;
       }
 
       if ($subType) {
@@ -978,7 +977,6 @@ LIMIT {$offset}, {$rowCount}
     // exclude current contact
     $searchValues[] = array('contact_id', '!=', $currentContactId, 0, 0);
 
-    $contactBAO  = new CRM_Contact_BAO_Contact();
     $query       = new CRM_Contact_BAO_Query($searchValues);
     $searchCount = $query->searchQuery(0, 0, NULL, TRUE);
     $iTotal      = $searchCount;
@@ -991,15 +989,8 @@ LIMIT {$offset}, {$rowCount}
 
       $config = CRM_Core_Config::singleton();
 
-      //variable is set if only one record is foun and that record already has relationship with the contact
-      $duplicateRelationship = 0;
-
       while ($result->fetch()) {
         $contactID = $result->contact_id;
-
-        $duplicateRelationship = 0;
-
-        $contact_type = '<img src="' . $config->resourceBase . 'i/contact_';
         $typeImage = CRM_Contact_BAO_Contact_Utils::getImage($result->contact_sub_type ?
           $result->contact_sub_type : $result->contact_type,
           FALSE, $contactID
@@ -1049,9 +1040,7 @@ LIMIT {$offset}, {$rowCount}
     $oid  = CRM_Utils_Type::escape($_REQUEST['oid'], 'Positive');
 
     if (!$oper || !$cid || !$oid) {
-
       return;
-
     }
 
     $exception = new CRM_Dedupe_DAO_Exception();
@@ -1213,14 +1202,16 @@ LIMIT {$offset}, {$rowCount}
     $contactId = CRM_Utils_Array::value('contact_id', $_REQUEST);
     if (!$contactId) {
       $addressVal["error_message"] = "no contact id found";
-    } else {
+    }
+    else {
       $entityBlock =
         array(
           'contact_id' => $contactId,
-          'entity_id' => $contactId
+          'entity_id' => $contactId,
         );
       $addressVal = CRM_Core_BAO_Address::getValues($entityBlock);
     }
+    
     echo json_encode($addressVal);
     CRM_Utils_System::civiExit();
   }
