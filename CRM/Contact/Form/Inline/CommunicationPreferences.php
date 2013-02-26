@@ -92,6 +92,11 @@ class CRM_Contact_Form_Inline_CommunicationPreferences extends CRM_Contact_Form_
     $params['is_opt_out'] = CRM_Utils_Array::value('is_opt_out', $params, FALSE);
     $params['contact_type'] = $this->_contactType;
     $params['contact_id'] = $this->_contactId;
+
+    if (!empty($this->_contactSubType)) {
+      $params['contact_sub_type'] = $this->_contactSubType;
+    }
+
     CRM_Contact_BAO_Contact::create($params);
 
     $this->response();
