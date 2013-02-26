@@ -94,6 +94,12 @@ class CRM_Logging_ReportSummary extends CRM_Report_Form {
         'bracket_info'  => array('options' => CRM_Core_PseudoConstant::activityType(TRUE, TRUE, FALSE, 'label', TRUE)),
         'entity_column' => 'activity_type_id',
       ),
+      'log_civicrm_case' =>
+      array( 'fk'  => 'contact_id',
+        'joins' => array('table' => 'log_civicrm_case_contact', 'join' => 'entity_log_civireport.id = fk_table.case_id'),
+        'bracket_info'  => array('options' => CRM_Case_PseudoConstant::caseType('label', FALSE)),
+        'entity_column' => 'case_type_id',
+      ),
     );
 
     // don’t display the ‘Add these Contacts to Group’ button
@@ -226,6 +232,12 @@ ORDER BY entity_log_civireport.log_date DESC {$this->_limit}";
         $entityID = $id;
       }
 
+      // since case_type_id is a varchar field with separator
+      if ($entity == 'log_civicrm_case') { 
+        $entityID = explode(CRM_Case_BAO_Case::VALUE_SEPARATOR,$entityID);
+        $entityID = CRM_Utils_Array::value(1, $entityID);
+      }
+
       if ($entityID && $logDate && array_key_exists('table', $this->_logTables[$entity]['bracket_info'])) {
         $sql = "
 SELECT {$this->_logTables[$entity]['bracket_info']['column']} 
@@ -233,7 +245,7 @@ FROM  `{$this->loggingDB}`.{$this->_logTables[$entity]['bracket_info']['table']}
 WHERE  log_date <= %1 AND id = %2 ORDER BY log_date DESC LIMIT 1";
         return CRM_Core_DAO::singleValueQuery($sql, array(1 => array(CRM_Utils_Date::isoToMysql($logDate), 'Timestamp'), 2 => array ($entityID, 'Integer')));
       } else if (array_key_exists('options', $this->_logTables[$entity]['bracket_info']) && $entityID) {
-        return $this->_logTables[$entity]['bracket_info']['options'][$entityID];
+        return CRM_Utils_Array::value($entityID, $this->_logTables[$entity]['bracket_info']['options']);
       }
     }
     return null;
