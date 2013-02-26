@@ -35,7 +35,12 @@
 class CRM_Logging_ReportSummary extends CRM_Report_Form {
   protected $cid;
 
-  protected $_logTables =
+  protected $_logTables = array();
+
+  protected $loggingDB;
+
+  function __construct() {
+    $this->_logTables =
     array(
       'log_civicrm_contact' =>
       array( 'fk'  => 'id',
@@ -86,13 +91,11 @@ class CRM_Logging_ReportSummary extends CRM_Report_Form {
       'log_civicrm_activity' =>
       array( 'fk'  => 'target_contact_id',
         'joins' => array('table' => 'log_civicrm_activity_target', 'join' => 'entity_log_civireport.id = fk_table.activity_id'),
-        'bracket_info'  => array('table' => 'log_civicrm_activity', 'column' => 'subject'),
+        'bracket_info'  => array('options' => CRM_Core_PseudoConstant::activityType(TRUE, TRUE, FALSE, 'label', TRUE)),
+        'entity_column' => 'activity_type_id',
       ),
     );
 
-  protected $loggingDB;
-
-  function __construct() {
     // don’t display the ‘Add these Contacts to Group’ button
     $this->_add2groupSupported = FALSE;
 
@@ -223,12 +226,14 @@ ORDER BY entity_log_civireport.log_date DESC {$this->_limit}";
         $entityID = $id;
       }
 
-      if ($entityID && $logDate) {
+      if ($entityID && $logDate && array_key_exists('table', $this->_logTables[$entity]['bracket_info'])) {
         $sql = "
 SELECT {$this->_logTables[$entity]['bracket_info']['column']} 
 FROM  `{$this->loggingDB}`.{$this->_logTables[$entity]['bracket_info']['table']} 
 WHERE  log_date <= %1 AND id = %2 ORDER BY log_date DESC LIMIT 1";
         return CRM_Core_DAO::singleValueQuery($sql, array(1 => array(CRM_Utils_Date::isoToMysql($logDate), 'Timestamp'), 2 => array ($entityID, 'Integer')));
+      } else if (array_key_exists('options', $this->_logTables[$entity]['bracket_info']) && $entityID) {
+        return $this->_logTables[$entity]['bracket_info']['options'][$entityID];
       }
     }
     return null;

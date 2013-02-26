@@ -36,6 +36,9 @@
  */
 class CRM_Report_Form_Contact_LoggingSummary extends CRM_Logging_ReportSummary {
   function __construct() {
+    parent::__construct();
+
+    $logTypes = array();
     foreach ( array_keys($this->_logTables) as  $table ) {
       $type = $this->getLogType($table);
       $logTypes[$type] = $type;
@@ -146,7 +149,6 @@ class CRM_Report_Form_Contact_LoggingSummary extends CRM_Logging_ReportSummary {
         ),
       ),
     );
-    parent::__construct();
   }
 
   function alterDisplay(&$rows) {
