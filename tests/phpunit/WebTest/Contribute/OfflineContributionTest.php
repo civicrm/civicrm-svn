@@ -137,7 +137,7 @@ class WebTest_Contribute_OfflineContributionTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent("thankyou_date");
 
     $this->type("note", "This is a test note.");
-    $this->type("non_deductible_amount", "10");
+    $this->type("non_deductible_amount", "10.00");
     $this->type("fee_amount", "0");
     $this->type("net_amount", "0");
     $this->type("invoice_id", time());
@@ -179,6 +179,7 @@ class WebTest_Contribute_OfflineContributionTest extends CiviSeleniumTestCase {
       'Contribution Status' => 'Completed',
       'Paid By'             => 'Check',
       'Check Number'        => 'check #1041',
+      'Non-deductible Amount' => '10.00',
       'Received Into'       => $financialAccount,
       'Soft Credit To'      => "{$softCreditFname} {$softCreditLname}"
     );

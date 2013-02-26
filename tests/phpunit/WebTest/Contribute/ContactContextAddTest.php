@@ -127,7 +127,6 @@ class WebTest_Contribute_ContactContextAddTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent("thankyou_date");
     
     $this->type("note", "Test note for {$firstName}.");
-    $this->type("non_deductible_amount", "10");
     $this->type("fee_amount", "0");
     $this->type("net_amount", "0");
     $this->type("invoice_id", time());
@@ -163,13 +162,14 @@ class WebTest_Contribute_ContactContextAddTest extends CiviSeleniumTestCase {
     $this->click("xpath=//div[@id='Contributions']//table/tbody/tr/td[8]/span/a[text()='View']");
     $this->waitForElementPresent('_qf_ContributionView_cancel-bottom');
 
-    // verify Contribution created
+    // verify Contribution created. Non-deductible amount derived from market value of selected 'sample' coffee mug premium (CRM-11956)
     $verifyData = array(
       'From' => $firstName . " Anderson",
       'Financial Type' => 'Donation',
       'Contribution Status' => 'Completed',
       'Paid By' => 'Check',
       'Total Amount' => '$ 100.00',
+      'Non-deductible Amount' => '$ 12.50',
       'Check Number' => 'check #1041',
     );
     foreach ($verifyData as $label => $value) {

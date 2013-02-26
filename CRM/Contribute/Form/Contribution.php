@@ -1186,6 +1186,51 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
       if ($isQuickConfig) {
         $params['is_quick_config'] = 1;
       }
+
+      // CRM-11956
+      // if non_deductible_amount exists i.e. Additional Details fieldset was opened [and staff typed something] -> keep it.
+      if (isset($params['non_deductible_amount']) && (!empty($params['non_deductible_amount']))) {
+        $params['non_deductible_amount'] = $params['non_deductible_amount'];
+      }
+      // if non_deductible_amount does NOT exist - then calculate it depending on:
+      // $ContributionType->is_deductible and whether there is a product (premium).
+      else {
+        $contributionType = new CRM_Financial_DAO_FinancialType();
+        $contributionType->id = $params['financial_type_id'];
+        if (!$contributionType->find(TRUE)) {
+          CRM_Core_Error::fatal('Could not find a system table');
+        }
+        if ($contributionType->is_deductible) {
+
+          if (isset($formValues['product_name'][0])) {
+            $selectProduct = $formValues['product_name'][0];
+          }
+          // if there is a product - compare the value to the contribution amount
+          if (isset($selectProduct))
+           {
+            $productDAO = new CRM_Contribute_DAO_Product();
+            $productDAO->id = $selectProduct;
+            $productDAO->find(TRUE);
+            // product value exceeds contribution amount
+            if ($params['total_amount'] < $productDAO->price) {
+              $params['non_deductible_amount'] = $params['total_amount'];
+            }
+            // product value does NOT exceed contribution amount
+            else {
+              $params['non_deductible_amount'] = $productDAO->price;
+            }
+          }
+          // contribution is deductible - but there is no product
+          else {
+            $params['non_deductible_amount'] = '0.00';
+          }
+        }
+        // contribution is NOT deductible
+        else {
+          $params['non_deductible_amount'] = $params['total_amount'];
+        }
+      }
+
       $contribution = CRM_Contribute_BAO_Contribution::create($params, $ids);
 
       // process associated membership / participant, CRM-4395
