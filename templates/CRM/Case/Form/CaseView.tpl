@@ -133,9 +133,9 @@
   {if $mergeCases}
     <tr class="crm-case-caseview-form-block-merge_case_id">
       <td colspan='2'><a href="#" onClick='cj("#merge_cases").toggle( ); return false;'>{ts}Merge Case{/ts}</a>
-              <span id='merge_cases' class='hide-block'>
-                  {$form.merge_case_id.html}&nbsp;{$form._qf_CaseView_next_merge_case.html}
-              </span>
+        <span id='merge_cases' class='hide-block'>
+          {$form.merge_case_id.html}&nbsp;{$form._qf_CaseView_next_merge_case.html}
+        </span>
       </td>
     </tr>
   {/if}
@@ -144,7 +144,7 @@
     <tr class="crm-case-caseview-form-block-change_client_id">
       <td colspan='2'><a href="#" onClick='cj("#change_client").toggle( ); return false;'>{ts}Assign to Another Client{/ts}</a>
           <span id='change_client' class='hide-block'>
-              {$form.change_client_id.html|crmAddClass:twenty}&nbsp;{$form._qf_CaseView_next_edit_client.html}
+            {$form.change_client_id.html|crmAddClass:twenty}&nbsp;{$form._qf_CaseView_next_edit_client.html}
           </span>
       </td>
     </tr>
@@ -495,11 +495,11 @@ cj(function(){
  {literal}
  <script type="text/javascript">
    cj(function( ) {
-      buildCaseClientRelationships( false );
+      buildCaseClientRelationships(false);
    });
 
- function buildCaseClientRelationships( filterSearch ) {
-   if( filterSearch ) {
+ function buildCaseClientRelationships(filterSearch) {
+   if (filterSearch) {
      oTable.fnDestroy();
    }
    var count   = 0;
@@ -535,8 +535,7 @@ cj(function(){
       "sAjaxSource": sourceUrl,
       "iDisplayLength": 10,
       "fnDrawCallback": function() { setClientRelationshipsSelectorClass(); },
-      "fnServerData": function ( sSource, aoData, fnCallback ) {
-
+      "fnServerData": function (sSource, aoData, fnCallback) {
         cj.ajax( {
           "dataType": 'json',
           "type": "POST",
@@ -549,8 +548,8 @@ cj(function(){
  }
 
   function setClientRelationshipsSelectorClass( ) {
-    cj("#clientRelationships-selector td:last-child").each( function( ) {
-      cj(this).parent().addClass(cj(this).text() );
+    cj("#clientRelationships-selector td:last-child").each(function() {
+      cj(this).parent().addClass(cj(this).text());
     });
   }
  </script>
@@ -580,12 +579,12 @@ cj(function(){
  {literal}
  <script type="text/javascript">
 
- cj( function ( ) {
-    buildCaseGlobalRelationships( false );
+ cj(function() {
+    buildCaseGlobalRelationships(false);
  });
 
- function buildCaseGlobalRelationships( filterSearch ) {
-   if( filterSearch ) {
+ function buildCaseGlobalRelationships(filterSearch) {
+   if (filterSearch) {
      oTable.fnDestroy();
    }
    var count   = 0;
@@ -595,7 +594,7 @@ cj(function(){
    sourceUrl = sourceUrl + '&userID={/literal}{$userID}{literal}';
 
     cj('#globalRelationships-selector th').each( function( ) {
-      if ( cj(this).attr('id') != 'nosort' ) {
+      if (cj(this).attr('id') != 'nosort') {
         columns += '{"sClass": "' + cj(this).attr('class') +'"},';
       }
       else {
@@ -622,7 +621,6 @@ cj(function(){
       "iDisplayLength": 10,
       "fnDrawCallback": function() { setGlobalRelationshipsSelectorClass(); },
       "fnServerData": function ( sSource, aoData, fnCallback ) {
-
         cj.ajax( {
           "dataType": 'json',
           "type": "POST",
@@ -672,7 +670,6 @@ function addRole() {
       background: "black"
     },
 
-
     open:function() {
       /* set defaults if editing */
       cj("#role_contact").val( "" );
@@ -705,7 +702,7 @@ function addRole() {
         }
 
         var v1 = cj("#role_contact_id").val( );
-        if ( ! cj("#role_contact").val( ) || ! v1 ) {
+        if (!cj("#role_contact").val( ) || !v1) {
           cj("#role_contact").crmError('{/literal}{ts escape="js"}Select valid contact from the list{/ts}{literal}.');
           return false;
         }
@@ -714,12 +711,13 @@ function addRole() {
         var postUrl = {/literal}"{crmURL p='civicrm/ajax/relation' h=0 }"{literal};
         var data = 'rel_contact='+ v1 + '&rel_type='+ v2 + '&contact_id='+sourceContact + '&rel_id='+ relID
           + '&case_id=' + caseID + "&key={/literal}{crmKey name='civicrm/ajax/relation'}{literal}";
-        cj.ajax({ type     : "POST",
+        cj.ajax({
+          type     : "POST",
           url      : postUrl,
           data     : data,
           async    : false,
           dataType : "json",
-          success  : function( values ) {
+          success  : function(values) {
             if (values.status == 'process-relationship-success') {
               // reloading datatable
               var oTable = cj('#caseRoles-selector').dataTable();
@@ -728,7 +726,7 @@ function addRole() {
             else {
               var relTypeName = cj("#role_type :selected").text();
               var relTypeAdminLink = {/literal}"{crmURL p='civicrm/admin/reltype' q='reset=1' h=0 }"{literal};
-              var errorMsg = '{/literal}{ts escape="js" 1="' + relTypeName + '" 2="' + relTypeAdminLink + '"  }The relationship type definition for the %1 case role is not valid for the client and / or staff contact types. You can review and edit relationship types at <a href="%2">Administer >> Option Lists >> Relationship Types</a>{/ts}{literal}.';
+              var errorMsg = '{/literal}{ts escape="js" 1="' + relTypeName + '" 2="' + relTypeAdminLink + '"}The relationship type definition for the %1 case role is not valid for the client and / or staff contact types. You can review and edit relationship types at <a href="%2">Administer >> Option Lists >> Relationship Types</a>{/ts}{literal}.';
 
               //display error message.
               cj().crmError(errorMsg);
@@ -754,7 +752,7 @@ function addRole() {
 {include file="CRM/Case/Form/ActivityChangeStatus.tpl"}
 
 {* pane to display / edit regular tags or tagsets for cases *}
-{if $showTags OR $showTagsets }
+{if $showTags OR $showTagsets}
 
 <div id="casetags" class="crm-accordion-wrapper  crm-case-tags-block">
  <div class="crm-accordion-header">
@@ -825,8 +823,8 @@ function addTags() {
         var caseID      = {/literal}{$caseID}{literal};
 
         cj("#manageTags #tags option").each( function() {
-          if ( cj(this).prop('selected') ) {
-            if ( !tagsChecked ) {
+          if (cj(this).prop('selected')) {
+            if (!tagsChecked) {
               tagsChecked = cj(this).val() + '';
             }
             else {
@@ -836,8 +834,8 @@ function addTags() {
         });
 
         var tagList = '';
-        cj("#manageTags input[name^=case_taglist]").each( function( ) {
-          if ( !tagsChecked ) {
+        cj("#manageTags input[name^=case_taglist]").each(function( ) {
+          if (!tagsChecked) {
             tagsChecked = cj(this).val() + '';
           }
           else {
