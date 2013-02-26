@@ -188,6 +188,7 @@ class CRM_Contribute_Form_ContributionPage_Custom extends CRM_Contribute_Form_Co
     }
 
     $errorMsg = ts('You must enable the Membership Block for this Contribution Page if you want to include a Profile with Membership fields.');
+
     if (($preProfileType == 'Membership') && !$membershipEnable) {
       $errors['custom_pre_id'] = $errorMsg;
     }
@@ -197,25 +198,17 @@ class CRM_Contribute_Form_ContributionPage_Custom extends CRM_Contribute_Form_Co
     }
    
     $behalf = CRM_Core_DAO::getFieldValue('CRM_Contribute_DAO_ContributionPage', $contributionPageId, 'is_for_organization');
-
-    $params = array();
     if ($fields['custom_pre_id']) {
-      $params['uf_group_id'] = $fields['custom_pre_id'];
-      $params['field_type']  = 'Membership';
-      $membershipCustomData = CRM_Core_BAO_UFField::checkForCustomData($params);
-      $errorMsg = ts('You should move the membership related custom fields in the "On Behalf" profile for this Contribution Page');
-      if (($preProfileType == 'Membership') && $behalf && $membershipCustomData) {
-        $errors['custom_pre_id'] = $errorMsg;
+      $errorMsg = ts('You should move the membership related fields in the "On Behalf" profile for this Contribution Page');
+      if ($preProfileType == 'Membership' && $behalf) {
+        $errors['custom_pre_id'] = isset($errors['custom_pre_id']) ? $errors['custom_pre_id'] . $errorMsg : $errorMsg;
       }
     }
 
     if ($fields['custom_post_id']) {
-      $params['uf_group_id'] = $fields['custom_post_id'];
-      $params['field_type']  = 'Membership';
-      $membershipCustomData = CRM_Core_BAO_UFField::checkForCustomData($params);
-      $errorMsg = ts('You should move the membership related custom fields in the "On Behalf" profile for this Contribution Page');
-      if (($postProfileType == 'Membership') && $behalf && $membershipCustomData) {
-        $errors['custom_post_id'] = $errorMsg;
+      $errorMsg = ts('You should move the membership related fields in the "On Behalf" profile for this Contribution Page');
+      if ($postProfileType == 'Membership' && $behalf) {
+        $errors['custom_post_id'] = isset($errors['custom_post_id']) ? $errors['custom_post_id'] . $errorMsg : $errorMsg;
       }
     }
     return empty($errors) ? TRUE : $errors;
