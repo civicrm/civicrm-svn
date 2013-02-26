@@ -35,13 +35,11 @@ class WebTest_Contribute_OfflineContributionTest extends CiviSeleniumTestCase {
   protected $screenshotPath = '/var/www/api.dev.civicrm.org/public/sc';
   protected $screenshotUrl = 'http://api.dev.civicrm.org/sc/';
     
-  protected function setUp()
-  {
-      parent::setUp();
+  protected function setUp() {
+    parent::setUp();
   }
   
-  function testStandaloneContributeAdd()
-  {
+  function testStandaloneContributeAdd() {
     // This is the path where our testing install resides. 
     // The rest of URL is defined in CiviSeleniumTestCase base class, in
     // class attributes.
@@ -205,4 +203,161 @@ class WebTest_Contribute_OfflineContributionTest extends CiviSeleniumTestCase {
       $this->verifyText("xpath=id('Search')/div[2]/table[2]/tbody/tr[2]/td[$value]", preg_quote($label));
     }
   }
+  
+  function testDeductibleAmount() {
+    // This is the path where our testing install resides. 
+    // The rest of URL is defined in CiviSeleniumTestCase base class, in
+    // class attributes.
+    $this->open( $this->sboxPath );
+
+    // Logging in. Remember to wait for page to load. In most cases,
+    // you can rely on 30000 as the value that allows your test to pass, however,
+    // sometimes your test might fail because of this. In such cases, it's better to pick one element
+    // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
+    // page contents loaded and you can continue your test execution.
+    $this->webtestLogin();
+
+    //add authorize .net payment processor
+    $processorName = 'Webtest AuthNet' . substr(sha1(rand()), 0, 7);
+    $this->webtestAddPaymentProcessor($processorName, 'AuthNet');
+      
+    $this->open($this->sboxPath . "civicrm/admin/contribute/managePremiums?action=add&reset=1");
+    $premiumName = 'test Premium' . substr(sha1(rand()), 0, 7);
+    $this->addPremium($premiumName, 'SKU', 3, 12, NULL, NULL);
+    
+    $firstName = 'John'.substr(sha1(rand()), 0, 7);
+    $lastName = 'Dsouza'.substr(sha1(rand()), 0, 7);
+    $this->webtestAddContact($firstName, $lastName);
+
+    //scenario 1 : is_deductible = 0 and non deductible amount is entered
+    $scenario1 = array(
+      'financial_type' => 'Campaign Contribution',
+      'total_amount' => 111,
+      'non_deductible_amount' => 15
+    );
+    $this->_doOfflineContribution($scenario1, $firstName, $lastName, $processorName);
+    
+    $checkScenario1 = array(
+      'From' => "{$firstName} {$lastName}",
+      'Financial Type' => 'Campaign Contribution',
+      'Total Amount' => 111,
+      'Non-deductible Amount' => 15
+    );
+    $this->_verifyAmounts($checkScenario1);
+    
+    //scenario 2 : is_deductible = TRUE and premium is set and premium is greater than total amount
+    $scenario2 = array(
+      'financial_type' => 'Donation',
+      'total_amount' => 10,
+      'premium' => "{$premiumName} ( SKU )"
+    );
+    $this->_doOfflineContribution($scenario2, $firstName, $lastName, $processorName);
+    
+    $checkScenario2 = array(
+      'From' => "{$firstName} {$lastName}",
+      'Financial Type' => 'Donation',
+      'Total Amount' => 10,
+      'Non-deductible Amount' => 10
+    );
+    $this->_verifyAmounts($checkScenario2);
+      
+    //scenario 3 : is_deductible = TRUE and premium is set and premium is less than total amount
+    $scenario3 = array(
+      'financial_type' => 'Donation',
+      'total_amount' => 123,
+      'premium' => "{$premiumName} ( SKU )"
+    );
+    $this->_doOfflineContribution($scenario3, $firstName, $lastName, $processorName);
+    
+    $checkScenario3 = array(
+      'From' => "{$firstName} {$lastName}",
+      'Financial Type' => 'Donation',
+      'Total Amount' => 123,
+      'Non-deductible Amount' => 12
+    );
+    $this->_verifyAmounts($checkScenario3);
+  
+    //scenario 4 : is_deductible = TRUE and premium is not set
+    $scenario4 = array(
+      'financial_type' => 'Donation',
+      'total_amount' => 123,
+    );
+    $this->_doOfflineContribution($scenario4, $firstName, $lastName, $processorName);
+   
+    $checkScenario4 = array(
+      'From' => "{$firstName} {$lastName}",
+      'Financial Type' => 'Donation',
+      'Total Amount' => 123,
+      'Non-deductible Amount' => '0.00'
+    );
+    $this->_verifyAmounts($checkScenario4);
+  }
+  
+  //common function for doing offline contribution
+  function _doOfflineContribution($params, $firstName, $lastName, $processorName) {
+           
+    $this->waitForElementPresent("css=li#tab_contribute a");
+    $this->click("css=li#tab_contribute a");
+    $this->waitForElementPresent("link=Submit Credit Card Contribution");
+    $this->click("link=Submit Credit Card Contribution");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
+
+    // since we don't have live credentials we will switch to test mode
+    $url = $this->getLocation();
+    $url = str_replace('mode=live', 'mode=test', $url);
+    $this->open($url);
+
+    // start filling out contribution form
+    $this->waitForElementPresent('payment_processor_id');
+    $this->select('payment_processor_id', "label={$processorName}");
+
+    // select financial type
+    $this->select("financial_type_id", "label={$params['financial_type']}");
+
+    // total amount
+    $this->type("total_amount", "{$params['total_amount']}");
+
+    // enter credit card info on form
+    $this->webtestAddCreditCardDetails();
+
+    // billing address
+    $this->webtestAddBillingDetails($firstName, NULL, $lastName);
+    
+    if ($nonDeductibleAmt = CRM_Utils_Array::value('non_deductible_amount', $params)) {
+      $this->click("AdditionalDetail");
+      $this->waitForElementPresent("thankyou_date");
+      $this->type("note", "This is a test note.");
+      $this->type("non_deductible_amount", "{$nonDeductibleAmt}");
+    }
+
+    if (CRM_Utils_Array::value('premium', $params)) {
+      //Premium section
+      $this->click("Premium");
+      $this->waitForElementPresent("fulfilled_date");
+      $this->select("product_name[0]", "label={$params['premium']}");
+    }
+    // Clicking save.
+    $this->click("_qf_Contribution_upload");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
+
+    // Is status message correct?
+    $this->assertTrue($this->isTextPresent("The contribution record has been processed."), "Status message didn't show up after saving!");
+  }
+  
+  //common function for verifing total_amount, and non_deductible_amount
+  function _verifyAmounts($verifyData) {
+    $this->waitForElementPresent( "xpath=//div[@id='Contributions']//table//tbody/tr[1]/td[8]/span/a[text()='View']" );
+    $this->click( "xpath=//div[@id='Contributions']//table/tbody/tr[1]/td[8]/span/a[text()='View']" );
+    $this->waitForPageToLoad($this->getTimeoutMsec());    
+
+    foreach ($verifyData as $label => $value) {
+      $this->verifyText("xpath=//form[@id='ContributionView']//table/tbody/tr/td[text()='{$label}']/following-sibling::td",
+        preg_quote($value)
+      );
+    }
+
+    $this->click("_qf_ContributionView_cancel-top");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
+  }
+
 }
