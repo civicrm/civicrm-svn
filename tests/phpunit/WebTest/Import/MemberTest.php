@@ -94,39 +94,27 @@ class WebTest_Import_MemberTest extends ImportCiviSeleniumTestCase {
     $year = date('Y') - 1;
     $startDate2 = date('Y-m-d', mktime(0, 0, 0, 9, 10, $year));
 
-    $contactInfo = array(
-      array(
-        'first_name' => $firstName1, 
-        'last_name' => 'Anderson'
-      ), 
-      array(
-        'first_name' => $firstName2, 
-        'last_name' => 'Anderson'
-      ),
-    );
-    $cids = $this->_getImportedContactIds($contactInfo);
-
     $headers = array(
-      'contact_id' => 'Contact ID',
+      'email' => 'Email',
       'membership_type_id' => 'Membership Type',
       'membership_start_date' => 'Membership Start Date',
     );
 
     $rows = array(
       array(
-        'contact_id' => $cids[0],
+        'email' => $email1,
         'membership_type_id' => $memTypeParams['membership_type'],
         'membership_start_date' => $startDate1,
       ),
       array(
-        'contact_id' => $cids[1],
+        'email' => $email2,
         'membership_type_id' => $memTypeParams['membership_type'],
         'membership_start_date' => $startDate2,
       ),
     );
 
     $fieldMapper = array(
-      'mapper[0][0]' => 'membership_contact_id',
+      'mapper[0][0]' => 'email',
       'mapper[1][0]' => 'membership_type_id',
       'mapper[2][0]' => 'membership_start_date',
     );

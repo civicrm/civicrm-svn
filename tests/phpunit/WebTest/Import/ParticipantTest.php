@@ -49,7 +49,7 @@ class WebTest_Import_ParticipantTest extends ImportCiviSeleniumTestCase {
    
     // Create and import csv from provided data and check imported data.
     $fieldMapper = array(
-      'mapper[0][0]' => 'participant_contact_id',
+      'mapper[0][0]' => 'email',
       'mapper[1][0]' => 'event_id',
       'mapper[2][0]' => 'participant_fee_level',
       'mapper[4][0]' => 'participant_status_id',
@@ -123,21 +123,9 @@ class WebTest_Import_ParticipantTest extends ImportCiviSeleniumTestCase {
     $firstName2 = substr(sha1(rand()), 0, 7);
     $email2 = 'mail_' . substr(sha1(rand()), 0, 7) . '@example.com';
     $this->webtestAddContact($firstName2, 'Anderson', $email2);
-  
-    $contactInfo = array(
-      array(
-        'first_name' => $firstName1, 
-        'last_name' => 'Anderson'
-      ), 
-      array(
-        'first_name' => $firstName2, 
-        'last_name' => 'Anderson'
-      ),
-    );
-    $cids = $this->_getImportedContactIds($contactInfo);
 
     $headers = array(
-      'contact_id' => 'Contact ID',
+      'email' => 'Email',
       'event_id' => 'Event Id',
       'fee_level' => 'Fee Level',
       'role' => 'Participant Role',
@@ -147,7 +135,7 @@ class WebTest_Import_ParticipantTest extends ImportCiviSeleniumTestCase {
 
     $rows = array(
       array(
-        'contact_id' => $cids[0],
+        'email' => $email1,
         'event_id' => $eventInfo['event_id'],
         'fee_level' => 'Member',
         'role' => 1,
@@ -155,7 +143,7 @@ class WebTest_Import_ParticipantTest extends ImportCiviSeleniumTestCase {
         'register_date' => '2011-03-30',
       ),
       array(
-        'contact_id' => $cids[1],
+        'email' => $email2,
         'event_id' => $eventInfo['event_id'],
         'fee_level' => 'Non-Member',
         'role' => 1,
