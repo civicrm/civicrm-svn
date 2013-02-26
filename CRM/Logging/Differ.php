@@ -84,6 +84,9 @@ class CRM_Logging_Differ {
       case 'civicrm_activity':
         $contactIdClause = "AND id = (select activity_id FROM civicrm_activity_target WHERE target_contact_id = {$contactID} LIMIT 1)";
         break;
+      case 'civicrm_case':
+        $contactIdClause = "AND id = (select case_id FROM civicrm_case_contact WHERE contact_id = {$contactID} LIMIT 1)";
+        break;
       default:
         $contactIdClause = "AND contact_id = {$contactID}";
         if ( strpos($table, 'civicrm_value') !== false ) {
@@ -192,6 +195,7 @@ class CRM_Logging_Differ {
       'civicrm_note' => 'CRM_Core_DAO_Note',
       'civicrm_relationship' => 'CRM_Contact_DAO_Relationship',
       'civicrm_activity' => 'CRM_Activity_DAO_Activity',
+      'civicrm_case' => 'CRM_Case_DAO_Case',
     );
 
     if (!isset($titles[$table]) or !isset($values[$table])) {
@@ -215,6 +219,7 @@ class CRM_Logging_Differ {
           'state_province_id' => CRM_Core_PseudoConstant::stateProvince(),
           'suffix_id' => CRM_Core_PseudoConstant::individualSuffix(),
           'website_type_id' => CRM_Core_PseudoConstant::websiteType(),
+          'status_id' => CRM_Case_PseudoConstant::caseStatus('label', FALSE),
         );
 
         require_once str_replace('_', DIRECTORY_SEPARATOR, $daos[$table]) . '.php';
