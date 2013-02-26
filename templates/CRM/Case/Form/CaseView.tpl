@@ -898,34 +898,34 @@ function addTags() {
         <table class="no-border form-layout-compressed" id="searchOptions">
           <tr>
             <td class="crm-case-caseview-form-block-repoter_id"colspan="2"><label for="reporter_id">{ts}Reporter/Role{/ts}</label><br />
-                {$form.reporter_id.html|crmAddClass:twenty}
+              {$form.reporter_id.html|crmAddClass:twenty}
             </td>
             <td class="crm-case-caseview-form-block-status_id"><label for="status_id">{$form.status_id.label}</label><br />
-                {$form.status_id.html}
+              {$form.status_id.html}
             </td>
             <td style="vertical-align: bottom;">
               <span class="crm-button"><input class="form-submit default" name="_qf_Basic_refresh" value="Search" type="button" onclick="buildCaseActivities( true )"; /></span>
             </td>
-              </tr>
-              <tr>
-                  <td class="crm-case-caseview-form-block-activity_date_low">
-                {$form.activity_date_low.label}<br />
-                      {include file="CRM/common/jcalendar.tpl" elementName=activity_date_low}
-                  </td>
-                  <td class="crm-case-caseview-form-block-activity_date_high">
-                      {$form.activity_date_high.label}<br />
-                      {include file="CRM/common/jcalendar.tpl" elementName=activity_date_high}
-                  </td>
-                  <td class="crm-case-caseview-form-block-activity_type_filter_id">
-                      {$form.activity_type_filter_id.label}<br />
-                      {$form.activity_type_filter_id.html}
-                  </td>
+          </tr>
+          <tr>
+            <td class="crm-case-caseview-form-block-activity_date_low">
+              {$form.activity_date_low.label}<br />
+            {include file="CRM/common/jcalendar.tpl" elementName=activity_date_low}
+            </td>
+            <td class="crm-case-caseview-form-block-activity_date_high">
+              {$form.activity_date_high.label}<br />
+            {include file="CRM/common/jcalendar.tpl" elementName=activity_date_high}
+            </td>
+            <td class="crm-case-caseview-form-block-activity_type_filter_id">
+              {$form.activity_type_filter_id.label}<br />
+              {$form.activity_type_filter_id.html}
+            </td>
           </tr>
           {if $form.activity_deleted}
             <tr class="crm-case-caseview-form-block-activity_deleted">
-             <td>
-              {$form.activity_deleted.html}{$form.activity_deleted.label}
-             </td>
+              <td>
+                {$form.activity_deleted.html}{$form.activity_deleted.label}
+              </td>
             </tr>
           {/if}
         </table>
@@ -934,14 +934,14 @@ function addTags() {
 
     <table id="activities-selector"  class="nestedActivitySelector">
       <thead><tr>
-      <th class='crm-case-activities-date'>{ts}Date{/ts}</th>
-      <th class='crm-case-activities-subject'>{ts}Subject{/ts}</th>
-      <th class='crm-case-activities-type'>{ts}Type{/ts}</th>
-      <th class='crm-case-activities-with'>{ts}With{/ts}</th>
-      <th class='crm-case-activities-assignee'>{ts}Reporter / Assignee{/ts}</th>
-      <th class='crm-case-activities-status'>{ts}Status{/ts}</th>
-      <th class='crm-case-activities-status' id="nosort">&nbsp;</th>
-      <th class='hiddenElement'>&nbsp;</th>
+        <th class='crm-case-activities-date'>{ts}Date{/ts}</th>
+        <th class='crm-case-activities-subject'>{ts}Subject{/ts}</th>
+        <th class='crm-case-activities-type'>{ts}Type{/ts}</th>
+        <th class='crm-case-activities-with'>{ts}With{/ts}</th>
+        <th class='crm-case-activities-assignee'>{ts}Reporter / Assignee{/ts}</th>
+        <th class='crm-case-activities-status'>{ts}Status{/ts}</th>
+        <th class='crm-case-activities-status' id="nosort">&nbsp;</th>
+        <th class='hiddenElement'>&nbsp;</th>
       </tr></thead>
     </table>
 
@@ -953,79 +953,83 @@ function addTags() {
 var oTable;
 
 function checkSelection( field ) {
-    var validationMessage = '';
-    var validationField   = '';
-    var successAction     = '';
-    var forceValidation   = false;
+  var validationMessage = '';
+  var validationField   = '';
+  var successAction     = '';
+  var forceValidation   = false;
 
-    var clientName = new Array( );
-    clientName = selectedContact.split('::');
-    var fName = field.name;
+  var clientName = new Array( );
+  clientName = selectedContact.split('::');
+  var fName = field.name;
 
-    switch ( fName )  {
-        case '_qf_CaseView_next' :
-            validationMessage = '{/literal}{ts escape="js"}Please select an activity set from the list.{/ts}{literal}';
-            validationField   = 'timeline_id';
-            successAction     = "confirm('{/literal}{ts escape='js'}Are you sure you want to add a set of scheduled activities to this case?{/ts}{literal}');";
-            break;
+  switch ( fName )  {
+  case '_qf_CaseView_next' :
+    validationMessage = '{/literal}{ts escape="js"}Please select an activity set from the list.{/ts}{literal}';
+    validationField   = 'timeline_id';
+    successAction     = "confirm('{/literal}{ts escape='js'}Are you sure you want to add a set of scheduled activities to this case?{/ts}{literal}');";
+    break;
 
-        case 'new_activity' :
-            validationMessage = '{/literal}{ts escape="js"}Please select an activity type from the list.{/ts}{literal}';
-            validationField   = 'activity_type_id';
-            if ( document.getElementById('activity_type_id').value == 3 ) {
-                successAction     = "window.location='{/literal}{$newActivityEmailUrl}{literal}' + document.getElementById('activity_type_id').value";
-            } else {
-                successAction     = "window.location='{/literal}{$newActivityUrl}{literal}' + document.getElementById('activity_type_id').value";
-            }
-            break;
-
-        case 'case_report' :
-            validationMessage = '{/literal}{ts escape="js"}Please select a report from the list.{/ts}{literal}';
-            validationField   = 'report_id';
-            successAction     = "window.location='{/literal}{$reportUrl}{literal}' + document.getElementById('report_id').value";
-            break;
-
-        case '_qf_CaseView_next_merge_case' :
-            validationMessage = '{/literal}{ts escape="js"}Please select a case from the list to merge with.{/ts}{literal}';
-            validationField   = 'merge_case_id';
-            break;
-        case '_qf_CaseView_next_edit_client' :
-            validationMessage = '{/literal}{ts escape="js"}Please select a client for this case.{/ts}{literal}';
-      if ( cj('#contact_id').val( ) == '{/literal}{$contactID}{literal}' ) {
-           forceValidation = true;
-                validationMessage = '{/literal}{ts 1="'+clientName[0]+'"}%1 is already assigned to this case. Please select some other client for this case.{/ts}{literal}';
-            }
-            validationField   = 'change_client_id';
-      successAction     = "confirm( '{/literal}{ts 1="'+clientName[0]+'"}Are you sure you want to reassign this case and all related activities and relationships to %1?{/ts}{literal}' )";
-            break;
+  case 'new_activity' :
+    validationMessage = '{/literal}{ts escape="js"}Please select an activity type from the list.{/ts}{literal}';
+    validationField   = 'activity_type_id';
+    if ( document.getElementById('activity_type_id').value == 3 ) {
+      successAction = "window.location='{/literal}{$newActivityEmailUrl}{literal}' + document.getElementById('activity_type_id').value";
     }
-
-    if ( forceValidation || ( document.getElementById( validationField ).value == '' ) ) {
-        cj('#'+validationField).crmError(validationMessage);
-        return false;
-    } else if ( successAction ) {
-        return eval( successAction );
+    else {
+      successAction = "window.location='{/literal}{$newActivityUrl}{literal}' + document.getElementById('activity_type_id').value";
     }
+    break;
+
+  case 'case_report' :
+    validationMessage = '{/literal}{ts escape="js"}Please select a report from the list.{/ts}{literal}';
+    validationField   = 'report_id';
+    successAction     = "window.location='{/literal}{$reportUrl}{literal}' + document.getElementById('report_id').value";
+    break;
+
+  case '_qf_CaseView_next_merge_case' :
+    validationMessage = '{/literal}{ts escape="js"}Please select a case from the list to merge with.{/ts}{literal}';
+    validationField   = 'merge_case_id';
+    break;
+
+  case '_qf_CaseView_next_edit_client' :
+    validationMessage = '{/literal}{ts escape="js"}Please select a client for this case.{/ts}{literal}';
+    if ( cj('#contact_id').val( ) == '{/literal}{$contactID}{literal}' ) {
+      forceValidation = true;
+      validationMessage = '{/literal}{ts 1="'+clientName[0]+'"}%1 is already assigned to this case. Please select some other client for this case.{/ts}{literal}';
+    }
+    validationField   = 'change_client_id';
+    successAction     = "confirm( '{/literal}{ts 1="'+clientName[0]+'"}Are you sure you want to reassign this case and all related activities and relationships to %1?{/ts}{literal}' )";
+    break;
+  }
+
+  if ( forceValidation || ( document.getElementById( validationField ).value == '' ) ) {
+    cj('#'+validationField).crmError(validationMessage);
+    return false;
+  }
+  else if ( successAction ) {
+    return eval( successAction );
+  }
 }
 
-cj( function ( ) {
-   buildCaseActivities( false );
+cj(function( ) {
+  buildCaseActivities(false);
 });
 
-function buildCaseActivities( filterSearch ) {
-  if( filterSearch ) {
-      oTable.fnDestroy();
-   }
+function buildCaseActivities(filterSearch) {
+  if (filterSearch) {
+    oTable.fnDestroy();
+  }
   var count   = 0;
   var columns = '';
   var sourceUrl = {/literal}"{crmURL p='civicrm/ajax/activity' h=0 q='snippet=4&caseID='}{$caseID}"{literal};
-            sourceUrl = sourceUrl + '&cid={/literal}{$contactID}{literal}';
-            sourceUrl = sourceUrl + '&userID={/literal}{$userID}{literal}';
+  sourceUrl = sourceUrl + '&cid={/literal}{$contactID}{literal}';
+  sourceUrl = sourceUrl + '&userID={/literal}{$userID}{literal}';
 
-        cj('#activities-selector th').each( function( ) {
-          if ( cj(this).attr('id') != 'nosort' ) {
+  cj('#activities-selector th').each(function( ) {
+    if (cj(this).attr('id') != 'nosort') {
       columns += '{"sClass": "' + cj(this).attr('class') +'"},';
-    } else {
+    }
+    else {
       columns += '{ "bSortable": false },';
     }
     count++;
@@ -1034,45 +1038,44 @@ function buildCaseActivities( filterSearch ) {
   columns    = columns.substring(0, columns.length - 1 );
   eval('columns =[' + columns + ']');
 
-   oTable = cj('#activities-selector').dataTable({
-            "bFilter"    : false,
-            "bAutoWidth" : false,
-            "aaSorting"  : [],
-            "aoColumns"  : columns,
-        "bProcessing": true,
-            "bJQueryUI": true,
-            "asStripClasses" : [ "odd-row", "even-row" ],
-            "sPaginationType": "full_numbers",
-            "sDom"       : '<"crm-datatable-pager-top"lfp>rt<"crm-datatable-pager-bottom"ip>',
-            "bServerSide": true,
-            "sAjaxSource": sourceUrl,
-            "iDisplayLength": 10,
-            "fnDrawCallback": function() { setSelectorClass(); },
-            "fnServerData": function ( sSource, aoData, fnCallback ) {
+  oTable = cj('#activities-selector').dataTable({
+    "bFilter"    : false,
+    "bAutoWidth" : false,
+    "aaSorting"  : [],
+    "aoColumns"  : columns,
+    "bProcessing": true,
+    "bJQueryUI": true,
+    "asStripClasses" : [ "odd-row", "even-row" ],
+    "sPaginationType": "full_numbers",
+    "sDom"       : '<"crm-datatable-pager-top"lfp>rt<"crm-datatable-pager-bottom"ip>',
+    "bServerSide": true,
+    "sAjaxSource": sourceUrl,
+    "iDisplayLength": 10,
+    "fnDrawCallback": function() { setSelectorClass(); },
+    "fnServerData": function ( sSource, aoData, fnCallback ) {
 
-        if ( filterSearch ) {
+      if ( filterSearch ) {
         var activity_deleted = 0;
-            if ( cj("#activity_deleted:checked").val() == 1 ) {
-                 activity_deleted = 1;
-                  }
-        aoData.push(
-        {name:'status_id', value: cj("select#status_id").val()},
-        {name:'activity_type_id', value: cj("select#activity_type_filter_id").val()},
-        {name:'activity_date_low', value: cj("#activity_date_low").val()},
-        {name:'activity_date_high', value: cj("#activity_date_high").val() },
-        {name:'activity_deleted', value: activity_deleted }
-        );
+        if ( cj("#activity_deleted:checked").val() == 1 ) {
+          activity_deleted = 1;
         }
-        cj.ajax( {
-         "dataType": 'json',
+        aoData.push(
+          {name:'status_id', value: cj("select#status_id").val()},
+          {name:'activity_type_id', value: cj("select#activity_type_filter_id").val()},
+          {name:'activity_date_low', value: cj("#activity_date_low").val()},
+          {name:'activity_date_high', value: cj("#activity_date_high").val() },
+          {name:'activity_deleted', value: activity_deleted }
+        );
+      }
+      cj.ajax( {
+        "dataType": 'json',
         "type": "POST",
         "url": sSource,
         "data": aoData,
         "success": fnCallback
-        } );
-        }
-         });
-
+      } );
+    }
+  });
 }
 
 function setSelectorClass( ) {
@@ -1098,12 +1101,11 @@ function printCaseReport( ) {
 
 {literal}
 <script type="text/javascript">
-cj(function() {
-   cj().crmAccordions();
-});
+  cj(function() {
+    cj().crmAccordions();
+  });
 </script>
 {/literal}
-
 
 {/if} {* view related cases if end *}
 </div>
