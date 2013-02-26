@@ -462,7 +462,7 @@ class CRM_Contact_BAO_Query {
 
     $this->_customQuery = NULL;
 
-    //reset cache, CRM-5803
+    // reset cached static variables - CRM-5803
     self::$_activityRole = NULL;
     self::$_considerCompActivities = NULL;
     self::$_withContactActivitiesOnly = NULL;
@@ -3907,7 +3907,8 @@ civicrm_relationship.start_date > CURDATE()
    * @return void
    * @access public
    */
-  static function apiQuery($params = NULL,
+  static function apiQuery(
+    $params = NULL,
     $returnProperties = NULL,
     $fields = NULL,
     $sort = NULL,
@@ -3918,16 +3919,18 @@ civicrm_relationship.start_date > CURDATE()
     $skipPermissions = True
   ) {
 
-    $query = new CRM_Contact_BAO_Query($params, $returnProperties,
+    $query = new CRM_Contact_BAO_Query(
+      $params, $returnProperties,
       NULL, TRUE, FALSE, 1,
       $skipPermissions,
       TRUE, $smartGroupCache
     );
+
    //this should add a check for view deleted if permissions are enabled
-   if($skipPermissions){
-     $query->_skipDeleteClause = True;
+   if ($skipPermissions){
+     $query->_skipDeleteClause = TRUE;
    }
-    $query->generatePermissionClause(False, $count);
+    $query->generatePermissionClause(FALSE, $count);
     list($select, $from, $where, $having) = $query->query($count);
 
     $options = $query->_options;
@@ -4226,24 +4229,25 @@ civicrm_relationship.start_date > CURDATE()
 
     return $dao;
   }
-/**
- * Populate $this->_permissionWhereClause with permission related clause and update other
- * query related properties.
- *
- * Function calls ACL permission class and hooks to filter the query appropriately
- *
- * Note that these 2 params were in the code when extracted from another function
- * and a second round extraction would be to make them properties of the class
- *
- * @param bool $onlyDeleted Only get deleted contacts
- * @param bool $count Return Count only
- *
- * @return null
- */
-  function generatePermissionClause($onlyDeleted = false, $count = false){
 
-      if (!$this->_skipPermission) {
-        $this->_permissionWhereClause = CRM_ACL_API::whereClause(CRM_Core_Permission::VIEW,
+  /**
+   * Populate $this->_permissionWhereClause with permission related clause and update other
+   * query related properties.
+   *
+   * Function calls ACL permission class and hooks to filter the query appropriately
+   *
+   * Note that these 2 params were in the code when extracted from another function
+   * and a second round extraction would be to make them properties of the class
+   *
+   * @param bool $onlyDeleted Only get deleted contacts
+   * @param bool $count Return Count only
+   *
+   * @return null
+   */
+  function generatePermissionClause($onlyDeleted = FALSE, $count = FALSE) {
+    if (!$this->_skipPermission) {
+      $this->_permissionWhereClause = CRM_ACL_API::whereClause(
+        CRM_Core_Permission::VIEW,
         $this->_tables,
         $this->_whereTables,
         NULL,
