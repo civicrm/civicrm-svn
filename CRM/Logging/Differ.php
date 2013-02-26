@@ -81,6 +81,9 @@ class CRM_Logging_Differ {
       case 'civicrm_relationship':
         $contactIdClause = "AND (contact_id_a = {$contactID} OR contact_id_b = {$contactID})";
         break;
+      case 'civicrm_activity':
+        $contactIdClause = "AND id = (select activity_id FROM civicrm_activity_target WHERE target_contact_id = {$contactID} LIMIT 1)";
+        break;
       default:
         $contactIdClause = "AND contact_id = {$contactID}";
         if ( strpos($table, 'civicrm_value') !== false ) {
@@ -188,6 +191,7 @@ class CRM_Logging_Differ {
       'civicrm_contribution' => 'CRM_Contribute_DAO_Contribution',
       'civicrm_note' => 'CRM_Core_DAO_Note',
       'civicrm_relationship' => 'CRM_Contact_DAO_Relationship',
+      'civicrm_activity' => 'CRM_Activity_DAO_Activity',
     );
 
     if (!isset($titles[$table]) or !isset($values[$table])) {
@@ -198,7 +202,7 @@ class CRM_Logging_Differ {
         $values[$table] = array(
           'contribution_page_id' => CRM_Contribute_PseudoConstant::contributionPage(),
           'contribution_status_id' => CRM_Contribute_PseudoConstant::contributionStatus(),
-                    'financial_type_id'              => CRM_Contribute_PseudoConstant::financialType(),
+          'financial_type_id'              => CRM_Contribute_PseudoConstant::financialType(),
           'country_id' => CRM_Core_PseudoConstant::country(),
           'gender_id' => CRM_Core_PseudoConstant::gender(),
           'location_type_id' => CRM_Core_PseudoConstant::locationType(),
