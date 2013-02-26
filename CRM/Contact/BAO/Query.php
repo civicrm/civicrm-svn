@@ -487,6 +487,39 @@ class CRM_Contact_BAO_Query {
   }
 
   function buildParamsLookup() {
+    // first fix and handle contact deletion nicely
+    // this code is primarily for search builder use case
+    // where different clauses can specify if they want deleted
+    // contacts or not
+    // CRM-11971
+    $trashParamExists = FALSE;
+    $paramByGroup    = array();
+    foreach ( $this->_params as $k => $param ) {
+      if ( $param[0] == 'contact_is_deleted' ) {
+        $trashParamExists = TRUE;
+      }
+      $paramByGroup[$param[3]][$k] = $param;
+    }
+
+    if ( $trashParamExists ) {
+      $this->_skipDeleteClause = TRUE;
+
+      //cycle through group sets and explicitly add trash param if not set
+      foreach ( $paramByGroup as $setID => $set ) {
+        if (
+          !in_array(array('contact_is_deleted', '=', '1', $setID, '0'), $this->_params) &&
+          !in_array(array('contact_is_deleted', '=', '0', $setID, '0'), $this->_params) ) {
+          $this->_params[] = array(
+            'contact_is_deleted',
+            '=',
+            '0',
+            $setID,
+            '0',
+          );
+        }
+      }
+    }
+
     foreach ($this->_params as $value) {
       if (!CRM_Utils_Array::value(0, $value)) {
         continue;
