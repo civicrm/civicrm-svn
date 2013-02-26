@@ -336,7 +336,7 @@ class WebTest_Campaign_OnlineContributionTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent("_qf_ContributionView_cancel-bottom");
 
     //View Contribution Record
-    $this->verifyText("xpath=id('ContributionView')/div[2]/table[1]/tbody/tr[11]/td[2]", preg_quote($campaignTitle));
+    $this->verifyText("xpath=id('ContributionView')/div[2]/table[1]/tbody/tr[10]/td[2]", preg_quote($campaignTitle));
   }
 
   function _testVerifyRegisterPage($contributionPageTitle) {
