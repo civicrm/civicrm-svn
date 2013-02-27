@@ -25,12 +25,12 @@ class TOOLBAR_civicrm {
   /**
    * Draws the tool bar for CiviCRM
    */
-  function _EDIT($displayAction) {
+  static function _EDIT($displayAction) {
 
     JToolBarHelper::title(JText::_('CiviCRM') . ': <small><small>[ ' . $displayAction . ' ]</small></small>', 'generic.png');
   }
 
-  function _DEFAULT() {
+  static function _DEFAULT() {
 
     JToolBarHelper::title(JText::_('CiviCRM'), 'generic.png');
   }
