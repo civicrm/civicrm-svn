@@ -1350,5 +1350,195 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
       "Status message didn't show up after saving!"
     );
   }
+
+
+  function testOnBehalfOfOrganizationWithImage() {
+      // This is the path where our testing install resides.
+      // The rest of URL is defined in CiviSeleniumTestCase base class, in
+      // class attributes.
+      $this->open($this->sboxPath);
+
+      // Logging in. Remember to wait for page to load. In most cases,
+      // you can rely on 30000 as the value that allows your test to pass, however,
+      // sometimes your test might fail because of this. In such cases, it's better to pick one element
+      // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
+      // page contents loaded and you can continue your test execution.
+      $this->webtestLogin();
+
+      $this->open($this->sboxPath . "civicrm/profile/edit?reset=1&gid=4");
+      $firstName     = 'John_x_' . substr(sha1(rand()), 0, 7);
+      $lastName      = 'Anderson_c_' . substr(sha1(rand()), 0, 7);
+
+      $this->waitForPageToLoad($this->getTimeoutMsec());
+      $this->waitForElementPresent("_qf_Edit_next");
+      $this->type("first_name", $firstName);
+      $this->type("last_name", $lastName);
+      $this->click("_qf_Edit_next");
+      $this->waitForPageToLoad($this->getTimeoutMsec());
+      $this->waitForElementPresent("profilewrap4");
+
+      $urlElements = $this->parseURL();
+      $cid = $urlElements['queryString']['id'];
+      $this->assertType('numeric', $cid);
+      // Is status message correct?                                                                                                                                                                          
+      $this->assertTextPresent("Thank you. Your information has been saved.", "Save successful status message didn't show up after saving profile to update testUserName!");
+
+      $this->open($this->sboxPath . "civicrm/admin/uf/group?reset=1");
+      $this->waitForPageToLoad($this->getTimeoutMsec());
+      $this->click("link=Reserved Profiles");
+
+      $this->click("xpath=//div[@id='reserved-profiles']/div/div/table/tbody//tr/td[1][text()='On Behalf Of Organization']/../td[5]/span/a[text()='Fields']");
+      $this->waitForPageToLoad($this->getTimeoutMsec());
+
+      $this->click("link=Add Field");
+      $this->waitForElementPresent('_qf_Field_next-bottom');
+
+      $this->select('field_name[0]', 'value=Contact');
+      $this->select('field_name[1]', 'label=Image Url');
+      $this->click('field_name[1]');
+      $this->click('_qf_Field_next-bottom');
+      $this->waitForPageToLoad($this->getTimeoutMsec());
+
+      // We need a payment processor
+      $processorName = "Webtest Dummy" . substr(sha1(rand()), 0, 7);
+      $processorType = 'Dummy';
+      $pageTitle = substr(sha1(rand()), 0, 7);
+      $rand = 100;
+      $hash = substr(sha1(rand()), 0, 7);
+      $amountSection = TRUE;
+      $payLater = TRUE;
+      $onBehalf = TRUE;
+      $pledges = FALSE;
+      $recurring = FALSE;
+      $memberships = FALSE;
+      $memPriceSetId = NULL;
+      $friend = TRUE;
+      $profilePreId = NULL;
+      $profilePostId = NULL;
+      $premiums = FALSE;
+      $widget = FALSE;
+      $pcp = FALSE;
+      $honoreeSection = FALSE;
+      $isAddPaymentProcessor = TRUE;
+      $isPcpApprovalNeeded = FALSE;
+      $isSeparatePayment = FALSE;
+
+      // create a new online contribution page
+      // create contribution page with randomized title and default params
+      $pageId = $this->webtestAddContributionPage($hash,
+                                                  $rand,
+                                                  $pageTitle,
+                                                  array($processorName => $processorType),
+                                                  $amountSection,
+                                                  $payLater,
+                                                  $onBehalf,
+                                                  $pledges,
+                                                  $recurring,
+                                                  $memberships,
+                                                  $memPriceSetId,
+                                                  $friend,
+                                                  $profilePreId,
+                                                  $profilePostId,
+                                                  $premiums,
+                                                  $widget,
+                                                  $pcp,
+                                                  $isAddPaymentProcessor,
+                                                  $isPcpApprovalNeeded,
+                                                  $isSeparatePayment,
+                                                  $honoreeSection
+                                                  );
+
+      $this->_testOrganizationWithImageUpload($pageId, $cid, $pageTitle);  
+  
+      $this->open($this->sboxPath . "civicrm/admin/uf/group?reset=1");
+      $this->waitForPageToLoad($this->getTimeoutMsec());
+      $this->click("link=Reserved Profiles");
+      
+      $this->click("xpath=//div[@id='reserved-profiles']/div/div/table/tbody//tr/td[1][text()='On Behalf Of Organization']/../td[5]/span/a[text()='Fields']");
+      $this->waitForPageToLoad($this->getTimeoutMsec());
+      $this->click("xpath=//table[@id='option11']/tbody//tr/td/span[text()='Image Url']/../following-sibling::td[8]/span[2]/ul/li[2]/a");
+      $this->waitForPageToLoad($this->getTimeoutMsec());
+      $this->click('_qf_Field_next-bottom');
+      $this->waitForPageToLoad($this->getTimeoutMsec());
+      $this->assertElementContainsText('crm-notification-container', "Selected Profile Field has been deleted.");
+      
+  }
+
+  function _testOrganizationWithImageUpload($pageId, $cid, $pageTitle) {
+      //Open Live Contribution Page
+      $this->open($this->sboxPath . "civicrm/contribute/transact?reset=1&id=" . $pageId);
+
+
+      $firstName = 'Ma' . substr(sha1(rand()), 0, 4);
+      $lastName  = 'An' . substr(sha1(rand()), 0, 7);
+      $orgName   = 'org_11_' . substr(sha1(rand()), 0, 7);
+      $this->type("email-5", $firstName . "@example.com");
+
+      // onbehalforganization info
+      $this->type("onbehalf_organization_name", $orgName);
+      $this->type("onbehalf_phone-3-1", 9999999999);
+      $this->type("onbehalf_email-3", "{$orgName}@example.com");
+      $this->type("onbehalf_street_address-3", "Test Street Address");
+      $this->type("onbehalf_city-3", "Test City");
+      $this->type("onbehalf_postal_code-3", substr(sha1(rand()), 0, 6));
+      $this->click("onbehalf_country-3");
+      $this->select("onbehalf_country-3", "label=United States");
+      $this->click("onbehalf_state_province-3");
+      $this->select("onbehalf_state_province-3", "label=Alabama");
+
+      // check for upload field.
+      $this->waitForElementPresent("onbehalf_image_URL");
+
+      //header("Content-Type: image/png");
+      $im = imagecreate(110, 20)
+          or die("Cannot Initialize new GD image stream");
+      $background_color = imagecolorallocate($im, 0, 0, 0);
+      $text_color = imagecolorallocate($im, 233, 14, 91);
+      imagestring($im, 1, 5, 5,  "On Behalf-Org Logo", $text_color);
+      imagepng($im,"/tmp/file.png");
+      
+      $imagePath = "/tmp/file.png";
+      $this->webtestAttachFile('onbehalf_image_URL', $imagePath);
+      unlink($imagePath);
+
+      // Credit Card Info
+      $this->select("credit_card_type", "value=Visa");
+      $this->type("credit_card_number", "4111111111111111");
+      $this->type("cvv2", "000");
+      $this->select("credit_card_exp_date[M]", "value=1");
+      $this->select("credit_card_exp_date[Y]", "value=2020");
+
+      //Billing Info
+      $this->type("billing_first_name", $firstName . 'billing');
+      $this->type("billing_last_name", $lastName . 'billing');
+      $this->type("billing_street_address-5", "0121 Mount Highschool.");
+      $this->type(" billing_city-5", "Shangai");
+      $this->select("billing_country_id-5", "value=1228");
+      $this->select("billing_state_province_id-5", "value=1004");
+      $this->type("billing_postal_code-5", "94129");
+      $this->click("_qf_Main_upload-bottom");
+
+      $this->waitForPageToLoad($this->getTimeoutMsec());
+      $this->waitForElementPresent("_qf_Confirm_next-bottom");
+
+      $this->click("_qf_Confirm_next-bottom");
+      $this->waitForPageToLoad($this->getTimeoutMsec());
+
+      // Type search name in autocomplete.
+      $this->click('sort_name_navigation');
+      $this->type('css=input#sort_name_navigation', $orgName);
+      $this->typeKeys('css=input#sort_name_navigation', $orgName);
+
+      // Wait for result list.
+      $this->waitForElementPresent("css=div.ac_results-inner li");
+      
+      // Visit organization page.
+      $this->click("css=div.ac_results-inner li");
+      $this->waitForPageToLoad($this->getTimeoutMsec());
+      
+      //check whether the image is present
+      $this->assertTrue($this->isElementPresent("xpath=//div[@id='crm-contact-thumbnail']/div/a/img"));
+
+  }
 }
 

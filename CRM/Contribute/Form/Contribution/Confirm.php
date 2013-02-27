@@ -714,6 +714,9 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         }
         unset($params['onbehalf_location']);
       }
+      if (CRM_Utils_Array::value('onbehalf[image_URL]', $params)) {
+        $behalfOrganization['image_URL'] = $params['onbehalf[image_URL]'];
+      }
     }
 
     // check for profile double opt-in and get groups to be subscribed
@@ -1593,6 +1596,12 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
       // don't allow name edit
       unset($behalfOrganization['organization_name']);
     }
+
+    // handling for image url
+    if (CRM_Utils_Array::value('image_URL', $behalfOrganization)) {
+      CRM_Contact_BAO_Contact::processImageParams($behalfOrganization);
+    }
+
     // create organization, add location
     $orgID = CRM_Contact_BAO_Contact::createProfileContact($behalfOrganization, $fields, $orgID,
       NULL, NULL, 'Organization'
