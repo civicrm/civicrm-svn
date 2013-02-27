@@ -117,8 +117,8 @@ class CRM_Report_Form_Contribute_Bookkeeping extends CRM_Report_Form {
         array(
           'receive_date' =>
           array('operatorType' => CRM_Report_Form::OP_DATE),
-                                 'financial_type_id'   =>
-                                    array( 'title'        => ts( 'Financial Type' ), 
+          'financial_type_id' => array( 
+            'title' => ts('Financial Type'), 
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
             'options' => CRM_Contribute_PseudoConstant::financialType(),
           ),
@@ -138,36 +138,33 @@ class CRM_Report_Form_Contribute_Bookkeeping extends CRM_Report_Form {
         ),
         'grouping' => 'contri-fields',
       ),
-      'civicrm_financial_account' =>
-      array(
-            'dao' => 'CRM_Financial_DAO_FinancialAccount',
-            'fields' =>  array (
-                                'debit_accounting_code' => 
-                                array('title' => ts('Financial Account Code- Debit'),
-                                      'name'  => 'accounting_code',
-                                      'alias' => 'financial_account_civireport_debit',
-                                      'default' => TRUE,
-                                      ),
-                                'credit_accounting_code' =>
-                                array(
-                                      'title' => ts('Financial Account Code- Credit'),
-                                      'name'  => 'accounting_code',
-                                      'alias' => 'financial_account_civireport_credit',
-                                      'default' => TRUE,
-                                      ),
-                                )
-            ),    
-      'civicrm_entity_financial_trxn' =>
-      array(
-            'dao' => 'CRM_Financial_DAO_EntityFinancialTrxn',
-            'fields' =>  array (
-                                'amount' => array('title' => ts('Amount'),
-                                                  'default' => TRUE,
-                                                   ),
-                                ),
-            ),
+      'civicrm_financial_account' => array(
+        'dao' => 'CRM_Financial_DAO_FinancialAccount',
+        'fields' => array(
+          'debit_accounting_code' => array(
+            'title' => ts('Financial Account Code- Debit'),
+            'name'  => 'accounting_code',
+            'alias' => 'financial_account_civireport_debit',
+            'default' => TRUE,
+          ),
+          'credit_accounting_code' => array(
+            'title' => ts('Financial Account Code- Credit'),
+            'name'  => 'accounting_code',
+            'alias' => 'financial_account_civireport_credit',
+            'default' => TRUE,
+          ),
+        )
+      ),    
+      'civicrm_entity_financial_trxn' => array(
+        'dao' => 'CRM_Financial_DAO_EntityFinancialTrxn',
+        'fields' => array(
+          'amount' => array(
+            'title' => ts('Amount'),
+            'default' => TRUE,
+          ),
+        ),
+      ),
     );
-
     parent::__construct();
   }
 
@@ -200,8 +197,7 @@ class CRM_Report_Form_Contribute_Bookkeeping extends CRM_Report_Form {
             WHEN trxn.from_financial_account_id IS NOT NULL
                THEN  {$this->_aliases['civicrm_financial_account']}_credit_1.accounting_code
                ELSE  {$this->_aliases['civicrm_financial_account']}_credit_2.accounting_code
-               END AS civicrm_financial_account_credit_accounting_code
-";
+               END AS civicrm_financial_account_credit_accounting_code ";
   }
 
   function from() {
@@ -277,7 +273,7 @@ class CRM_Report_Form_Contribute_Bookkeeping extends CRM_Report_Form {
     $checkList          = array();
     $entryFound         = FALSE;
     $display_flag       = $prev_cid = $cid = 0;
-    $contributionTypes = CRM_Contribute_PseudoConstant::financialType( );
+    $contributionTypes = CRM_Contribute_PseudoConstant::financialType();
     $paymentInstruments = CRM_Contribute_PseudoConstant::paymentInstrument();
 
     foreach ($rows as $rowNum => $row) {
