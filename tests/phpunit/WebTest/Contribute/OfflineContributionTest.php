@@ -291,6 +291,21 @@ class WebTest_Contribute_OfflineContributionTest extends CiviSeleniumTestCase {
       'Non-deductible Amount' => '0.00'
     );
     $this->_verifyAmounts($checkScenario4);
+
+    //scenario 5 : is_deductible = FALSE, non_deductible_amount = the total amount
+    $scenario5 = array(
+      'financial_type' => 'Campaign Contribution',
+      'total_amount' => 555,
+    );
+    $this->_doOfflineContribution($scenario5, $firstName, $lastName, $processorName);
+   
+    $checkScenario5 = array(
+      'From' => "{$firstName} {$lastName}",
+      'Financial Type' => 'Campaign Contribution',
+      'Total Amount' => 555,
+      'Non-deductible Amount' => 555
+    );
+    $this->_verifyAmounts($checkScenario5);
   }
   
   //common function for doing offline contribution
@@ -359,5 +374,4 @@ class WebTest_Contribute_OfflineContributionTest extends CiviSeleniumTestCase {
     $this->click("_qf_ContributionView_cancel-top");
     $this->waitForPageToLoad($this->getTimeoutMsec());
   }
-
 }
