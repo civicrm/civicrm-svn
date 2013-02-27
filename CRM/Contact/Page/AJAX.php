@@ -288,7 +288,6 @@ class CRM_Contact_Page_AJAX {
     $relationshipID  = CRM_Utils_Array::value('rel_id', $_REQUEST);
     $caseID          = CRM_Utils_Array::value('case_id', $_REQUEST);
 
-
     $relationParams = array(
       'relationship_type_id' => $relType . '_a_b',
       'contact_check' => array($relContactID => 1),
@@ -1211,7 +1210,7 @@ LIMIT {$offset}, {$rowCount}
         );
       $addressVal = CRM_Core_BAO_Address::getValues($entityBlock);
     }
-    
+
     echo json_encode($addressVal);
     CRM_Utils_System::civiExit();
   }

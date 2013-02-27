@@ -166,7 +166,7 @@
 
     {if $hasAccessToAllCases}
       <div class="crm-submit-buttons">
-        <a class="button" href="#" onClick="Javascript:addRole();return false;"><span><div class="icon add-icon"></div>{ts}Add new role{/ts}</span></a>
+        <a class="button" href="#" onclick="addRole();return false;"><span><div class="icon add-icon"></div>{ts}Add new role{/ts}</span></a>
       </div>
     {/if}
 
@@ -358,7 +358,8 @@
         cj("#rel_contact_id").val(null);
         if (contactID) {
           cj("#rel_contact_id").val(contactID);
-          cj("#rel_contact").val(cj("#relName_" + rowNumber).text( ));
+          var contactName = cj('#caseRoles-selector').find('tr :eq('+ rowNumber +')').children(':eq(1)').text();
+          cj("#rel_contact").val(contactName);
         }
 
         var contactUrl = {/literal}"{crmURL p='civicrm/ajax/rest' q='className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=caseview' h=0 }"{literal};
