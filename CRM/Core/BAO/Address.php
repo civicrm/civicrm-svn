@@ -55,7 +55,7 @@ class CRM_Core_BAO_Address extends CRM_Core_DAO_Address {
     if (!isset($params['address']) || !is_array($params['address'])) {
       return;
     }
-
+    CRM_Core_BAO_Block::sortPrimaryFirst($params['address']);
     $addresses = array();
     $contactId = NULL;
 
