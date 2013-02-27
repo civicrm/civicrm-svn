@@ -120,7 +120,7 @@ class CRM_Activity_Page_AJAX {
     if ($sort && $sortOrder) {
       $sortSQL = $sort .' '.$sortOrder;
     }
-    
+
     // Retrieve ALL client relationships
     $relClient = CRM_Contact_BAO_Relationship::getRelationship($contactID,
       CRM_Contact_BAO_Relationship::CURRENT,
@@ -184,7 +184,6 @@ class CRM_Activity_Page_AJAX {
     }
 
     $caseRelationships = CRM_Case_BAO_Case::getCaseRoles($contactID, $caseID);
-
     $caseTypeName = CRM_Case_BAO_Case::getCaseType($caseID, 'name');
     $xmlProcessor = new CRM_Case_XMLProcessor_Process();
     $caseRoles    = $xmlProcessor->get($caseTypeName, 'CaseRoles');
@@ -208,7 +207,7 @@ class CRM_Activity_Page_AJAX {
     }
     
     $caseRoles['client'] = CRM_Case_BAO_Case::getContactNames($caseID);
-        
+
     // move/transform caseRoles array data to caseRelationships
     // for sorting and display
     foreach($caseRoles as $id => $value) {
@@ -234,7 +233,7 @@ class CRM_Activity_Page_AJAX {
         }
       }
     }
-    
+
     // sort clientRelationships array using jquery call params
     foreach ($caseRelationships as $key => $row) {
       $sortArray[$key]  = $row[$sort];
@@ -268,7 +267,7 @@ class CRM_Activity_Page_AJAX {
         switch($caseRelationships[$key]['source']){
         case 'caseRel':
           $caseRelationships[$key]['actions'] = 
-            '<a href="#" title="edit case role" onclick="createRelationship( '.$caseRelationships[$key]['relation_type'].', '.$caseRelationships[$key]['cid'].', '.$key.', '.$idx.', \''.$caseRelationships[$key]['relation'].'\' );return false;"><div class="icon edit-icon" ></div></a>&nbsp;&nbsp;<a href="'.CRM_Utils_System::url('civicrm/contact/view/rel', 'action=delete&reset=1&cid='. $caseRelationships[$key]['cid'].'&id='.$key.'&caseID='.$caseID.'').'" onclick = "if (confirm(\'Are you sure you want to remove this person from their case role?\') ) this.href+=\'&confirmed=1\'; else return false;"><div class="icon delete-icon" title="remove contact from case role"></div></a>';
+            '<a href="#" title="edit case role" onclick="createRelationship( '.$caseRelationships[$key]['relation_type'].', '.$caseRelationships[$key]['cid'].', '.$caseRelationships[$key]['rel_id'].', '.$idx.', \''.$caseRelationships[$key]['relation'].'\' );return false;"><div class="icon edit-icon" ></div></a>&nbsp;&nbsp;<a href="'.CRM_Utils_System::url('civicrm/contact/view/rel', 'action=delete&reset=1&cid='. $caseRelationships[$key]['cid'].'&id='.$caseRelationships[$key]['rel_id'].'&caseID='.$caseID.'').'" onclick = "if (confirm(\'Are you sure you want to remove this person from their case role?\') ) this.href+=\'&confirmed=1\'; else return false;"><div class="icon delete-icon" title="remove contact from case role"></div></a>';
           break;
           
         case 'caseRoles':

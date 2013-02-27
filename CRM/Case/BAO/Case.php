@@ -931,7 +931,8 @@ SELECT case_status.label AS case_status, status_id, case_type.label AS case_type
      WHERE  civicrm_relationship.contact_id_a = %1 AND civicrm_relationship.case_id = %2';
 
 
-    $params = array(1 => array($contactID, 'Positive'),
+    $params = array(
+      1 => array($contactID, 'Positive'),
       2 => array($caseID, 'Positive'),
     );
 
@@ -950,6 +951,7 @@ SELECT case_status.label AS case_status, status_id, case_type.label AS case_type
       $values[$rid]['email'] = $dao->email;
       $values[$rid]['phone'] = $dao->phone;
       $values[$rid]['relation_type'] = $dao->relation_type;
+      $values[$rid]['rel_id'] = $dao->civicrm_relationship_id;
     }
 
     $dao->free();
