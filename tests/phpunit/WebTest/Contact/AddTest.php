@@ -165,6 +165,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
     // Clicking save.
     $this->click("_qf_Contact_upload_view");
 
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertElementContainsText('crm-notification-container', "Contact Saved");
   }
 
