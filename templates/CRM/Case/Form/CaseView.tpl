@@ -254,17 +254,12 @@
 
     window.location = dataUrl;
   }
-  </script>
- {/literal}
-
-  <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
-  {literal}
-    <script type="text/javascript">
-      cj(function() {
-        cj().crmAccordions();
-      });
-    </script>
-  {/literal}
+  
+  cj(function() {
+    cj().crmAccordions();
+  });
+</script>
+{/literal}
  </div><!-- /.crm-accordion-body -->
 </div><!-- /.crm-accordion-wrapper -->
 <div id="dialog">
