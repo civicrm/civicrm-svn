@@ -164,7 +164,6 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
 
     // Clicking save.
     $this->click("_qf_Contact_upload_view");
-    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->assertElementContainsText('crm-notification-container', "Contact Saved");
   }
@@ -378,7 +377,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
     $this->assertElementContainsText('crm-notification-container', "Contact Saved");
   }
 
-  function testIndividualAdWithSharedAddress() {
+  function testIndividualAddWithSharedAddress() {
     $this->webtestLogin();
 
     // Go directly to the URL of the screen that you will be testing (New Individual).
@@ -395,8 +394,9 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
     //fill in middle name
     $this->type("middle_name", "Bruce");
 
+    $lastName = substr(sha1(rand()), 0, 7) . "Smith";
     //fill in last name
-    $this->type("last_name", substr(sha1(rand()), 0, 7) . "Smith");
+    $this->type("last_name", $lastName);
 
     //create new current employer
     $currentEmployer = substr(sha1(rand()), 0, 7) . "Web Access";
@@ -436,7 +436,10 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
     $this->click("_qf_Edit_next");
 
     // Is new contact created?
-    $this->assertTrue($this->isTextPresent("New contact has been created."), "Status message didn't show up after saving!");
+    $this->assertTrue(
+      $this->isTextPresent("$currentEmployer has been created."),
+      "Status message didn't show up after saving!"
+    );
 
     //make sure shared address is selected
     $this->waitForElementPresent('selected_shared_address-1');
@@ -466,7 +469,10 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
     $this->click("_qf_Edit_next");
 
     // Is new contact created?
-    $this->assertTrue($this->isTextPresent("New contact has been created."), "Status message didn't show up after saving!");
+    $this->assertTrue(
+      $this->isTextPresent("$sharedHousehold has been created."),
+      "Status message didn't show up after saving!"
+    );
 
     //make sure shared address is selected
     $this->waitForElementPresent('selected_shared_address-2');
