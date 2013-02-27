@@ -1854,7 +1854,8 @@ SELECT case_status.label AS case_status, status_id, case_type.label AS case_type
     }
 
     $session = CRM_Core_Session::singleton();
-    $activityParams = array('source_contact_id' => $session->get('userID'),
+    $activityParams = array(
+      'source_contact_id' => $session->get('userID'),
       'subject' => $caseRelationship . ' : ' . $assigneContactName,
       'activity_date_time' => date('YmdHis'),
       'status_id' => CRM_Core_OptionGroup::getValue('activity_status', 'Completed', 'name'),
@@ -1919,7 +1920,8 @@ SELECT civicrm_contact.id as casemanager_id,
  LEFT JOIN civicrm_case ON civicrm_case.id = civicrm_relationship.case_id
  WHERE civicrm_case.id = %2";
 
-      $managerRoleParams = array(1 => array($managerRoleId, 'Integer'),
+      $managerRoleParams = array(
+        1 => array($managerRoleId, 'Integer'),
         2 => array($caseId, 'Integer'),
       );
 
@@ -1992,9 +1994,7 @@ SELECT civicrm_contact.id as casemanager_id,
     $dao = CRM_Core_DAO::executeQuery($query);
     $unclosedCases = array();
     while ($dao->fetch()) {
-      if ($doFilterCases &&
-        !array_key_exists($dao->id, $filterCases)
-      ) {
+      if ($doFilterCases && !array_key_exists($dao->id, $filterCases)) {
         continue;
       }
       $unclosedCases[$dao->id] = array(
@@ -2129,9 +2129,10 @@ INNER JOIN  civicrm_case_contact ON ( civicrm_case.id = civicrm_case_contact.cas
  INNER JOIN  civicrm_activity relAct           ON (relCaseAct.activity_id = relAct.id  AND relAct.activity_type_id = %1)
      WHERE  $whereClause";
 
-    $dao = CRM_Core_DAO::executeQuery($query, array(1 => array($linkActType, 'Integer'),
-        2 => array($mainCaseId, 'Integer'),
-      ));
+    $dao = CRM_Core_DAO::executeQuery($query, array(
+      1 => array($linkActType, 'Integer'),
+      2 => array($mainCaseId, 'Integer'),
+    ));
     $relatedCaseIds = array();
     while ($dao->fetch()) {
       $relatedCaseIds[$dao->case_id] = $dao->case_id;
@@ -2147,7 +2148,6 @@ INNER JOIN  civicrm_case_contact ON ( civicrm_case.id = civicrm_case_contact.cas
     if ($excludeDeleted) {
       $whereClause .= " AND ( relCase.is_deleted = 0 OR relCase.is_deleted IS NULL )";
     }
-
 
     //filter for permissioned cases.
     $filterCases = array();
@@ -2224,9 +2224,8 @@ INNER JOIN  civicrm_case_contact ON ( civicrm_case.id = civicrm_case_contact.cas
    * @return void.
    * @static
    */
-  static function mergeCases($mainContactId, $mainCaseId = NULL,
-    $otherContactId = NULL, $otherCaseId = NULL, $changeClient = FALSE
-  ) {
+  static function mergeCases($mainContactId, $mainCaseId = NULL, $otherContactId = NULL,
+                             $otherCaseId = NULL, $changeClient = FALSE ) {
     $moveToTrash = TRUE;
 
     $duplicateContacts = FALSE;
@@ -2264,7 +2263,6 @@ INNER JOIN  civicrm_case_contact ON ( civicrm_case.id = civicrm_case_contact.cas
         return;
       }
     }
-
 
     $session = CRM_Core_Session::singleton();
     $currentUserId = $session->get('userID');
@@ -2642,7 +2640,13 @@ WHERE id IN (' . implode(',', $copiedActivityIds) . ')';
     }
 
     //do check for cases.
-    $caseActOperations = array('File On Case', 'Link Cases', 'Move To Case', 'Copy To Case');
+    $caseActOperations = array(
+      'File On Case',
+      'Link Cases',
+      'Move To Case',
+      'Copy To Case',
+    );
+
     if (in_array($operation, $caseActOperations)) {
       static $unclosedCases;
       if (!is_array($unclosedCases)) {
@@ -2673,7 +2677,8 @@ WHERE id IN (' . implode(',', $copiedActivityIds) . ')';
 
         //check for permissions.
         $permissions = array(
-          'view' => array('access my cases and activities',
+          'view' => array(
+            'access my cases and activities',
             'access all cases and activities',
           ),
           'edit' => array(
@@ -2710,7 +2715,6 @@ WHERE id IN (' . implode(',', $copiedActivityIds) . ')';
               //edit - contact must be source or assignee
               //view - contact must be source/assignee/target
               $isTarget = $isAssignee = $isSource = FALSE;
-
 
               $target = new CRM_Activity_DAO_ActivityTarget();
               $target->activity_id = $activityId;
