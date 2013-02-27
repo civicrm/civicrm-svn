@@ -123,6 +123,17 @@ INNER JOIN civicrm_price_set cps ON cps.id = cpf.price_set_id AND cps.name <>'de
         $preUpgradeMessage .= "<br /><strong>". ts('We have identified extraneous data in your database that a previous upgrade likely introduced. We STRONGLY recommend making a backup of your site before continuing. We also STRONGLY suggest fixing this issue with unneeded records BEFORE you upgrade. You can find more information about this issue and the way to fix it by visiting <a href="http://forum.civicrm.org/index.php/topic,26181.0.html">http://forum.civicrm.org/index.php/topic,26181.0.html</a>.') ."</strong>";
       }
     }
+
+    if (version_compare($rev, '4.2.9') >= 0) {
+      //CRM-11980
+      $sql = "SELECT id FROM civicrm_option_group WHERE name LIKE 'civicrm_price_field.amount.%' LIMIT 1";
+      $dao = CRM_Core_DAO::executeQuery($sql);
+      if ($dao->fetch()) {
+        $errors = ts("We found unexpected data values from an older version of CiviCRM in your database. The upgrade can not be run until this condition is corrected.<br /><br />Details: One or more rows are present in the civicrm_option_group with name like 'civicrm_price_field.amount.%'. <a href='%1'>Check here for information on diagnosing and correcting this problem.</a>", array(1 => 'http://forum.civicrm.org/index.php/topic,27744.msg118748.html#msg118748'));
+        CRM_Core_Error::fatal($errors);     
+        return FALSE;
+      }    
+    }
   }
 
   /**
