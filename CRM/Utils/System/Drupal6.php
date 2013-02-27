@@ -65,7 +65,7 @@ class CRM_Utils_System_Drupal6 extends CRM_Utils_System_Base {
       // through a badly named variable ("$args") which was almost always
       // TRUE (except on fatal error screen).  However, this feature is
       // non-functional on D6 default themes, was purposefully removed from
-      // D7, has no analog in other our other CMS's, and clutters the code. 
+      // D7, has no analog in other our other CMS's, and clutters the code.
       // Hard-wiring to TRUE should be OK.
       $out = theme('page', $content, TRUE);
     }
@@ -124,7 +124,7 @@ class CRM_Utils_System_Drupal6 extends CRM_Utils_System_Base {
 
   /*
    *  Change user name in host CMS
-   *  
+   *
    *  @param integer $ufID User ID in CMS
    *  @param string $ufName User name
    */
@@ -520,7 +520,7 @@ SELECT name, mail
    *
    * @return mixed false if no auth
    *               array(
-      contactID, ufID, unique string ) if success
+   *  contactID, ufID, unique string ) if success
    * @access public
    */
   function authenticate($name, $password, $loadCMSBootstrap = FALSE, $realPath = NULL) {
@@ -867,11 +867,11 @@ SELECT name, mail
       $perms = $perms + drupal_map_assoc($newPerms);
       $permList = implode(', ', $perms);
       db_query('UPDATE {permission} SET perm = "%s" WHERE rid = %d', $permList, $rid);
-      /*        
+      /*
         if ( ! empty( $roles ) ) {
             $rids = implode(',', array_keys($roles));
             db_query( 'UPDATE {permission} SET perm = CONCAT( perm, \', edit all events\') WHERE rid IN (' . implode(',', array_keys($roles)) . ')' );
-            db_query( "UPDATE {permission} SET perm = REPLACE( perm, '%s', '%s' ) WHERE rid IN ($rids)", 
+            db_query( "UPDATE {permission} SET perm = REPLACE( perm, '%s', '%s' ) WHERE rid IN ($rids)",
                 $oldPerm, implode(', ', $newPerms) );*/
     }
   }
@@ -889,7 +889,7 @@ SELECT name, mail
     }
     return $result;
   }
-  
+
   /**
    * Get user login URL for hosting CMS (method declared in each CMS system class)
    *
@@ -907,6 +907,24 @@ SELECT name, mail
       $loginURL .= '?destination=' . urlencode($destination);
     }
     return $loginURL;
+  }
+
+  /*
+   * Wrapper for og_membership creation
+   */
+  function og_membership_create($ogID, $drupalID){
+    $group_membership = og_membership_create($ogID, 'user', $drupalID, array('is_active' => 1));
+    $group_membership->save();
+  }
+
+  /**
+   * Wrapper for og_membership deletion
+   */
+  function og_membership_delete($ogID, $drupalID) {
+    $membership = og_get_group_membership($ogID, 'user', $drupalID);
+    if ($membership) {
+      og_membership_delete($membership->id);
+    }
   }
 
 }
