@@ -588,13 +588,15 @@ HTACCESS;
         return FALSE;
       }
     }
-    // When CRM_Core_Extensions_Extension does this, it uses copyDir, and
-    // that seems odd. We'll just a rename().
-    // CRM_Utils_File::copyDir($fromDir, $toDir);
-    // if (!CRM_Utils_File::cleanDir($fromDir, TRUE, FALSE)) {
-    //   CRM_Core_Session::setStatus(ts('Failed to clean temp dir: %1', array(1 => $fromDir)), '', 'alert');
-    // }
-    return rename($fromDir, $toDir);
+
+    // return rename($fromDir, $toDir); // CRM-11987, https://bugs.php.net/bug.php?id=54097
+
+    CRM_Utils_File::copyDir($fromDir, $toDir);
+    if (!CRM_Utils_File::cleanDir($fromDir, TRUE, FALSE)) {
+       CRM_Core_Session::setStatus(ts('Failed to clean temp dir: %1', array(1 => $fromDir)), '', 'alert');
+      return FALSE;
+    }
+    return TRUE;
   }
 }
 
