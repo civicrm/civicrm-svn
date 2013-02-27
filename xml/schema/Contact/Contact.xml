@@ -167,7 +167,7 @@
   </field>
   <field>
        <name>nick_name</name>
-       <title>Nick Name</title>
+       <title>Nickname</title>
        <type>varchar</type>
        <length>128</length>
        <size>BIG</size>
