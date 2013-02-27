@@ -163,6 +163,18 @@ class CRM_Logging_Differ {
         if (CRM_Utils_Array::value($diff, $original) === CRM_Utils_Array::value($diff, $changed)) {
           continue;
         }
+        
+        // hack: case_type_id column is a varchar with separator. For proper mapping to type labels, 
+        // we need to make sure separators are trimmed
+        if ($diff == 'case_type_id') {
+          foreach (array('original', 'changed') as $var)  {
+            if (CRM_Utils_Array::value($diff, $$var)) {
+              $holder =& $$var;
+              $val = explode(CRM_Case_BAO_Case::VALUE_SEPARATOR, $holder[$diff]);
+              $holder[$diff] = CRM_Utils_Array::value(1, $val);
+            }
+          }
+        }
 
         $diffs[] = array(
           'action' => $changed['log_action'],
@@ -220,6 +232,7 @@ class CRM_Logging_Differ {
           'suffix_id' => CRM_Core_PseudoConstant::individualSuffix(),
           'website_type_id' => CRM_Core_PseudoConstant::websiteType(),
           'status_id' => CRM_Case_PseudoConstant::caseStatus('label', FALSE),
+          'case_type_id' => CRM_Case_PseudoConstant::caseType('label', FALSE),
         );
 
         require_once str_replace('_', DIRECTORY_SEPARATOR, $daos[$table]) . '.php';

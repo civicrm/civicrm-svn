@@ -226,8 +226,11 @@ ORDER BY entity_log_civireport.log_date DESC {$this->_limit}";
   function getEntityValue( $id, $entity, $logDate ) {
     if (CRM_Utils_Array::value('bracket_info', $this->_logTables[$entity])) {
       if (CRM_Utils_Array::value('entity_column', $this->_logTables[$entity])) {
-        $sql = "select {$this->_logTables[$entity]['entity_column']} from `{$this->loggingDB}`.{$entity} where id = %1";
-        $entityID = CRM_Core_DAO::singleValueQuery($sql, array(1 => array($id, 'Integer')));
+        $sql = "
+SELECT {$this->_logTables[$entity]['entity_column']} 
+  FROM `{$this->loggingDB}`.{$entity} 
+ WHERE  log_date <= %1 AND id = %2 ORDER BY log_date DESC LIMIT 1";
+        $entityID = CRM_Core_DAO::singleValueQuery($sql, array(1 => array(CRM_Utils_Date::isoToMysql($logDate), 'Timestamp'), 2 => array ($id, 'Integer')));
       } else {
         $entityID = $id;
       }
