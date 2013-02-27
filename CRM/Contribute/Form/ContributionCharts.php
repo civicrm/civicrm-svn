@@ -106,6 +106,7 @@ class CRM_Contribute_Form_ContributionCharts extends CRM_Core_Form {
    * @return None
    */
   public function postProcess() {
+    $config = CRM_Core_Config::singleton();
     $chartType = 'bvg';
     if ($this->_chartType) {
       $chartType = $this->_chartType;
