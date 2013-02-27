@@ -387,43 +387,43 @@ class CRM_Activity_BAO_Query {
         //as component specific activities does not have entry in
         //activity target table so lets consider civicrm_activity_assignment.
         if (CRM_Contact_BAO_Query::$_considerCompActivities) {
-          $from .= " $side JOIN civicrm_activity_target 
+          $from .= " $side JOIN civicrm_activity_target
                                       ON ( civicrm_activity_target.target_contact_id = contact_a.id ) ";
 
-          $from .= " $side JOIN civicrm_activity_assignment activity_assignment 
+          $from .= " $side JOIN civicrm_activity_assignment activity_assignment
                                       ON ( activity_assignment.assignee_contact_id = contact_a.id )";
 
-          $from .= " $side JOIN civicrm_activity 
-                                      ON ( civicrm_activity.id = civicrm_activity_target.activity_id 
+          $from .= " $side JOIN civicrm_activity
+                                      ON ( civicrm_activity.id = civicrm_activity_target.activity_id
                                       AND civicrm_activity.is_deleted = 0 AND civicrm_activity.is_current_revision = 1 )";
         }
         elseif (CRM_Contact_BAO_Query::$_withContactActivitiesOnly) {
           //force the civicrm_activity_target table.
           $from .= " $side JOIN civicrm_activity_target ON civicrm_activity_target.target_contact_id = contact_a.id ";
-          $from .= " $side JOIN civicrm_activity ON ( civicrm_activity.id = civicrm_activity_target.activity_id 
-                                                            AND civicrm_activity.is_deleted = 0 
+          $from .= " $side JOIN civicrm_activity ON ( civicrm_activity.id = civicrm_activity_target.activity_id
+                                                            AND civicrm_activity.is_deleted = 0
                                                             AND civicrm_activity.is_current_revision = 1 )";
         }
         else {
           $activityRole = CRM_Contact_BAO_Query::$_activityRole;
           switch ($activityRole) {
             case 1:
-              $from .= " $side JOIN civicrm_activity ON ( civicrm_activity.source_contact_id = contact_a.id 
-                        AND civicrm_activity.is_deleted = 0 
+              $from .= " $side JOIN civicrm_activity ON ( civicrm_activity.source_contact_id = contact_a.id
+                        AND civicrm_activity.is_deleted = 0
                         AND civicrm_activity.is_current_revision = 1 )";
               break;
 
             case 2:
               $from .= " $side JOIN civicrm_activity_assignment activity_assignment ON ( activity_assignment.assignee_contact_id = contact_a.id )";
-              $from .= " $side JOIN civicrm_activity ON ( civicrm_activity.id = activity_assignment.activity_id 
-                        AND civicrm_activity.is_deleted = 0 
+              $from .= " $side JOIN civicrm_activity ON ( civicrm_activity.id = activity_assignment.activity_id
+                        AND civicrm_activity.is_deleted = 0
                         AND civicrm_activity.is_current_revision = 1 )";
               break;
 
             default:
               $from .= " $side JOIN civicrm_activity_target ON civicrm_activity_target.target_contact_id = contact_a.id ";
               $from .= " $side JOIN civicrm_activity ON ( civicrm_activity.id = civicrm_activity_target.activity_id
-                            AND civicrm_activity.is_deleted = 0 
+                            AND civicrm_activity.is_deleted = 0
                             AND civicrm_activity.is_current_revision = 1 )";
           }
         }
@@ -444,13 +444,13 @@ class CRM_Activity_BAO_Query {
 
       case 'activity_status':
         $from = " $side JOIN civicrm_option_group option_group_activity_status ON (option_group_activity_status.name = 'activity_status')";
-        $from .= " $side JOIN civicrm_option_value activity_status ON (civicrm_activity.status_id = activity_status.value 
+        $from .= " $side JOIN civicrm_option_value activity_status ON (civicrm_activity.status_id = activity_status.value
                                AND option_group_activity_status.id = activity_status.option_group_id ) ";
         break;
 
       case 'activity_type':
         $from = " $side JOIN civicrm_option_group option_group_activity_type ON (option_group_activity_type.name = 'activity_type')";
-        $from .= " $side JOIN civicrm_option_value activity_type ON (civicrm_activity.activity_type_id = activity_type.value 
+        $from .= " $side JOIN civicrm_option_value activity_type ON (civicrm_activity.activity_type_id = activity_type.value
                                AND option_group_activity_type.id = activity_type.option_group_id ) ";
         break;
 
@@ -488,7 +488,14 @@ class CRM_Activity_BAO_Query {
     $activityOptions = CRM_Core_PseudoConstant::activityType(TRUE, TRUE, FALSE, 'label', TRUE);
     asort($activityOptions);
     foreach ($activityOptions as $activityID => $activity) {
-      $form->_activityElement = &$form->addElement('checkbox', "activity_type_id[$activityID]", NULL, $activity, array('onClick' => 'showCustomData( this.id );'));
+      $form->_activityElement =&
+        $form->addElement(
+          'checkbox',
+          "activity_type_id[$activityID]",
+          NULL,
+          $activity,
+          array('onClick' => 'showCustomData( this.id );')
+        );
     }
 
     CRM_Core_Form_Date::buildDateRange($form, 'activity_date', 1, '_low', '_high', ts('From'), FALSE, FALSE);
@@ -550,7 +557,7 @@ class CRM_Activity_BAO_Query {
         array('' => ts('- any -')) + CRM_Campaign_PseudoConstant::engagementLevel()
       );
     }
-    
+
     $form->assign('buildEngagementLevel', $buildEngagementLevel);
     $form->setDefaults(array('activity_test' => 0));
   }
@@ -560,9 +567,7 @@ class CRM_Activity_BAO_Query {
     $showHide->addShow('caseActivityForm_show');
   }
 
-  static function defaultReturnProperties($mode,
-    $includeCustomFields = TRUE
-  ) {
+  static function defaultReturnProperties($mode, $includeCustomFields = TRUE) {
     $properties = NULL;
     if ($mode & CRM_Contact_BAO_Query::MODE_ACTIVITY) {
       $properties = array(

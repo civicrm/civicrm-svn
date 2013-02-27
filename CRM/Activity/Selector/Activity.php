@@ -216,7 +216,8 @@ class CRM_Activity_Selector_Activity extends CRM_Core_Selector_Base implements C
       ));
     }
 
-    if ($activityTypeName &&
+    if (
+      $activityTypeName &&
       CRM_Case_BAO_Case::checkPermission($activityId, 'File On Case', $activityTypeId)
     ) {
       $actionLinks += array(CRM_Core_Action::ADD => array('name' => ts('File On Case'),
