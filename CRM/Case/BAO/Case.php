@@ -920,7 +920,7 @@ SELECT case_status.label AS case_status, status_id, case_type.label AS case_type
             civicrm_contact.sort_name as sort_name,
             civicrm_email.email as email,
             civicrm_phone.phone as phone,
-            civicrm_relationship.contact_id_b as civicrm_contact_id,
+            civicrm_relationship.contact_id_a as civicrm_contact_id,
             civicrm_relationship_type.label_a_b as relation,
             civicrm_relationship_type.id as relation_type
       FROM  civicrm_relationship
