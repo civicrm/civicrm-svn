@@ -191,7 +191,7 @@ class CRM_Contribute_Form_ContributionPage_Settings extends CRM_Contribute_Form_
    */
   static function formRule($values, $files, $contributionPageId) {
     $errors = array();
-    
+
     //CRM-4286
     if (strstr($values['title'], '/')) {
       $errors['title'] = ts("Please do not use '/' in Title");
@@ -212,7 +212,7 @@ class CRM_Contribute_Form_ContributionPage_Settings extends CRM_Contribute_Form_
 
     //dont allow on behalf of save when
     //pre or post profile consists of membership fields 
-    if (CRM_Utils_Array::value('is_organization', $values)) {
+    if ($contributionPageId && CRM_Utils_Array::value('is_organization', $values)) {
       $ufJoinParams = array(
         'module' => 'CiviContribute',
         'entity_table' => 'civicrm_contribution_page',
