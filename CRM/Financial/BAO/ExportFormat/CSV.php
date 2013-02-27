@@ -159,29 +159,37 @@ class CRM_Financial_BAO_ExportFormat_CSV extends CRM_Financial_BAO_ExportFormat 
       $financialItems = array();
       $this->_batchIds = $batchId;
       while ($dao->fetch()) {
-        $financialItems[$dao->financial_trxn_id]['Transaction Date'] = $dao->trxn_date;
-        $financialItems[$dao->financial_trxn_id]['Debit Account'] = $dao->to_account_code;
-        $financialItems[$dao->financial_trxn_id]['Debit Account Name'] = $dao->to_account_name;
-        $financialItems[$dao->financial_trxn_id]['Debit Account Type'] = $dao->to_account_type_code;
-        $financialItems[$dao->financial_trxn_id]['Debit Account Amount (Unsplit)'] = $dao->debit_total_amount;
-        $financialItems[$dao->financial_trxn_id]['Transaction ID (Unsplit)'] = $dao->trxn_id;
-        $financialItems[$dao->financial_trxn_id]['Payment Instrument'] = $dao->payment_instrument;
-        $financialItems[$dao->financial_trxn_id]['Check Number'] = $dao->check_number;
-        $financialItems[$dao->financial_trxn_id]['Source'] = $dao->source;
-        $financialItems[$dao->financial_trxn_id]['Currency'] = $dao->currency;
-        $financialItems[$dao->financial_trxn_id]['Transaction Status'] = $dao->status;
-        $financialItems[$dao->financial_trxn_id]['Amount'] = $dao->amount;
+        $creditAccountName = $creditAccountType = 
+          $creditAccount = NULL;
         if ($dao->credit_account) {
-          $financialItems[$dao->financial_trxn_id]['Credit Account'] = $dao->credit_account;
-          $financialItems[$dao->financial_trxn_id]['Credit Account Name'] = $dao->credit_account_name;
-          $financialItems[$dao->financial_trxn_id]['Credit Account Type'] = $dao->credit_account_type_code;
+          $creditAccountName = $dao->credit_account_name;
+          $creditAccountType = $dao->credit_account_type_code;
+          $creditAccount = $dao->credit_account;
         }
         else {
-          $financialItems[$dao->financial_trxn_id]['Credit Account'] = $dao->from_credit_account;
-          $financialItems[$dao->financial_trxn_id]['Credit Account Name'] = $dao->from_credit_account_name;
-          $financialItems[$dao->financial_trxn_id]['Credit Account Type'] = $dao->from_credit_account_type_code;
+          $creditAccountName = $dao->from_credit_account_name;
+          $creditAccountType = $dao->from_credit_account_type_code;
+          $creditAccount = $dao->from_credit_account;   
         }
-        $financialItems[$dao->financial_trxn_id]['Item Description'] = $dao->item_description;
+        
+        $financialItems[] = array(
+          'Transaction Date' => $dao->trxn_date,
+          'Debit Account' => $dao->to_account_code,
+          'Debit Account Name' => $dao->to_account_name,
+          'Debit Account Type' => $dao->to_account_type_code,
+          'Debit Account Amount (Unsplit)' => $dao->debit_total_amount,
+          'Transaction ID (Unsplit)' => $dao->trxn_id,
+          'Payment Instrument' => $dao->payment_instrument,
+          'Check Number' => $dao->check_number,
+          'Source' => $dao->source,
+          'Currency' => $dao->currency,
+          'Transaction Status' => $dao->status,
+          'Amount' => $dao->amount,
+          'Credit Account' => $creditAccount,
+          'Credit Account Name' => $creditAccountName,
+          'Credit Account Type' => $creditAccountType,
+          'Item Description' => $dao->item_description,
+        );
       }
       $financialItems['headers'] = self::formatHeaders($financialItems);
       self::export($financialItems);
