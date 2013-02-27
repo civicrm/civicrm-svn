@@ -392,11 +392,77 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
       $isSeparatePayment,
       $honoreeSection
     );
+    
+    //check for formRule
+    //scenario 1 : add membership data in pre / post profile and check for formRule
+    //add new profile 
+    $this->open($this->sboxPath . "civicrm/admin/uf/group?reset=1");
 
+    $this->waitForPageToLoad($this->getTimeoutMsec());
+    $this->click('link=Add Profile');
+
+    $profileTitle = "test profile" . substr(sha1(rand()), 0, 7);
+    // Add membership custom data field to profile
+    $this->waitForElementPresent('_qf_Group_cancel-bottom');
+    $this->type('title', $profileTitle);
+    $this->click('_qf_Group_next-bottom');
+
+    $this->waitForElementPresent('_qf_Field_cancel-bottom');
+    $this->assertTrue($this->isTextPresent("Your CiviCRM Profile '{$profileTitle}' has been added. You can add fields to this profile now."));
+
+    $this->select('field_name[0]', "value=Membership");
+    $this->select('field_name[1]', "label={$checkboxFieldLabel} :: {$customGroupTitle}");
+    $this->click('field_name[1]');
+    $this->click('label');
+
+    // Clicking save and new
+    $this->click('_qf_Field_next_new-bottom');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
+    $this->assertTrue($this->isTextPresent("Your CiviCRM Profile Field '{$checkboxFieldLabel}' has been saved to '{$profileTitle}'."));
+    
+    $this->open($this->sboxPath . "civicrm/admin/contribute/custom?reset=1&action=update&id={$pageId}"); 
+    $this->waitForElementPresent('_qf_Custom_next-bottom');
+    $this->select('custom_pre_id', "label={$profileTitle}");
+    $this->click('_qf_Custom_next-bottom');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
+    sleep(3);
+    $this->assertTrue($this->isTextPresent('You should move the membership related fields in the "On Behalf" profile for this Contribution Page'), "Form rule didn't showed up while incorrectly configuring membership fields profile for 'on behalf of' contribution page");
+    
+    $this->select('custom_pre_id', "- select -");
+    $this->select('custom_post_id', "label={$profileTitle}");
+    $this->click('_qf_Custom_next-bottom');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
+    sleep(3);
+    $this->assertTrue($this->isTextPresent('You should move the membership related fields in the "On Behalf" profile for this Contribution Page'), "Form rule didn't showed up while incorrectly configuring membership fields profile for 'on behalf of' contribution page");
+        
+    //scenario 2 : disable 'on behalf of', add membership data in pre / post profile 
+    //then try to add 'on behalf of' and check for formRule
+    //disable 'on behalf of'
+    $this->open($this->sboxPath . "civicrm/admin/contribute/settings?reset=1&action=update&id={$pageId}"); 
+    $this->waitForElementPresent('_qf_Settings_next-bottom');
+    $this->uncheck('is_organization');
+    $this->click('_qf_Settings_next-bottom');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
+    
+    //set a membership field profile for this contribution page
+    $this->click('css=li#tab_custom a');
+    $this->waitForElementPresent('_qf_Custom_next-bottom');
+    $this->select('custom_pre_id', "label={$profileTitle}");
+    $this->click('_qf_Custom_next-bottom');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
+
+    //now visit the title settings page and configure the profile as on behalf of
+    $this->click('css=li#tab_settings a');
+    $this->waitForElementPresent('_qf_Settings_next-bottom');
+    $this->check('is_organization');
+    $this->click('_qf_Settings_next-bottom');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
+    sleep(3);    
+    $this->assertTrue($this->isTextPresent("You should move the membership related fields configured in 'Includes Profile (top of page)' to the 'On Behalf' profile for this Contribution Page"), "Form rule 'You should move the membership related fields configured in 'Includes Profile (top of page)' to the 'On Behalf' profile for this Contribution Page' didn't showed up");
+    
     //logout
     $this->open($this->sboxPath . "civicrm/logout?reset=1");
     $this->waitForPageToLoad($this->getTimeoutMsec());
-
   }
 
   function testOnBehalfOfOrganizationWithOrgData()
