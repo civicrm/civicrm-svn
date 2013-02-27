@@ -96,7 +96,7 @@ function _civicrm_api3_group_create_spec(&$params) {
  */
 function civicrm_api3_group_get($params) {
 
-  $options          = _civicrm_api3_get_options_from_params($params, TRUE,'group','get');
+  $options          = _civicrm_api3_get_options_from_params($params, TRUE, 'get');
   $sort             = CRM_Utils_Array::value('sort', $options, NULL);
   $offset           = CRM_Utils_Array::value('offset', $options);
   $rowCount         = CRM_Utils_Array::value('limit', $options);

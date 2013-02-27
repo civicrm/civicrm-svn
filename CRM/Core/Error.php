@@ -285,7 +285,8 @@ class CRM_Core_Error extends PEAR_ErrorStack {
       print ("Sorry. A non-recoverable error has occurred.\n$message \n$code\n$email\n\n");
       debug_print_backtrace();
       die("\n");
-      // FIXME: Why doesn't this call abend()? Difference: abend() will cleanup transaction and (via civiExit) store session state
+      // FIXME: Why doesn't this call abend()?
+      // Difference: abend() will cleanup transaction and (via civiExit) store session state
       // self::abend(CRM_Core_Error::FATAL_ERROR);
     }
 
@@ -313,9 +314,7 @@ class CRM_Core_Error extends PEAR_ErrorStack {
     CRM_Core_Error::debug_var('Fatal Error Details', $vars);
     CRM_Core_Error::backtrace('backTrace', TRUE);
     $content = $template->fetch($config->fatalErrorTemplate);
-    if ($config->userFramework == 'Joomla' &&
-      class_exists('JError')
-    ) {
+    if ($config->userFramework == 'Joomla' && class_exists('JError')) {
       JError::raiseError('CiviCRM-001', $content);
     }
     else {
@@ -354,7 +353,8 @@ class CRM_Core_Error extends PEAR_ErrorStack {
       printf("Sorry. A non-recoverable error has occurred.\n%s\n", $vars['message']);
       print self::formatTextException($exception);
       die("\n");
-      // FIXME: Why doesn't this call abend()? Difference: abend() will cleanup transaction and (via civiExit) store session state
+      // FIXME: Why doesn't this call abend()?
+      // Difference: abend() will cleanup transaction and (via civiExit) store session state
       // self::abend(CRM_Core_Error::FATAL_ERROR);
     }
 
@@ -748,6 +748,7 @@ class CRM_Core_Error extends PEAR_ErrorStack {
   }
 
   public static function exceptionHandler($pearError) {
+    CRM_Core_Error::backtrace('backTrace', TRUE);
     throw new PEAR_Exception($pearError->getMessage(), $pearError);
   }
 

@@ -233,7 +233,13 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
    * @todo other BAO functions that use returnProperties (e.g. Query Objects) receive the array flipped & filled with 1s and
    * add in essential fields (e.g. id). This should follow a regular pattern like the others
    */
-  static function getGroups($params = NULL, $returnProperties = NULL, $sort = NULL, $offset = NULL, $rowCount = NULL) {
+  static function getGroups(
+    $params = NULL,
+    $returnProperties = NULL,
+    $sort = NULL,
+    $offset = NULL,
+    $rowCount = NULL
+  ) {
     $dao = new CRM_Contact_DAO_Group();
     $dao->is_active = 1;
     if ($params) {

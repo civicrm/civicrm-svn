@@ -179,7 +179,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
       'option.limit' => 1,
       'return' => 'value'
     ));
-    return $result['result'];
+    return $result;
   }
 
   function webtestGetValidCountryID() {
@@ -192,9 +192,13 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
   }
 
   function webtestGetValidEntityID($entity) {
-    //michaelmcandrew: would like to use getvalue but there is a bug for e.g. group where option.limit not working at the moment CRM-9110
+    // michaelmcandrew: would like to use getvalue but there is a bug
+    // for e.g. group where option.limit not working at the moment CRM-9110
     $result = $this->webtest_civicrm_api($entity, "get", array('option.limit' => 1, 'return' => 'id'));
-    return current(array_keys($result['values']));
+    if (!empty($result['values'])) {
+      return current(array_keys($result['values']));
+    }
+    return NULL;
   }
 
   function webtestGetConfig($field) {

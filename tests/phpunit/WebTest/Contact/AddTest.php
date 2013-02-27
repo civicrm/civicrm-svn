@@ -37,13 +37,13 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
 
     // Go directly to the URL of the screen that you will be testing (New Individual).
     $this->WebtestAddGroup();
-    
-     // go to display preferences to enable Open ID field
+
+    // go to display preferences to enable Open ID field
     $this->open($this->sboxPath . "civicrm/admin/setting/preferences/display?reset=1");
     $this->waitForElementPresent("_qf_Display_next-bottom");
     $this->check("xpath=//ul[@id='contactEditBlocks']//li/span[2]/label[text()='Open ID']/../input");
-    $this->click("_qf_Display_next-bottom");    
-    $this->waitForPageToLoad($this->getTimeoutMsec());    
+    $this->click("_qf_Display_next-bottom");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->open($this->sboxPath . "civicrm/contact/add?reset=1&ct=Individual");
 
     //contact details section
@@ -176,8 +176,8 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
     $this->open($this->sboxPath . "civicrm/admin/setting/preferences/display?reset=1");
     $this->waitForElementPresent("_qf_Display_next-bottom");
     $this->check("xpath=//ul[@id='contactEditBlocks']//li/span[2]/label[text()='Open ID']/../input");
-    $this->click("_qf_Display_next-bottom");    
-    $this->waitForPageToLoad($this->getTimeoutMsec());    
+    $this->click("_qf_Display_next-bottom");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     // Go directly to the URL of the screen that you will be testing (New Household).
     $this->open($this->sboxPath . "civicrm/contact/add?reset=1&ct=Household");
 
@@ -283,8 +283,8 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
     $this->open($this->sboxPath . "civicrm/admin/setting/preferences/display?reset=1");
     $this->waitForElementPresent("_qf_Display_next-bottom");
     $this->check("xpath=//ul[@id='contactEditBlocks']//li/span[2]/label[text()='Open ID']/../input");
-    $this->click("_qf_Display_next-bottom");    
-    $this->waitForPageToLoad($this->getTimeoutMsec());    
+    $this->click("_qf_Display_next-bottom");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     // Go directly to the URL of the screen that you will be testing (New Organization).
     $this->open($this->sboxPath . "civicrm/contact/add?reset=1&ct=Organization");
 
