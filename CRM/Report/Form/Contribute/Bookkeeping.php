@@ -109,19 +109,11 @@ class CRM_Report_Form_Contribute_Bookkeeping extends CRM_Report_Form {
           'id' => array('title' => ts('Contribution #'),
             'default' => TRUE,
           ),
-          'financial_type_id' => array('title' => ts('Financial Type'),
-            'default' => TRUE,
-        ),
         ),
         'filters' =>
         array(
           'receive_date' =>
           array('operatorType' => CRM_Report_Form::OP_DATE),
-          'financial_type_id' => array( 
-            'title' => ts('Financial Type'), 
-            'operatorType' => CRM_Report_Form::OP_MULTISELECT,
-            'options' => CRM_Contribute_PseudoConstant::financialType(),
-          ),
           'payment_instrument_id' =>
           array('title' => ts('Paid By'),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
@@ -161,6 +153,21 @@ class CRM_Report_Form_Contribute_Bookkeeping extends CRM_Report_Form {
           'amount' => array(
             'title' => ts('Amount'),
             'default' => TRUE,
+          ),
+        ),
+      ),    
+      'civicrm_line_item' => array(
+        'dao' => 'CRM_Price_DAO_LineItem',
+        'fields' => array(
+          'financial_type_id' => array('title' => ts('Financial Type'),
+            'default' => TRUE,
+          ),
+        ),
+        'filters' => array(
+          'financial_type_id' => array( 
+            'title' => ts('Financial Type'), 
+            'operatorType' => CRM_Report_Form::OP_MULTISELECT,
+            'options' => CRM_Contribute_PseudoConstant::financialType(),
           ),
         ),
       ),
@@ -226,7 +233,9 @@ class CRM_Report_Form_Contribute_Bookkeeping extends CRM_Report_Form {
               INNER JOIN civicrm_financial_item fitem
                     ON fitem.id = {$this->_aliases['civicrm_entity_financial_trxn']}_item.entity_id
               INNER JOIN civicrm_financial_account {$this->_aliases['civicrm_financial_account']}_credit_2
-                    ON fitem.financial_account_id = {$this->_aliases['civicrm_financial_account']}_credit_2.id";
+                    ON fitem.financial_account_id = {$this->_aliases['civicrm_financial_account']}_credit_2.id
+              INNER JOIN civicrm_line_item {$this->_aliases['civicrm_line_item']}
+                    ON  fitem.entity_id = {$this->_aliases['civicrm_line_item']}.id AND fitem.entity_table = 'civicrm_line_item' ";
   }
 
   function orderBy() {
@@ -307,8 +316,8 @@ class CRM_Report_Form_Contribute_Bookkeeping extends CRM_Report_Form {
         $entryFound = TRUE;
       }
 
-      if ($value = CRM_Utils_Array::value('civicrm_contribution_financial_type_id', $row)) {
-        $rows[$rowNum]['civicrm_contribution_financial_type_id'] = $contributionTypes[$value];
+      if ($value = CRM_Utils_Array::value('civicrm_line_item_financial_type_id', $row)) {
+        $rows[$rowNum]['civicrm_line_item_financial_type_id'] = $contributionTypes[$value];
         $entryFound = TRUE;
       }
 
