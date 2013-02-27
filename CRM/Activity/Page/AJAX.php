@@ -267,7 +267,7 @@ class CRM_Activity_Page_AJAX {
         switch($caseRelationships[$key]['source']){
         case 'caseRel':
           $caseRelationships[$key]['actions'] = 
-            '<a href="#" title="edit case role" onclick="createRelationship( '.$caseRelationships[$key]['relation_type'].', '.$caseRelationships[$key]['cid'].', '.$caseRelationships[$key]['rel_id'].', '.$idx.', \''.$caseRelationships[$key]['relation'].'\' );return false;"><div class="icon edit-icon" ></div></a>&nbsp;&nbsp;<a href="'.CRM_Utils_System::url('civicrm/contact/view/rel', 'action=delete&reset=1&cid='. $caseRelationships[$key]['cid'].'&id='.$caseRelationships[$key]['rel_id'].'&caseID='.$caseID.'').'" onclick = "if (confirm(\'Are you sure you want to remove this person from their case role?\') ) this.href+=\'&confirmed=1\'; else return false;"><div class="icon delete-icon" title="remove contact from case role"></div></a>';
+            '<a href="#" title="edit case role" onclick="createRelationship( '.$caseRelationships[$key]['relation_type'].', '.$caseRelationships[$key]['cid'].', '.$caseRelationships[$key]['rel_id'].', '.$idx.', \''.$caseRelationships[$key]['relation'].'\' );return false;"><div class="icon edit-icon" ></div></a>&nbsp;&nbsp;<a href="'.CRM_Utils_System::url('civicrm/contact/view/rel', 'action=delete&reset=1&cid='. $caseRelationships[$key]['client_id'].'&id='.$caseRelationships[$key]['rel_id'].'&caseID='.$caseID.'').'" onclick = "if (confirm(\'Are you sure you want to remove this person from their case role?\') ) this.href+=\'&confirmed=1\'; else return false;"><div class="icon delete-icon" title="remove contact from case role"></div></a>';
           break;
           
         case 'caseRoles':
