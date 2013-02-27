@@ -375,16 +375,26 @@ INNER JOIN   civicrm_contact AS contact ON ( contact.id = contrib.contact_id )
    * @access public
    */
   static function contributionChartYearly() {
-    $query = '
+    $config = CRM_Core_Config::singleton();
+    $yearClause = "year(contrib.receive_date) as contribYear";
+    if (!empty($config->fiscalYearStart) && ($config->fiscalYearStart['M'] != 1 || $config->fiscalYearStart['d'] != 1)) {
+      $yearClause = "CASE WHEN DAYOFYEAR(contrib.receive_date)>= " .
+        date('z',mktime(0, 0, 0, $config->fiscalYearStart['M'], $config->fiscalYearStart['d']+1, 2000)) .
+        " THEN
+          concat(YEAR(contrib.receive_date), '-',YEAR(contrib.receive_date)+1)
+   ELSE concat(YEAR(contrib.receive_date)-1,'-', YEAR(contrib.receive_date)) END AS contribYear";
+    }
+
+    $query = "
     SELECT   sum(contrib.total_amount) AS ctAmt,
-             year(contrib.receive_date) as contribYear
+             {$yearClause}
       FROM   civicrm_contribution AS contrib
 INNER JOIN   civicrm_contact contact ON ( contact.id = contrib.contact_id )
      WHERE   ( contrib.is_test = 0 OR contrib.is_test IS NULL )
        AND   contrib.contribution_status_id = 1
        AND   contact.is_deleted = 0
   GROUP BY   contribYear
-  ORDER BY   contribYear';
+  ORDER BY   contribYear";
     $dao = CRM_Core_DAO::executeQuery($query);
 
     $params = NULL;
