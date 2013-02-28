@@ -54,7 +54,11 @@
   {/if}
   {if $contributionMode}
   <div id="help">
-    {ts 1=$displayName 2=$contribMode}Use this form to submit a new contribution on behalf of %1. <strong>A %2 transaction will be submitted</strong> using the selected payment processor.{/ts}
+    {if $contactId}
+      {ts 1=$displayName 2=$contribMode}Use this form to submit a new contribution on behalf of %1. <strong>A %2 transaction will be submitted</strong> using the selected payment processor.{/ts}
+    {else}
+      {ts 1=$displayName 2=$contribMode}Use this form to submit a new contribution. <strong>A %2 transaction will be submitted</strong> using the selected payment processor.{/ts}
+    {/if}
   </div>
   {/if}
   {if $action eq 8}
@@ -63,8 +67,18 @@
     {ts}WARNING: Deleting this contribution will result in the loss of the associated financial transactions (if any).{/ts} {ts}Do you want to continue?{/ts}
   </div>
   {else}
-  <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
-    {if $isOnline}{assign var=valueStyle value=" class='view-value'"}{else}{assign var=valueStyle value=""}{/if}
+  <div class="crm-submit-buttons">
+    {include file="CRM/common/formButtons.tpl"}
+    {if $newCredit AND $action EQ 1 AND $contributionMode EQ null}
+      {if $contactId}
+        {capture assign=ccModeLink}{crmURL p='civicrm/contact/view/contribution' q="reset=1&action=add&cid=`$contactId`&context=`$context`&mode=live"}{/capture}
+      {else}
+        {capture assign=ccModeLink}{crmURL p='civicrm/contact/view/contribution' q="reset=1&action=add&context=standalone&mode=live"}{/capture}
+      {/if}
+      <span class="action-link crm-link-credit-card-mode">&nbsp;<a href="{$ccModeLink}">&raquo; {ts}submit credit card contribution{/ts}</a>
+    {/if}
+  </div>
+  {if $isOnline}{assign var=valueStyle value=" class='view-value'"}{else}{assign var=valueStyle value=""}{/if}
   <table class="form-layout-compressed">
     {if $context neq 'standalone'}
     <tr>

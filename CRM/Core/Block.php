@@ -360,13 +360,7 @@ class CRM_Core_Block {
 
       if (!empty($config->enableComponents)) {
         // check if we can process credit card contribs
-        $newCredit = FALSE;
-        $processors = CRM_Core_PseudoConstant::paymentProcessor(FALSE, FALSE,
-          "billing_mode IN ( 1, 3 )"
-        );
-        if (count($processors) > 0) {
-          $newCredit = TRUE;
-        }
+        $newCredit = CRM_Core_Payment::allowBackofficeCreditCard();
         
         foreach ($components as $componentName => $obj) {
           if (in_array($componentName, $config->enableComponents)) {

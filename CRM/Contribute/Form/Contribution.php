@@ -332,7 +332,10 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
     if ($this->_id) {
       $this->_contactID = $defaults['contact_id'];
     }
-
+    
+    // Set $newCredit variable in template to control whether link to credit card mode is included
+    CRM_Core_Payment::allowBackofficeCreditCard($this);
+    
     // fix the display of the monetary value, CRM-4038
     if (isset($defaults['total_amount'])) {
       $defaults['total_amount'] = CRM_Utils_Money::format($defaults['total_amount'], NULL, '%a');

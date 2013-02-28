@@ -356,5 +356,24 @@ INNER JOIN civicrm_contribution con ON ( con.contribution_recur_id = rec.id )
     }
     return $this->_paymentProcessor['url_recur'];
   }
+
+  /**
+   * Check for presence of type 1 or type 3 enabled processors (means we can do back-office submit credit/debit card trxns)
+   * @public
+   */
+  static function allowBackofficeCreditCard($template = NULL, $variableName = 'newCredit') {
+    $newCredit = FALSE;
+    $processors = CRM_Core_PseudoConstant::paymentProcessor(FALSE, FALSE,
+      "billing_mode IN ( 1, 3 )"
+    );
+    if (count($processors) > 0) {
+      $newCredit = TRUE;
+    }
+    if ($template) {
+      $template->assign($variableName, $newCredit);
+    }
+    return $newCredit;
+  }
+
 }
 
