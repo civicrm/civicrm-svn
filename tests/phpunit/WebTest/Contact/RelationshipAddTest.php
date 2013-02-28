@@ -33,11 +33,6 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase {
   }
 
   function testRelationshipAddTest() {
-    // This is the path where our testing install resides.
-    // The rest of URL is defined in CiviSeleniumTestCase base class, in
-    // class attributes.
-    $this->open($this->sboxPath);
-
     // Logging in. Remember to wait for page to load. In most cases,
     // you can rely on 30000 as the value that allows your test to pass, however,
     // sometimes your test might fail because of this. In such cases, it's better to pick one element
@@ -276,7 +271,7 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase {
 
     //fill in the individual
     $this->webtestFillAutocomplete($sortName);
- 
+
     $this->waitForElementPresent("quick-save");
 
     //fill in the relationship start date
@@ -304,8 +299,6 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase {
   }
 
   function testRelationshipAddNewIndividualTest() {
-    $this->open($this->sboxPath);
-
     $this->webtestLogin();
 
     //create a relationship type between different contact types
