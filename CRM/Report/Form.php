@@ -2050,6 +2050,7 @@ WHERE cg.extends IN ('" . implode("','", $this->_customGroupExtends) . "') AND
   }
 
   function unselectedSectionColumns() {
+    $selectColumns = array();
     foreach ($this->_columns as $tableName => $table) {
       if (array_key_exists('fields', $table)) {
         foreach ($table['fields'] as $fieldName => $field) {
@@ -2062,7 +2063,7 @@ WHERE cg.extends IN ('" . implode("','", $this->_customGroupExtends) . "') AND
         }
       }
     }
-    if (is_array($this->_sections) && is_array($selectColumns)) {
+    if (is_array($this->_sections)) {
       return array_diff_key($this->_sections, $selectColumns);
     }
     else {
