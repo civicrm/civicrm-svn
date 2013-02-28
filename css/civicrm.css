@@ -3651,14 +3651,14 @@ div.m ul#civicrm-menu,
 }
 
 /* Notifications */
-.crm-container .ui-notify {
+#crm-container .ui-notify {
   width: 350px;
   position: fixed;
   top: 45px;
   right: 15px;
   z-index: 999999;
 }
-.crm-container div.ui-notify-message {
+#crm-container div.ui-notify-message {
   padding: 10px;
   margin-bottom: 15px;
   color: #fff;
@@ -3717,8 +3717,21 @@ div.m ul#civicrm-menu,
   color: #ffffab;
 }
 #crm-container div.ui-notify-message table,
-#crm-container div.ui-notify-message tbody {
+#crm-container div.ui-notify-message tbody,
+#crm-container div.ui-notify-message tr {
   border: 0 none;
+  font-size: 11px;
+}
+#crm-container div.ui-notify-message td {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid #111;
+  font-size: 11px;
+}
+#crm-container div.ui-notify-message th {
+  background: rgba(200,200,200,0.2);
+  border: 1px solid #111;
+  color: #eee;
+  font-size: 11px;
 }
 #crm-container div.ui-notify-message ul,
 #crm-container div.ui-notify-message ol {
