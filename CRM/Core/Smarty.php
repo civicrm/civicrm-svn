@@ -76,7 +76,7 @@ class CRM_Core_Smarty extends Smarty {
    *
    * @return CRM_Core_Smarty
    * @access private
-   */ 
+   */
   private function __construct() {
     parent::__construct();
   }
@@ -98,7 +98,7 @@ class CRM_Core_Smarty extends Smarty {
     // else we sometime suppress errors quietly and this results
     // in blank emails etc
     if (!is_writable($this->compile_dir)) {
-           echo "CiviCRM does not have permission to write temp files in {$this->compile_dir}, Exiting";
+      echo "CiviCRM does not have permission to write temp files in {$this->compile_dir}, Exiting";
       exit();
     }
 
@@ -112,7 +112,12 @@ class CRM_Core_Smarty extends Smarty {
 
     $customPluginsDir = NULL;
     if (isset($config->customPHPPathDir)) {
-      $customPluginsDir = $config->customPHPPathDir . DIRECTORY_SEPARATOR . 'CRM' . DIRECTORY_SEPARATOR . 'Core' . DIRECTORY_SEPARATOR . 'Smarty' . DIRECTORY_SEPARATOR . 'plugins' . DIRECTORY_SEPARATOR;
+      $customPluginsDir =
+        $config->customPHPPathDir . DIRECTORY_SEPARATOR .
+        'CRM'                     . DIRECTORY_SEPARATOR .
+        'Core'                    . DIRECTORY_SEPARATOR .
+        'Smarty'                  . DIRECTORY_SEPARATOR .
+        'plugins'                 . DIRECTORY_SEPARATOR;
       if (!file_exists($customPluginsDir)) {
         $customPluginsDir = NULL;
       }
