@@ -33,25 +33,12 @@ class WebTest_Contact_MergeContactsTest extends CiviSeleniumTestCase {
   }
 
   function testIndividualAdd() {
-    // This is the path where our testing install resides.
-    // The rest of URL is defined in CiviSeleniumTestCase base class, in
-    // class attributes.
-    $this->open($this->sboxPath);
-
     // Logging in. Remember to wait for page to load. In most cases,
     // you can rely on 30000 as the value that allows your test to pass, however,
     // sometimes your test might fail because of this. In such cases, it's better to pick one element
     // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
     // page contents loaded and you can continue your test execution.
     $this->webtestLogin();
-
-    // edit the default Fuzzy rule
-    $this->open($this->sboxPath . "civicrm/contact/deduperules?action=update&id=1");
-    $this->waitForElementPresent('threshold');
-    $this->click("threshold");
-    $this->type("threshold", "10");
-    $this->click("_qf_DedupeRules_next-bottom");
-    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Go directly to the URL of New Individual.
     $this->open($this->sboxPath . "civicrm/contact/add?reset=1&ct=Individual");
@@ -147,6 +134,10 @@ class WebTest_Contact_MergeContactsTest extends CiviSeleniumTestCase {
     $this->assertElementContainsText('crm-notification-container', "Contact Saved");
 
     // Find and Merge Contacts with Supervised Rule
+    $this->open($this->sboxPath . 'civicrm/contact/dedupefind?reset=1&rgid=1&action=renew');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
+
+    // reload the page
     $this->open($this->sboxPath . 'civicrm/contact/dedupefind?reset=1&rgid=1&action=update');
     $this->waitForPageToLoad($this->getTimeoutMsec());
 
@@ -294,12 +285,7 @@ class WebTest_Contact_MergeContactsTest extends CiviSeleniumTestCase {
   }
 
 
-  function testMergeTest(){
-    // This is the path where our testing install resides.
-    // The rest of URL is defined in CiviSeleniumTestCase base class, in
-    // class attributes.
-    $this->open($this->sboxPath);
-
+  function testMergeTest() {
     // Logging in. Remember to wait for page to load. In most cases,
     // you can rely on 30000 as the value that allows your test to pass, however,
     // sometimes your test might fail because of this. In such cases, it's better to pick one element
@@ -307,20 +293,11 @@ class WebTest_Contact_MergeContactsTest extends CiviSeleniumTestCase {
     // page contents loaded and you can continue your test execution.
     $this->webtestLogin();
 
-    // edit the default Fuzzy rule
-    $this->open($this->sboxPath . "civicrm/contact/deduperules?action=update&id=1");
-    $this->waitForElementPresent('threshold');
-    $this->click("threshold");
-    $this->type("threshold", "10");
-    $this->click("_qf_DedupeRules_next-bottom");
-    $this->waitForPageToLoad($this->getTimeoutMsec());
-
-    // Merge with the add new checkbox ticked
     // Go directly to the URL of New Individual.
     $this->open($this->sboxPath . "civicrm/contact/add?reset=1&ct=Individual");
     $this->waitForPageToLoad($this->getTimeoutMsec());
 
-     // add contact1
+    // add contact1
     //fill in first name
     $firstName = substr(sha1(rand()), 0, 7);
     $this->type('first_name', $firstName);
@@ -352,7 +329,7 @@ class WebTest_Contact_MergeContactsTest extends CiviSeleniumTestCase {
     $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertElementContainsText('crm-notification-container', "Contact Saved");
 
-      // contact2: duplicate of contact1.
+    // contact2: duplicate of contact1.
     $this->open($this->sboxPath . "civicrm/contact/add?reset=1&ct=Individual");
 
     //fill in first name
@@ -377,7 +354,7 @@ class WebTest_Contact_MergeContactsTest extends CiviSeleniumTestCase {
     $this->assertElementContainsText('crm-notification-container', "Contact Saved");
 
     // Find and Merge Contacts with Supervised Rule
-    $this->open($this->sboxPath . 'civicrm/contact/dedupefind?reset=1&rgid=1&action=update');
+    $this->open($this->sboxPath . 'civicrm/contact/dedupefind?reset=1&rgid=1&action=renew');
     $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Select the contacts to be merged
@@ -401,25 +378,25 @@ class WebTest_Contact_MergeContactsTest extends CiviSeleniumTestCase {
     $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->assertTrue($this->isTextPresent('Contacts Merged'));
-    $this->assertTrue($this->isElementPresent("xpath=//div[@id='email-block']/div/div/div[2][contains(text(), 'Home')]"));
-    $this->assertTrue($this->isElementPresent("xpath=//div[@id='email-block']/div/div/div[3]/span/a[text() ='{$firstName}.{$lastName}@example.com']"));
-    $this->assertTrue($this->isElementPresent("xpath=//div[@id='email-block']/div/div/div[4][contains(text(), 'Home')]"));
-    $this->assertTrue($this->isElementPresent("xpath=//div[@id='email-block']/div/div/div[5]/span/a[text() ='{$firstName}.{$lastName}@example.com']"));
-    $this->assertTrue($this->isElementPresent("xpath=//div[@id='email-block']/div/div/div[6][contains(text(), 'Billing')]"));
-    $this->assertTrue($this->isElementPresent("xpath=//div[@id='email-block']/div/div/div[7]/span/a[text() ='$firstName.$lastName@billing.com']"));
-    $this->assertTrue($this->isElementPresent("xpath=//div[@id='phone-block']/div/div/div[2][contains(text(), 'Home')]"));
-    $this->assertTrue($this->isElementPresent("xpath=//div[@id='phone-block']/div/div/div[3]/span[contains(text(), '9876543211')]"));
-    $this->assertTrue($this->isElementPresent("xpath=//div[@id='phone-block']/div/div/div[4][contains(text(), 'Home')]"));
-    $this->assertTrue($this->isElementPresent("xpath=//div[@id='phone-block']/div/div/div[5]/span[contains(text(), '9876543210')]"));
-    $this->assertTrue($this->isElementPresent("xpath=//div[@id='phone-block']/div/div/div[6][contains(text(), 'Billing')]"));
-    $this->assertTrue($this->isElementPresent("xpath=//div[@id='phone-block']/div/div/div[7]/span[contains(text(), '9876543120')]"));
+    $this->assertTrue($this->isElementPresent("xpath=//div[@id='email-block']/div/div/div[2]/div[1][contains(text(), 'Home')]"));
+    $this->assertTrue($this->isElementPresent("xpath=//div[@id='email-block']/div/div/div[2]/div[2]/a[text() = '{$firstName}.{$lastName}@example.com']"));
+    $this->assertTrue($this->isElementPresent("xpath=//div[@id='email-block']/div/div/div[3]/div[1][contains(text(), 'Home')]"));
+    $this->assertTrue($this->isElementPresent("xpath=//div[@id='email-block']/div/div/div[3]/div[2]/a[text() ='{$firstName}.{$lastName}@example.com']"));
+    $this->assertTrue($this->isElementPresent("xpath=//div[@id='email-block']/div/div/div[4]/div[1][contains(text(), 'Billing')]"));
+    $this->assertTrue($this->isElementPresent("xpath=//div[@id='email-block']/div/div/div[4]/div[2]/a[text() ='$firstName.$lastName@billing.com']"));
+    $this->assertTrue($this->isElementPresent("xpath=//div[@id='phone-block']/div/div/div[2]/div[1][contains(text(), 'Home')]"));
+    $this->assertTrue($this->isElementPresent("xpath=//div[@id='phone-block']/div/div/div[2]/div[2][contains(text(), '9876543211')]"));
+    $this->assertTrue($this->isElementPresent("xpath=//div[@id='phone-block']/div/div/div[3]/div[1][contains(text(), 'Home')]"));
+    $this->assertTrue($this->isElementPresent("xpath=//div[@id='phone-block']/div/div/div[3]/div[2][contains(text(), '9876543210')]"));
+    $this->assertTrue($this->isElementPresent("xpath=//div[@id='phone-block']/div/div/div[4]/div[1][contains(text(), 'Billing')]"));
+    $this->assertTrue($this->isElementPresent("xpath=//div[@id='phone-block']/div/div/div[4]/div[2][contains(text(), '9876543120')]"));
 
     //Merge with the feature of (add)
     // Go directly to the URL of New Individual.
     $this->open($this->sboxPath . "civicrm/contact/add?reset=1&ct=Individual");
     $this->waitForPageToLoad($this->getTimeoutMsec());
 
-     // add contact1
+    // add contact1
     //fill in first name
     $firstName1 = substr(sha1(rand()), 0, 7);
     $this->type('first_name', $firstName1);
@@ -446,7 +423,7 @@ class WebTest_Contact_MergeContactsTest extends CiviSeleniumTestCase {
     $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertElementContainsText('crm-notification-container', "Contact Saved");
 
-      // contact2: duplicate of contact1.
+    // contact2: duplicate of contact1.
     $this->open($this->sboxPath . "civicrm/contact/add?reset=1&ct=Individual");
 
     //fill in first name
@@ -471,7 +448,7 @@ class WebTest_Contact_MergeContactsTest extends CiviSeleniumTestCase {
     $this->assertElementContainsText('crm-notification-container', "Contact Saved");
 
     // Find and Merge Contacts with Supervised Rule
-    $this->open($this->sboxPath . 'civicrm/contact/dedupefind?reset=1&rgid=1&action=update');
+    $this->open($this->sboxPath . 'civicrm/contact/dedupefind?reset=1&rgid=1&action=renew');
     $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Select the contacts to be merged
@@ -497,36 +474,23 @@ class WebTest_Contact_MergeContactsTest extends CiviSeleniumTestCase {
     $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->assertTrue($this->isTextPresent('Contacts Merged'));
-    $this->assertTrue($this->isElementPresent("xpath=//div[@id='email-block']/div/div/div[2][contains(text(), 'Home')]"));
-    $this->assertTrue($this->isElementPresent("xpath=//div[@id='email-block']/div/div/div[3]/span/a[text() ='{$firstName1}.{$lastName1}@example.com']"));
-    $this->assertTrue($this->isElementPresent("xpath=//div[@id='email-block']/div/div/div[4][contains(text(), 'Main')]"));
-    $this->assertTrue($this->isElementPresent("xpath=//div[@id='email-block']/div/div/div[5]/span/a[text() ='{$firstName1}.{$lastName1}@example.com']"));
-    $this->assertTrue($this->isElementPresent("xpath=//div[@id='phone-block']/div/div/div[2][contains(text(), 'Billing')]"));
-    $this->assertTrue($this->isElementPresent("xpath=//div[@id='phone-block']/div/div/div[3]/span[contains(text(), '9876543120')]"));
-    $this->assertTrue($this->isElementPresent("xpath=//div[@id='phone-block']/div/div/div[4][contains(text(), 'Home')]"));
-    $this->assertTrue($this->isElementPresent("xpath=//div[@id='phone-block']/div/div/div[5]/span[contains(text(), '9876543210')]"));
-}
+    $this->assertTrue($this->isElementPresent("xpath=//div[@id='email-block']/div/div/div[2]/div[1][contains(text(), 'Home')]"));
+    $this->assertTrue($this->isElementPresent("xpath=//div[@id='email-block']/div/div/div[2]/div[2]/a[text() ='{$firstName1}.{$lastName1}@example.com']"));
+    $this->assertTrue($this->isElementPresent("xpath=//div[@id='email-block']/div/div/div[3]/div[1][contains(text(), 'Main')]"));
+    $this->assertTrue($this->isElementPresent("xpath=//div[@id='email-block']/div/div/div[3]/div[2]/a[text() ='{$firstName1}.{$lastName1}@example.com']"));
+    $this->assertTrue($this->isElementPresent("xpath=//div[@id='phone-block']/div/div/div[2]/div[1][contains(text(), 'Billing')]"));
+    $this->assertTrue($this->isElementPresent("xpath=//div[@id='phone-block']/div/div/div[2]/div[2][contains(text(), '9876543120')]"));
+    $this->assertTrue($this->isElementPresent("xpath=//div[@id='phone-block']/div/div/div[3]/div[1][contains(text(), 'Home')]"));
+    $this->assertTrue($this->isElementPresent("xpath=//div[@id='phone-block']/div/div/div[3]/div[2][contains(text(), '9876543210')]"));
+  }
 
   function testBatchMerge(){
-    // This is the path where our testing install resides.
-    // The rest of URL is defined in CiviSeleniumTestCase base class, in
-    // class attributes.
-    $this->open($this->sboxPath);
-
     // Logging in. Remember to wait for page to load. In most cases,
     // you can rely on 30000 as the value that allows your test to pass, however,
     // sometimes your test might fail because of this. In such cases, it's better to pick one element
     // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
     // page contents loaded and you can continue your test execution.
     $this->webtestLogin();
-
-    // edit the default Fuzzy rule
-    $this->open($this->sboxPath . "civicrm/contact/deduperules?action=update&id=1");
-    $this->waitForElementPresent('threshold');
-    $this->click("threshold");
-    $this->type("threshold", "10");
-    $this->click("_qf_DedupeRules_next-bottom");
-    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // add contact1 and its duplicate
     //first name
@@ -616,7 +580,7 @@ class WebTest_Contact_MergeContactsTest extends CiviSeleniumTestCase {
     $this->_createContacts($firstName3,$lastName3);
 
     // Find and Merge Contacts with Supervised Rule
-    $this->open($this->sboxPath . 'civicrm/contact/dedupefind?reset=1&rgid=1&action=update');
+    $this->open($this->sboxPath . 'civicrm/contact/dedupefind?reset=1&rgid=1&action=renew');
     $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->select("name=option51_length", "value=100");
@@ -625,8 +589,9 @@ class WebTest_Contact_MergeContactsTest extends CiviSeleniumTestCase {
     $this->click("xpath=//form[@id='DedupeFind']//a/span[text()='Batch Merge Duplicates']");
 
     // Check confirmation alert.
-    $this->assertTrue((bool)preg_match("/^This will run the batch merge process on the listed duplicates. The operation will run in safe mode - only records with no direct data conflicts will be merged. Click OK to proceed if you are sure you wish to run this operation./",
-                                       $this->getConfirmation()
+    $this->assertTrue(
+      (bool)preg_match("/^This will run the batch merge process on the listed duplicates. The operation will run in safe mode - only records with no direct data conflicts will be merged. Click OK to proceed if you are sure you wish to run this operation./",
+        $this->getConfirmation()
                                        ));
     $this->chooseOkOnNextConfirmation();
     $this->waitForPageToLoad($this->getTimeoutMsec());
@@ -642,19 +607,6 @@ class WebTest_Contact_MergeContactsTest extends CiviSeleniumTestCase {
     $this->click("toggleSelect");
     $this->click("_qf_Merge_next-bottom");
     $this->waitForPageToLoad($this->getTimeoutMsec());
-
-    /* Not sure what this was supposed to do, but it doesn't work.
-    $this->click("xpath=//a[@class='delete button']");
-    $this->waitForPageToLoad($this->getTimeoutMsec());
-    $this->click("_qf_Delete_done");
-    $this->waitForPageToLoad($this->getTimeoutMsec());
-    $this->assertElementContainsText('crm-notification-container', "Deleted");
-    $this->click("xpath=//div[@class='crm-actions-ribbon']/ul/li[2]/a[@class='delete button']");
-    $this->waitForPageToLoad($this->getTimeoutMsec());
-    $this->click("_qf_Delete_done");
-    $this->waitForPageToLoad($this->getTimeoutMsec());
-    $this->assertElementContainsText('crm-notification-container', "Deleted");
-    */
 
     //check the existence of merged contacts
     $contactEmails = array( 1 => "{$firstName}.{$lastName}@example.com", 2 => "{$firstName2}.{$lastName2}@example.com", 3 => "{$firstName3}.{$lastName3}@example.com");

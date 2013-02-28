@@ -73,13 +73,13 @@
     {literal}
     <script type="text/javascript">
     function mergeBlock(blockname, element, blockId) {
-           var allBlock = {/literal}{$mainLocBlock}{literal};
-           var block    = eval( "allBlock." + 'main_'+ blockname + element.value);
+        var allBlock = {/literal}{$mainLocBlock}{literal};
+        var block    = eval( "allBlock." + 'main_'+ blockname + element.value);
         if(blockname == 'email' || blockname == 'phone'){
-                 var label = '(overwrite)'+<span id="main_blockname_blockId_overwrite">{/literal}{$form.location.$blockName.$blockId.operation.html}{literal}<br /></span>;
+           var label = '(overwrite)'+ '<span id="main_blockname_blockId_overwrite">{/literal}{$form.location.$blockName.$blockId.operation.html}{literal}<br /></span>';
         }
-      else {
-            label = '(overwrite)<br />';
+        else {
+          label = '(overwrite)<br />';
         }
 
         if ( !block ) {
