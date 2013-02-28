@@ -51,7 +51,20 @@ class WebTest_Report_LoggingReportTest extends CiviSeleniumTestCase {
     $this->click("_qf_Miscellaneous_next-top");
     
     $this->waitForTextPresent("Changes Saved");
-
+    
+    // Enable CiviCase component
+    $this->open($this->sboxPath . "civicrm/admin/setting/component?reset=1");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
+    $this->waitForElementPresent("_qf_Component_next-bottom");
+    $enabledComponents = $this->getSelectOptions("enableComponents-t");
+    if (!in_array("CiviCase", $enabledComponents)) {
+      $this->addSelection("enableComponents-f", "label=CiviCase");
+      $this->click("//option[@value='CiviCase']");
+      $this->click("add");
+      $this->click("_qf_Component_next-bottom");
+      $this->waitForPageToLoad($this->getTimeoutMsec());
+      $this->assertTrue($this->isTextPresent("Changes Saved."));
+    }
     //add new contact
     $orginalFirstName = $firstName = 'Anthony' . substr(sha1(rand()), 0, 7);
     $lastName  = 'Anderson' . substr(sha1(rand()), 0, 7);
@@ -150,9 +163,39 @@ class WebTest_Report_LoggingReportTest extends CiviSeleniumTestCase {
     $this->type("first_name", $firstName);
     $this->click("_qf_Contact_upload_view-top");
     $this->waitForPageToLoad($this->getTimeoutMsec());
+    
+    //add an activity
+    $this->click("xpath=//li[@id='tab_activity']/a");
+    $this->waitForElementPresent("other_activity");
+    $this->select("other_activity", "label=Interview");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
+    $this->click('_qf_Activity_upload-bottom');
+    $this->waitForElementPresent("xpath=//table[@id='contact-activity-selector-activity']/tbody/tr/td[9]/span/a[2]");
+    $this->click("xpath=//table[@id='contact-activity-selector-activity']/tbody/tr/td[9]/span/a[2]");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
+    $this->select("status_id","value=2");
+    $this->click('_qf_Activity_upload-bottom');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
+    
+    //add a case
+    $this->click("xpath=//li[@id='tab_case']/a");
+    $this->waitForElementPresent("xpath=//div[@id='Cases']//div[@class='action-link']/a");
+    $this->click("xpath=//div[@id='Cases']//div[@class='action-link']/a");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
+    $this->type('activity_subject',"subject".rand());
+    $this->select('case_type_id','value=1');
+    $this->click('_qf_Case_upload-bottom');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
+    $this->click("xpath=//form[@id='CaseView']/div[2]/table/tbody/tr/td[4]/a");
+    $this->waitForElementPresent("_qf_Activity_cancel-bottom");
+    $this->select("case_status_id","value=2");
+    $this->click("_qf_Activity_upload-top");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
         
     //visit the logging contact summary report
     $this->open($this->sboxPath . "civicrm/report/logging/contact/summary?reset=1");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
+    $this->type('altered_contact_value', $firstName);
     $this->click("_qf_LoggingSummary_submit");
     $this->waitForPageToLoad($this->getTimeoutMsec());
 
@@ -174,7 +217,13 @@ class WebTest_Report_LoggingReportTest extends CiviSeleniumTestCase {
               //tags data check
               array("log_type" => "Tag", "altered_contact" => "{$firstName} {$lastName} [Company]", "action" => "Insert"),
               array("log_type" => "Tag", "altered_contact" => "{$firstName} {$lastName} [Government Entity]", "action" => "Insert"),
-              array("log_type" => "Tag", "altered_contact" => "{$firstName} {$lastName} [Company]", "action" => "Delete")              
+              array("log_type" => "Tag", "altered_contact" => "{$firstName} {$lastName} [Company]", "action" => "Delete"),
+              //case data check
+              array("log_type" => "Case", "altered_contact" => "{$firstName} {$lastName} [Housing Support]", "action" => "Update"),
+              array("log_type" => "Case", "altered_contact" => "{$firstName} {$lastName} [Housing Support]", "action" => "Insert"),
+              //case activity check
+              array("log_type" => "Activity", "altered_contact" => "{$firstName} {$lastName} [Interview]", "action" => "Update"),
+              array("log_type" => "Activity", "altered_contact" => "{$firstName} {$lastName} [Interview]", "action" => "Insert"),
             );
     $this->verifyReportData($data);
     
@@ -202,9 +251,21 @@ class WebTest_Report_LoggingReportTest extends CiviSeleniumTestCase {
       array('field' => 'Subject', 'changed_from' => $noteSubject, 'changed_to' => "{$noteSubject}_edited"),
     );
     $noteInfo = array_merge($noteInfo, $data[7]);
-    
-    $dataForReportDetail = array($contactInfo, $relationshipInfo, $noteInfo);
-    $this->detailReportCheck($dataForReportDetail);
+
+    $caseInfo = array();
+    $caseInfo['data'] = array(
+      array('field' => 'Case Status Id', 'changed_from' => 'Ongoing', 'changed_to' => "Resolved"),
+    );
+    $caseInfo = array_merge($caseInfo, $data[13]);
+
+    $activityInfo = array(); 
+    $activityInfo['data'] = array( 
+       array('field' => 'Activity Status Id', 'changed_from' => 'Scheduled', 'changed_to' => 'Completed'), 
+     ); 
+    $activityInfo = array_merge($activityInfo, $data[15]); 
+
+    $dataForReportDetail = array($contactInfo, $relationshipInfo, $noteInfo, $caseInfo, $activityInfo);
+    $this->detailReportCheck($dataForReportDetail, "{$firstName} {$lastName}");
     
     //delete contact check
     $this->open($this->sboxPath . "civicrm/contact/view/delete?&reset=1&delete=1&cid={$cid[1]}");
@@ -239,20 +300,28 @@ class WebTest_Report_LoggingReportTest extends CiviSeleniumTestCase {
     }
   }
   
-  function detailReportCheck($dataForReportDetail) {
+  function detailReportCheck($dataForReportDetail, $alteredContact) {
     foreach ($dataForReportDetail as $value) {
+      $this->waitForElementPresent("xpath=//table/tbody//tr/td[2][contains(text(), '{$value['log_type']}')]/../td[4]/a[contains(text(), '{$value['altered_contact']}')]/../../td[1]/a[2]");
       $this->click("xpath=//table/tbody//tr/td[2][contains(text(), '{$value['log_type']}')]/../td[4]/a[contains(text(), '{$value['altered_contact']}')]/../../td[1]/a[2]");
       $this->waitForPageToLoad($this->getTimeoutMsec());
-
+    
       foreach ($value['data'] as $key => $data) {
-        $position = $key + 1;
-        $this->verifyText("xpath=//form[@id='LoggingDetail']//table/tbody/tr[{$position}]/td[@class='crm-report-field']", preg_quote($data['field']));
-        $this->verifyText("xpath=//form[@id='LoggingDetail']//table/tbody/tr[{$position}]/td[@class='crm-report-from']", preg_quote($data['changed_from']));
-        $this->verifyText("xpath=//form[@id='LoggingDetail']//table/tbody/tr[{$position}]/td[@class='crm-report-to']", preg_quote($data['changed_to']));
+        $rowCount = $this->getXpathCount("//table[@class='report-layout display']/tbody/tr");
+        for ($i = 1; $i <= $rowCount; $i++) {
+          $field = $data['field'];
+          if ($this->isElementPresent("xpath=//form[@id='LoggingDetail']//table/tbody/tr[{$i}]/td[@class='crm-report-field'][text()='$field']")) {
+            $this->verifyText("xpath=//form[@id='LoggingDetail']//table/tbody/tr[{$i}]/td[@class='crm-report-field']", preg_quote($data['field']));
+            $this->verifyText("xpath=//form[@id='LoggingDetail']//table/tbody/tr[{$i}]/td[@class='crm-report-from']", preg_quote($data['changed_from']));
+            $this->verifyText("xpath=//form[@id='LoggingDetail']//table/tbody/tr[{$i}]/td[@class='crm-report-to']", preg_quote($data['changed_to']));
+          }
+        }
       }
 
     //visit the logging contact summary report
     $this->open($this->sboxPath . "civicrm/report/logging/contact/summary?reset=1");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
+    $this->type('altered_contact_value', $alteredContact);
     $this->click("_qf_LoggingSummary_submit");
     $this->waitForPageToLoad($this->getTimeoutMsec());  
     }
