@@ -138,7 +138,7 @@ function getSearchURLValue( )
     }
 }
 
-if (CRM.userFramework != 'Joomla') {
+if (CRM.config.userFramework != 'Joomla') {
   cj('body').prepend( cj("#menu-container").html() );
 
   //Track Scrolling
