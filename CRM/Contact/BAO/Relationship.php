@@ -1296,8 +1296,9 @@ SELECT count(*)
  WHERE membership_type_id = {$membershipValues['membership_type_id']} AND owner_membership_id = {$membershipValues['owner_membership_id']}
     AND is_current_member = 1";
             $result = CRM_Core_DAO::singleValueQuery($query);
-            if ($result < $membershipValues['max_related'])
-            CRM_Member_BAO_Membership::create($membershipValues, CRM_Core_DAO::$_nullArray);
+            if ($result < CRM_Utils_Array::value('max_related', $membershipValues, PHP_INT_MAX)) {
+              CRM_Member_BAO_Membership::create($membershipValues, CRM_Core_DAO::$_nullArray);              
+            }
           }
         }
         elseif ($action & CRM_Core_Action::UPDATE) {
