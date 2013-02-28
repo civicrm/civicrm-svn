@@ -1150,10 +1150,16 @@ WHERE       ps.id = %1
     //2 membership types can be selected
     //instead of comparing all of them
     while ($dao->fetch()) {
-      if (!empty($autoRenew) && !in_array($dao->auto_renew, $autoRenew)) {
+      //temp fix for #CRM-10370 
+      //if its NULL consider it '0' i.e. 'No auto-renew option'
+      $daoAutoRenew = $dao->auto_renew;
+      if ($daoAutoRenew === NULL) {
+        $daoAutoRenew = 0;
+      }
+      if (!empty($autoRenew) && !in_array($daoAutoRenew, $autoRenew)) {
         return true;
       }
-      $autoRenew[] = $dao->auto_renew;
+      $autoRenew[] = $daoAutoRenew;
     }
     return false;
   }
