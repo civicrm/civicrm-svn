@@ -144,6 +144,9 @@ class WebTest_Contact_MergeContactsTest extends CiviSeleniumTestCase {
     // Select the contacts to be merged
     $this->select("name=option51_length", "value=100");
     $this->waitForTextPresent("$firstName $lastName");
+
+    // sleep seems to work here, not sure why
+    sleep(3);
     $this->click("xpath=//a[text()='$firstName $lastName']/../../td[4]/a[text()='merge']");
     $this->waitForElementPresent('_qf_Merge_cancel-bottom');
 
@@ -582,9 +585,9 @@ class WebTest_Contact_MergeContactsTest extends CiviSeleniumTestCase {
     // Find and Merge Contacts with Supervised Rule
     $this->open($this->sboxPath . 'civicrm/contact/dedupefind?reset=1&rgid=1&action=renew');
     $this->waitForPageToLoad($this->getTimeoutMsec());
+    sleep(3);
 
     $this->select("name=option51_length", "value=100");
-    sleep(3);
     $totalContacts = $this->getXpathCount("//table[@class='pagerDisplay']/tbody/tr");
     $this->click("xpath=//form[@id='DedupeFind']//a/span[text()='Batch Merge Duplicates']");
 
@@ -601,16 +604,13 @@ class WebTest_Contact_MergeContactsTest extends CiviSeleniumTestCase {
     $mergedContacts = $totalContacts - $unMergedContacts;
     $this->assertElementContainsText('crm-notification-container', "safe mode");
 
-    $this->waitForElementPresent("xpath=//form[@id='DedupeFind']/div[2]/div/table/tbody//tr/td[1]/a[text()='$firstName1 $lastName1']/../../td[2]/a[text()='$firstName1 $lastName1']");
-    $this->click("xpath=//form[@id='DedupeFind']/div[2]/div/table/tbody//tr/td[1]/a[text()='$firstName1 $lastName1']/../../td[2]/a[text()='$firstName1 $lastName1']/../../td[4]/a[text()='merge']");
-    $this->waitForPageToLoad($this->getTimeoutMsec());
-    $this->click("toggleSelect");
-    $this->click("_qf_Merge_next-bottom");
-    $this->waitForPageToLoad($this->getTimeoutMsec());
-
     //check the existence of merged contacts
-    $contactEmails = array( 1 => "{$firstName}.{$lastName}@example.com", 2 => "{$firstName2}.{$lastName2}@example.com", 3 => "{$firstName3}.{$lastName3}@example.com");
-    //contact 1
+    $contactEmails = array(
+      1 => "{$firstName}.{$lastName}@example.com",
+      2 => "{$firstName2}.{$lastName2}@example.com",
+      3 => "{$firstName3}.{$lastName3}@example.com"
+    );
+
     foreach( $contactEmails as $key => $value ) {
       $this->click('sort_name_navigation');
       $this->type('css=input#sort_name_navigation', $value);
