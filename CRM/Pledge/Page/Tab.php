@@ -131,15 +131,7 @@ class CRM_Pledge_Page_Tab extends CRM_Core_Page {
     $this->preProcess();
 
     // check if we can process credit card registration
-    $processors = CRM_Core_PseudoConstant::paymentProcessor(FALSE, FALSE,
-      "billing_mode IN ( 1, 3 )"
-    );
-    if (count($processors) > 0) {
-      $this->assign('newCredit', TRUE);
-    }
-    else {
-      $this->assign('newCredit', FALSE);
-    }
+    CRM_Core_Payment::allowBackofficeCreditCard($this);
 
     $this->setContext();
 
