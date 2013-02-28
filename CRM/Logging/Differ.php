@@ -70,27 +70,30 @@ class CRM_Logging_Differ {
       $params[3] = array($contactID, 'Integer');
       switch ($table) {
       case 'civicrm_contact':
-        $contactIdClause = "AND id = {$contactID}";
+        $contactIdClause = "AND id = %3";
         break;
       case 'civicrm_note':
-        $contactIdClause = "AND ( entity_id = {$contactID} AND entity_table = 'civicrm_contact' ) OR (entity_id IN (SELECT note.id FROM {$this->db}.log_civicrm_note note WHERE note.entity_id = {$contactID} AND note.entity_table = 'civicrm_contact') AND entity_table = 'civicrm_note')";
+        $contactIdClause = "AND ( entity_id = %3 AND entity_table = 'civicrm_contact' ) OR (entity_id IN (SELECT note.id FROM {$this->db}.log_civicrm_note note WHERE note.entity_id = %3 AND note.entity_table = 'civicrm_contact') AND entity_table = 'civicrm_note')";
         break;
       case 'civicrm_entity_tag':
-        $contactIdClause = "AND entity_id = {$contactID} AND entity_table = 'civicrm_contact'";
+        $contactIdClause = "AND entity_id = %3 AND entity_table = 'civicrm_contact'";
         break;
       case 'civicrm_relationship':
-        $contactIdClause = "AND (contact_id_a = {$contactID} OR contact_id_b = {$contactID})";
+        $contactIdClause = "AND (contact_id_a = %3 OR contact_id_b = %3)";
         break;
       case 'civicrm_activity':
-        $contactIdClause = "AND id = (select activity_id FROM civicrm_activity_target WHERE target_contact_id = {$contactID} LIMIT 1)";
+        $contactIdClause = "
+AND (id = (select activity_id FROM civicrm_activity_target WHERE target_contact_id = %3 LIMIT 1) OR 
+     id = (select activity_id FROM civicrm_activity_assignment WHERE assignee_contact_id = %3 LIMIT 1) OR 
+     source_contact_id = %3)";
         break;
       case 'civicrm_case':
-        $contactIdClause = "AND id = (select case_id FROM civicrm_case_contact WHERE contact_id = {$contactID} LIMIT 1)";
+        $contactIdClause = "AND id = (select case_id FROM civicrm_case_contact WHERE contact_id = %3 LIMIT 1)";
         break;
       default:
-        $contactIdClause = "AND contact_id = {$contactID}";
+        $contactIdClause = "AND contact_id = %3";
         if ( strpos($table, 'civicrm_value') !== false ) {
-          $contactIdClause = "AND entity_id = {$contactID}";
+          $contactIdClause = "AND entity_id = %3";
         }
       }
     }
