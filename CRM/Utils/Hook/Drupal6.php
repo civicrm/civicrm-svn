@@ -59,6 +59,37 @@ class CRM_Utils_Hook_Drupal6 extends CRM_Utils_Hook {
     &$arg1, &$arg2, &$arg3, &$arg4, &$arg5,
     $fnSuffix
   ) {
+
+    $this->buildModuleList();
+    
+    return $this->runHooks($this->allModules, $fnSuffix,
+      $numParams, $arg1, $arg2, $arg3, $arg4, $arg5
+    );
+  }
+
+  /**
+   * Get a list of modules implementing the given hook.
+   * @return Array of module names.
+   */
+  function moduleImplements($hook_name) {
+    $return = array();
+
+    $this->buildModuleList();
+    
+    // For each module, check if it defines a hook implementation.
+    foreach ($this->allModules as $module) {
+      $fnName = "{$module}_{$hook_name}";
+      if (function_exists($fnName)) {
+        $return[] = $module;
+      }
+    }
+    return $return;
+  }
+
+  /**
+   * Build the list of modules to be processed for hooks.
+   */
+  function buildModuleList() {
     if ($this->isBuilt === FALSE) {
       if ($this->drupalModules === NULL) {
         if (function_exists('module_list')) {
@@ -78,10 +109,8 @@ class CRM_Utils_Hook_Drupal6 extends CRM_Utils_Hook {
         $this->isBuilt = TRUE;
       }
     }
-
-    return $this->runHooks($this->allModules, $fnSuffix,
-      $numParams, $arg1, $arg2, $arg3, $arg4, $arg5
-    );
   }
 }
+
+
 

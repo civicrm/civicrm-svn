@@ -455,6 +455,9 @@ class CRM_Core_Invoke {
     // also cleanup all caches
     $config->cleanupCaches($sessionReset || CRM_Utils_Request::retrieve('sessionReset', 'Boolean', CRM_Core_DAO::$_nullObject, FALSE, 0, 'GET'));
 
+    // also cleanup module permissions
+    $config->cleanupPermissions();
+
     CRM_Core_BAO_SETTING::updateSettingsFromMetaData();
     CRM_Core_Resources::singleton()->resetCacheCode();
     // also rebuild triggers if requested explicitly

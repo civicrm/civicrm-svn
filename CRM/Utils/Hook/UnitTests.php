@@ -71,5 +71,15 @@ class CRM_Utils_Hook_UnitTests extends CRM_Utils_Hook {
     }
   }
 
+  /**
+   * Get a list of modules implementing the given hook.
+   *
+   * Does nothing in UnitTests.
+   *
+   * @return Array of module names.
+   */
+  function moduleImplements($fnSuffix) {
+    return;
+  }
 }
 

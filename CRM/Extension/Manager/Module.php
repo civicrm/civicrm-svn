@@ -66,6 +66,12 @@ class CRM_Extension_Manager_Module extends CRM_Extension_Manager_Base {
     return TRUE;
   }
 
+  public function onPostUninstall(CRM_Extension_Info $info) {
+    // Remove references to the module's permissions.
+    $config = CRM_Core_Config::singleton();
+    return $config->userPermissionClass->uninstallPermissions($info->file);
+  }
+
   public function onPreDisable(CRM_Extension_Info $info) {
     $this->callHook($info, 'disable');
   }

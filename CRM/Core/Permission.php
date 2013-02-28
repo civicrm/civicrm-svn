@@ -413,6 +413,11 @@ class CRM_Core_Permission {
           }
         }
       }
+
+      // Add any permissions defined in hook_civicrm_permission implementations.
+      $config = CRM_Core_Config::singleton();
+      $module_permissions = $config->userPermissionClass->getAllModulePermissions();
+      $permissions = array_merge($permissions, $module_permissions);
     }
 
     return $permissions;

@@ -655,6 +655,18 @@ class CRM_Core_Config extends CRM_Core_Config_Variables {
   }
 
   /**
+   * Do general cleanup of module permissions.
+   */
+  function cleanupPermissions() {
+    $module_files = CRM_Extension_System::singleton()->getMapper()->getActiveModuleFiles();
+    foreach ($module_files as $module_file) {
+      // Clean up old module permissions that have been removed in the current
+      // module version.
+      $this->userPermissionClass->upgradePermissions($module_file['prefix']);
+    }
+  }
+
+  /**
    * Flush information about loaded modules
    */
   function clearModuleList() {

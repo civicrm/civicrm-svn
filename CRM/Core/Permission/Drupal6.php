@@ -148,5 +148,39 @@ class CRM_Core_Permission_Drupal6 extends CRM_Core_Permission_DrupalBase {
   $_cache[$permissionName] = self::getContactEmails($uids);
   return $_cache[$permissionName];
   }
+
+  /**
+   * Remove all vestiges of permissions for the given module.
+   *
+   * Does nothing in Drupal 6.
+   */
+  function uninstallPermissions($module) {
+  }
+
+  /**
+   * Ensure that all cached permissions associated with the given module are
+   * actually defined by that module. This is useful during module upgrade
+   * when the newer module version has removed permission that were defined
+   * in the older version.
+   *
+   * Does nothing in Drupal 6.
+   */
+  function upgradePermissions($module) {
+  }
+
+  /**
+   * Get the permissions defined in the hook_civicrm_permission implementation
+   * of the given module.
+   *
+   * @return Array of permissions, in the same format as CRM_Core_Permission::getCorePermissions().
+   */
+  static function getModulePermissions($module) {
+    $return_permissions = array();
+    $fn_name = "{$module}_civicrm_permission";
+    if (function_exists($fn_name)) {
+      $fn_name($return_permissions);
+    }
+    return $return_permissions;
+  }
 }
 

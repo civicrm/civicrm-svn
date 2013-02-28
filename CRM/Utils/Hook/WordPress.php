@@ -42,5 +42,9 @@ class CRM_Utils_Hook_WordPress extends CRM_Utils_Hook {
       $fnSuffix, 'wordpress'
     );
   }
+
+  function moduleImplements($fnSuffix) {
+    return $this->commonModuleImplements($fnSuffix, 'wordpress');
+  }
 }
 

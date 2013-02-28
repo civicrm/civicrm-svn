@@ -152,5 +152,41 @@ class CRM_Core_Permission_Base {
     CRM_Core_Error::fatal("this function only works in Drupal 6 at the moment");
   }
 
+  /**
+   * Remove all vestiges of permissions for the given module.
+   */
+  function uninstallPermissions($module) {
+  }
+
+  /**
+   * Ensure that all cached permissions associated with the given module are
+   * actually defined by that module. This is useful during module upgrade
+   * when the newer module version has removed permission that were defined
+   * in the older version.
+   */
+  function upgradePermissions($module) {
+  }
+
+  /**
+   * Get the permissions defined in the hook_civicrm_permission implementation
+   * of the given module.
+   *
+   * @return Array of permissions, in the same format as CRM_Core_Permission::getCorePermissions().
+   */
+  static function getModulePermissions($module) {
+    return array();
+  }
+
+  /**
+   * Get the permissions defined in the hook_civicrm_permission implementation
+   * in all enabled CiviCRM module extensions.
+   *
+   * @return Array of permissions, in the same format as CRM_Core_Permission::getCorePermissions().
+   */
+  function getAllModulePermissions() {
+    $permissions = array();
+    CRM_Utils_Hook::permission($permissions);
+    return $permissions;
+  }
 }
 

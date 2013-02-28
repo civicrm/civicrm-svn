@@ -91,10 +91,28 @@ abstract class CRM_Utils_Hook {
     $fnSuffix
   );
 
+  /**
+   * Get a list of modules implementing the given hook.
+   * @return Array of module names.
+   */
+  abstract function moduleImplements($hookName);
+
   function commonInvoke($numParams,
     &$arg1, &$arg2, &$arg3, &$arg4, &$arg5,
     $fnSuffix, $fnPrefix
   ) {
+
+    $this->commonBuildModuleList($fnPrefix);
+    
+    return $this->runHooks($this->commonCiviModules, $fnSuffix,
+      $numParams, $arg1, $arg2, $arg3, $arg4, $arg5
+    );
+  }
+
+  /**
+   * Build the list of modules to be processed for hooks.
+   */
+  function commonBuildModuleList($fnPrefix) {
     if (!$this->commonIncluded) {
       // include external file
       $this->commonIncluded = TRUE;
@@ -112,10 +130,24 @@ abstract class CRM_Utils_Hook {
 
       $this->requireCiviModules($this->commonCiviModules);
     }
+  }
 
-    return $this->runHooks($this->commonCiviModules, $fnSuffix,
-      $numParams, $arg1, $arg2, $arg3, $arg4, $arg5
-    );
+  /**
+   * Get a list of modules implementing the given hook.
+   * @return Array of module names.
+   */
+  function commonModuleImplements($fnSuffix, $fnPrefix) {
+    $return = array();
+
+    $this->commonBuildModuleList($fnPrefix);
+
+    foreach ($this->commonCiviModules as $module) {
+      $fnName = "{$module}_{$fnSuffix}";
+      if (function_exists($fnName)) {
+        $return[] = $module;
+      }
+    }
+    return $return;
   }
 
   function runHooks(&$civiModules, $fnSuffix, $numParams,
@@ -1173,6 +1205,23 @@ abstract class CRM_Utils_Hook {
     return self::singleton()->invoke(1,
       $jobManager, self::$_nullObject, self::$_nullObject, self::$_nullObject, self::$_nullObject,
       'civicrm_cron'
+    );
+  }
+
+  /**
+   * This hook is called when loading CMS permissions; use this hook to modify
+   * the array of system permissions for CiviCRM.
+   *
+   * @param Array $permissions Array of permissions. See CRM_Core_Permission::getCorePermissions()
+   *   for the format of this array.
+   *
+   * @return null the return value is ignored
+   * @access public
+   */
+  static function permission(&$permissions) {
+    return self::singleton()->invoke(1, $permissions,
+      self::$_nullObject, self::$_nullObject, self::$_nullObject, self::$_nullObject,
+      'civicrm_permission'
     );
   }
 }
