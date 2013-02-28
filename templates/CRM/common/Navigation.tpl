@@ -29,7 +29,7 @@
         <li id="crm-qsearch" class="menumain crm-link-home">
             <form action="{crmURL p='civicrm/contact/search/basic' h=0 }" name="search_block" id="id_search_block" method="post" onsubmit="getSearchURLValue( );">
               <div id="quickSearch">
-                <input type="text" class="form-text" id="sort_name_navigation" placeholder="{ts}Name/Email{/ts}" name="sort_name" style="width: 12em;" />
+                <input type="text" class="form-text" id="sort_name_navigation" placeholder="{ts}Find Contacts{/ts}" name="sort_name" style="width: 12em;" />
                 <input type="hidden" id="sort_contact_id" value="" />
                 <input type="hidden" name="qfKey" value="{crmKey name='CRM_Contact_Controller_Search' addSequence=1}" />
                 <input type="submit" value="{ts}Go{/ts}" name="_qf_Basic_refresh" class="form-submit default" style="display: none;" />
@@ -69,7 +69,7 @@ cj( document ).ready( function( ) {
     } else {
       htmlContent = '<input type="submit" value="Go" name="_qf_Basic_refresh" class="form-submit default" />';
     }
-    htmlContent += '<input type="text" class="form-text" id="sort_name_navigation" placeholder="{/literal}{ts escape='js'}Find Contacts by...{/ts}{literal}" name="sort_name" style="width: 12em; margin-left: -45px;" /><input type="text" id="sort_contact_id" style="display: none" />';
+    htmlContent += '<input type="text" class="form-text" id="sort_name_navigation" placeholder="{/literal}{ts escape='js'}Find Contacts{/ts}{literal}" name="sort_name" style="width: 12em; margin-left: -45px;" /><input type="text" id="sort_contact_id" style="display: none" />';
     htmlContent += '<input type="hidden" name="qfKey" value="' + {/literal}'{crmKey name='CRM_Contact_Controller_Search' addSequence=1}'{literal} + '" />';
     cj('#quickSearch').html(htmlContent);
   }
