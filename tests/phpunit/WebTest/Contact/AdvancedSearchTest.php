@@ -56,7 +56,7 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
     // take a tag name and create tag
     include_once 'WebTest/Contact/SearchTest.php';
     $tagName = 'tag_' . substr(sha1(rand()), 0, 7);
-    WebTest_Contact_SearchTest::addTag($tagName);
+    WebTest_Contact_SearchTest::addTag($tagName, $this);
 
     //---------- create detailed contact ---------
 
@@ -123,7 +123,7 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
     $this->type("source", "membership source$firstName");
     $this->click("_qf_Membership_upload-bottom");
     $this->waitForPageToLoad($this->getTimeoutMsec());
-  
+
     $this->assertTrue($this->isTextPresent("Student membership for $firstName adv$firstName has been added"));
 
     // go to relationship tab and add relationship
@@ -165,7 +165,7 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
     foreach ($searchBlockValues as $block => $blockValues) {
       switch ($block) {
         case 'basic':
-          $this->$blockValues[1]($firstName, $groupName, $tagName);          
+          $this->$blockValues[1]($firstName, $groupName, $tagName);
           break;
 
         case 'notes':
@@ -228,13 +228,13 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
         $pagerCount = "Contact {$j} - {$subTotal} of {$count}";
         $this->verifyText("xpath=//div[@class='crm-search-results']/div[@class='crm-pager']/span[@class='crm-pager-nav']", preg_quote($pagerCount));
         $this->assertEquals($perPageRow, $this->getXpathCount("//div[@class='crm-search-results']/table/tbody/tr"));
-        
+
         //go to next page
         $this->click("xpath=//div[@class='crm-search-results']/div[@class='crm-pager']/span[@class='crm-pager-nav']/a[@title='next page']");
         $this->waitForPageToLoad($this->getTimeoutMsec());
         $j = $j + $subTotal;
       }
-      
+
       //pagination and row count assertion for the remaining last page
       if ($mod) {
         $pagerCount = "Contact {$lastPageSub} - {$count} of {$count}";
@@ -242,7 +242,7 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
         $this->assertEquals($mod, $this->getXpathCount("//div[@class='crm-search-results']/table/tbody/tr"));
       }
     }
-  }  
+  }
 
   //function to check match for sumbit Advance Search
   function submitSearch($firstName) {
@@ -283,7 +283,7 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
     $this->select("preferred_language", "value=en_US");
     // select privacy
     $this->select("privacy_options", "value=do_not_email");
-    
+
     // select preferred communication method
     // phone
     $this->check("preferred_communication_method[1]");
@@ -322,7 +322,7 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
     $this->webtestFillDate("activity_date_high", "+1 day");
     $this->type("activity_subject", "Student - membership source$firstName - Status: New");
     // fill activity status
- 
+
     $this->click("xpath=//div[@id='activity']/table/tbody//tr/td[2]/label[text()='Activity Status']/../label[text()='Scheduled']");
     $this->click("xpath=//div[@id='activity']/table/tbody//tr/td[2]/label[text()='Activity Status']/../label[text()='Completed']");
   }
@@ -330,7 +330,7 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
   // function to fill demographic search details
   function addDemographicSearchDetail() {
     // fill birth date range
-    $this->select("birth_date_relative","value=0");  
+    $this->select("birth_date_relative","value=0");
     $this->webtestFillDate("birth_date_low", "-3 year");
     $this->webtestFillDate("birth_date_high", "now");
     // fill deceased date range
@@ -339,7 +339,7 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
     $this->webtestFillDate("deceased_date_low", "-1 month");
     $this->webtestFillDate("deceased_date_high", "+1 month");
     // fill gender (male)
-    $this->check("civicrm_gender_Male_2"); 
+    $this->check("civicrm_gender_Male_2");
   }
 
   //function to fill contribution search details
@@ -457,7 +457,7 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
     $this->click("customData1");
     $this->waitForElementPresent("custom_3_-1");
 
-    $this->click("CIVICRM_QFID_Edu_2");    
+    $this->click("CIVICRM_QFID_Edu_2");
     $this->select("custom_2_-1", "label=Single");
 
     // --- fill few values in address
@@ -493,7 +493,7 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
     $this->click("//form[@id='Contact']/div[2]/div[7]/div[1]");
     $this->waitForElementPresent("is_deceased");
     $this->click("civicrm_gender_Male_2");
-        
+
     $this->webtestFillDate("birth_date", "-1 year");
     $this->click("is_deceased");
     $this->waitForElementPresent("deceased_date");

@@ -80,7 +80,7 @@ class WebTest_Contact_SearchTest extends CiviSeleniumTestCase {
     $this->click("css=input#sort_name_navigation");
     $this->type("css=input#sort_name_navigation", 'ada');
     $this->typeKeys("css=input#sort_name_navigation", 'ada');
-    
+
     $this->click("_qf_Basic_refresh");
 
     // wait for result list
@@ -99,7 +99,7 @@ class WebTest_Contact_SearchTest extends CiviSeleniumTestCase {
 
     // Create new tag.
     $tagName = 'tag_' . substr(sha1(rand()), 0, 7);
-    $this->addTag($tagName);
+    self::addTag($tagName, $this);
 
     // Create new group
     $groupName = 'group_' . substr(sha1(rand()), 0, 7);
@@ -156,27 +156,32 @@ class WebTest_Contact_SearchTest extends CiviSeleniumTestCase {
     $this->assertElementContainsText('css=.crm-search-results > table.row-highlight', $sortName);
   }
 
-  function addTag($tagName = 'New Tag') {
-    $this->openCiviPage('admin/tag', array('reset' => 1, 'action' => 'add'), '_qf_Tag_next');
+  /**
+   * This code is reused with advanced search, hence the reference to $self
+   *
+   * @static
+   */
+  static function addTag($tagName = 'New Tag', $self) {
+    $self->openCiviPage('admin/tag', array('reset' => 1, 'action' => 'add'), '_qf_Tag_next');
 
     // fill tag name
-    $this->type("name", $tagName);
+    $self->type("name", $tagName);
 
     // fill description
-    $this->type("description", "Adding new tag.");
+    $self->type("description", "Adding new tag.");
 
     // select used for contact
-    $this->select("used_for", "value=civicrm_contact");
+    $self->select("used_for", "value=civicrm_contact");
 
     // check reserved
-    $this->click("is_reserved");
+    $self->click("is_reserved");
 
     // Clicking save.
-    $this->click("_qf_Tag_next");
-    $this->waitForPageToLoad($this->getTimeoutMsec());
+    $self->click("_qf_Tag_next");
+    $self->waitForPageToLoad($self->getTimeoutMsec());
 
     // Is status message correct?
-    $this->assertTrue($this->isTextPresent("The tag '$tagName' has been saved."));
+    $self->assertTrue($self->isTextPresent("The tag '$tagName' has been saved."));
   }
 
   // CRM-6586
