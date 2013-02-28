@@ -104,7 +104,7 @@ class WebTest_Contribute_UpdatePendingContributionTest extends CiviSeleniumTestC
     $this->webtestNewDialogContact($firstName, "Contributor", $email);
 
     // select financial type
-        $this->select( "financial_type_id", "value=1" );
+    $this->select( "financial_type_id", "value=1" );
 
     // fill in Received Date
     $this->webtestFillDate('receive_date');
@@ -170,13 +170,14 @@ class WebTest_Contribute_UpdatePendingContributionTest extends CiviSeleniumTestC
     // Is status message correct?
     $this->assertTrue($this->isTextPresent("The contribution record has been saved."), "Status message didn't show up after saving!");
 
-    // verify if Membership is created
+    // verify if Contribution is created
     $this->waitForElementPresent("xpath=//div[@id='Contributions']//table//tbody/tr[1]/td[8]/span/a[text()='View']");
 
-    //click through to the Membership view screen
+    //click through to the Contribution view screen
     $this->click("xpath=//div[@id='Contributions']//table/tbody/tr[1]/td[8]/span/a[text()='View']");
     $this->waitForElementPresent("_qf_ContributionView_cancel-bottom");
 
+    // View Contribution Record and test for expected values
     $expected = array(
       'Financial Type' => 'Donation',
       'Total Amount' => '100.00',
@@ -185,9 +186,7 @@ class WebTest_Contribute_UpdatePendingContributionTest extends CiviSeleniumTestC
       'Check Number' => 'check #1041',
       'Soft Credit To' => "{$softCreditFname} {$softCreditLname}",
     );
-    foreach ($expected as $label => $value) {
-      $this->verifyText("xpath=id('ContributionView')/div[2]/table[1]/tbody//tr/td[1][text()='$label']/../td[2]", preg_quote($value));
-    }
+    $this->webtestVerifyTabularData($expected);
 
     // go to soft creditor contact view page
     $this->click("xpath=id('ContributionView')/div[2]/table[1]/tbody//tr/td[1][text()='Soft Credit To']/../td[2]/a[text()='{$softCreditFname} {$softCreditLname}']");
@@ -304,16 +303,14 @@ class WebTest_Contribute_UpdatePendingContributionTest extends CiviSeleniumTestC
     $this->click("xpath=//div[@id='contributionSearch']//table//tbody/tr[2]/td[11]/span/a[text()='View']");
     $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_ContributionView_cancel-bottom");
-    //View Contribution Record
+    // View Contribution Record and test for expected values
     $expected = array(
-      2 => 'Donation',
-      3 => '100.00',
-      7 => 'Pending : Pay Later',
-      1 => "{$firstName} {$lastName}",
+      'From'             => "{$firstName} {$lastName}",
+      'Financial Type'   => 'Donation',
+      'Total Amount'     => '100.00',
+      'Contribution Status' => 'Pending : Pay Later',
     );
-    foreach ($expected as $value => $label) {
-      $this->verifyText("xpath=id('ContributionView')/div[2]/table[1]/tbody/tr[$value]/td[2]", preg_quote($label));
-    }
+    $this->webtestVerifyTabularData($expected);
   }
 }
 
