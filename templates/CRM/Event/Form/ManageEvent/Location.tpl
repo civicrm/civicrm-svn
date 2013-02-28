@@ -98,7 +98,6 @@
 <script type="text/javascript">
 {literal}
 var locUsedMsgTxt = {/literal}"{$locUsedMsgTxt}"{literal};
-var locBlockURL   = {/literal}"{crmURL p='civicrm/ajax/locBlock' q='reset=1' h=0}"{literal};
 var locBlockId    = {/literal}"{$form.loc_event_id.value.0}"{literal};
 
 if ( {/literal}"{$locUsed}"{literal} ) {
@@ -108,7 +107,7 @@ if ( {/literal}"{$locUsed}"{literal} ) {
 cj(document).ready(function() {
   cj('#loc_event_id').change(function() {
     cj.ajax({
-      url: locBlockURL,
+      url: CRM.url('civicrm/ajax/locBlock', 'reset=1'),
       type: 'POST',
       data: {'lbid': cj(this).val()},
       dataType: 'json',
