@@ -145,8 +145,10 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
     //Is custom field created
     $this->assertTrue($this->isTextPresent("Your custom field '$radioFieldLabel' has been saved."));
 
+    // Go to the URL to create an Individual contact.
+    $this->openCiviPage("contact/add", "reset=1&ct=Individual");
+
     //create Individual contact
-    $this->click("//ul[@id='civicrm-menu']/li[4]");
     $this->click("//div[@id='root-menu-div']/div[5]/ul/li[1]/div/a");
     $this->waitForPageToLoad($this->getTimeoutMsec());
 
@@ -171,11 +173,6 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
   }
 
   function testCustomDataMoneyAdd() {
-    // This is the path where our testing install resides.
-    // The rest of URL is defined in CiviSeleniumTestCase base class, in
-    // class attributes.
-    $this->open($this->sboxPath);
-
     // Logging in. Remember to wait for page to load. In most cases,
     // you can rely on 30000 as the value that allows your test to pass, however,
     // sometimes your test might fail because of this. In such cases, it's better to pick one element
@@ -201,7 +198,7 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
     $this->click("//option[@value='Contact']");
     $this->click("_qf_Group_next-bottom");
     $this->waitForElementPresent("_qf_Field_cancel-bottom");
-    
+
     //Is custom group created?
     $this->assertTrue($this->isTextPresent("Your custom field set '{$customGroupTitle}' has been added. You can add custom fields now."));
 
@@ -257,7 +254,7 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
     $this->type("email_1_email", $emailId);
 
     //fill custom values for the contact
-    $this->click("xpath=//table//tr/td/label[text()=\"$moneyTextFieldLabel\"]");    
+    $this->click("xpath=//table//tr/td/label[text()=\"$moneyTextFieldLabel\"]");
     $this->type("xpath=//table//tr/td/label[text()=\"$moneyTextFieldLabel\"]/../following-sibling::td/input", "12345678.98");
     $this->click("_qf_Contact_upload_view");
     $this->waitForPageToLoad($this->getTimeoutMsec());
@@ -266,7 +263,7 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
     $this->assertTrue($this->isElementPresent("xpath=//div[@id='custom-set-content-{$customFieldsetId}']/div/div[2]/div[2]"));
     $this->verifyText("xpath=//div[@id='custom-set-content-{$customFieldsetId}']/div/div[2]/div[2]", '12,345,678.98');
   }
-  
+
   function testCustomDataChangeLog(){
      // This is the path where our testing install resides.
     // The rest of URL is defined in CiviSeleniumTestCase base class, in
@@ -279,14 +276,16 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
     // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
     // page contents loaded and you can continue your test execution.
     $this->webtestLogin();
-    
+
     //enable logging
     $this->open($this->sboxPath . "civicrm/admin/setting/misc?reset=1");
     $this->click("CIVICRM_QFID_1_logging");
-    $this->click("_qf_Miscellaneous_next-top");
     $this->waitForPageToLoad($this->getTimeoutMsec());
-    //adding sleep her since enabling logging takes lot of time
-    sleep(40);
+    $this->click("_qf_Miscellaneous_next-top");
+    // adding sleep here since enabling logging takes lot of time
+    // increased the time since we now also add a lot of triggers and create tables
+    // the first time around
+    sleep(60);
     $this->waitForTextPresent("Your changes have been saved");
 
     // Create new Custom Field Set
@@ -317,7 +316,7 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
     //fill in first name
     $firstName = 'Jimmy'.substr(sha1(rand()), 0, 7);
     $this->type('first_name', $firstName);
-    
+
     //fill in last name
     $lastName = 'Page'.substr(sha1(rand()), 0, 7);
     $this->type('last_name', $lastName);
@@ -327,11 +326,11 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
 
     //fill in phone
     $this->type("phone_1_phone", "2222-4444");
-    
+
     $this->click("xpath=//table//tr/td/label[text()=\"$customField\"]");
     $value = "custom".rand();
     $this->type("xpath=//table//tr/td/label[text()=\"$customField\"]/../following-sibling::td/input",$value);
-    
+
     //check for matching contact
     $this->click("_qf_Contact_refresh_dedupe");
     $this->waitForPageToLoad($this->getTimeoutMsec());
@@ -367,7 +366,7 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
     $this->click("_qf_Contact_upload_view-bottom");
     $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click("css=#tab_log a");
-    
+
     //check the changed log
     $this->waitForElementPresent("xpath=//div[@id='instance_data']/div[2]/table/tbody/tr[1]/td[4]/a[contains(text(), '$firstName $lastName')]");
     $this->waitForElementPresent("xpath=//div[@id='instance_data']/div[2]/table/tbody/tr[1]/td/a[2]");
@@ -384,7 +383,7 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
     sleep(40);
     $this->waitForTextPresent("Changes Saved");
   }
-  
+
 }
 
 

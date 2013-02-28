@@ -58,7 +58,7 @@ class WebTest_Contact_AddressParsingTest extends CiviSeleniumTestCase {
     //contact details section
     $firstName = "John" . substr(sha1(rand()), 0, 7);
     $lastName = "Smith" . substr(sha1(rand()), 0, 7);
-   
+
     //fill in first name
     $this->type("first_name", $firstName);
 
