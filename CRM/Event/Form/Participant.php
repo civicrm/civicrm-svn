@@ -1488,8 +1488,8 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
                 $line['unit_price'] = $line['line_total'] = $params['total_amount'];
               }
               $lineItem[$this->_priceSetId][$lineKey] = $line;
-              CRM_Price_BAO_LineItem::processPriceSet($participants[$num]->id, $lineItem, CRM_Utils_Array::value($num, $contributions, NULL), 'civicrm_participant');
             }
+            CRM_Price_BAO_LineItem::processPriceSet($participants[$num]->id, $lineItem, CRM_Utils_Array::value($num, $contributions, NULL), 'civicrm_participant');
           }
         }
       }
