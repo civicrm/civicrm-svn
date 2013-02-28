@@ -265,7 +265,10 @@ class WebTest_Report_LoggingReportTest extends CiviSeleniumTestCase {
     $activityInfo = array_merge($activityInfo, $data[15]); 
 
     $dataForReportDetail = array($contactInfo, $relationshipInfo, $noteInfo, $caseInfo, $activityInfo);
-    $this->detailReportCheck($dataForReportDetail, "{$firstName} {$lastName}");
+    $filters = array(
+      'text' => array('altered_contact_value' => "{$firstName} {$lastName}"),
+    );
+    $this->detailReportCheck($dataForReportDetail, $filters);
     
     //delete contact check
     $this->open($this->sboxPath . "civicrm/contact/view/delete?&reset=1&delete=1&cid={$cid[1]}");
@@ -300,7 +303,7 @@ class WebTest_Report_LoggingReportTest extends CiviSeleniumTestCase {
     }
   }
   
-  function detailReportCheck($dataForReportDetail, $alteredContact) {
+  function detailReportCheck($dataForReportDetail, $filters = array()) {
     foreach ($dataForReportDetail as $value) {
       $this->waitForElementPresent("xpath=//table/tbody//tr/td[2][contains(text(), '{$value['log_type']}')]/../td[4]/a[contains(text(), '{$value['altered_contact']}')]/../../td[1]/a[2]");
       $this->click("xpath=//table/tbody//tr/td[2][contains(text(), '{$value['log_type']}')]/../td[4]/a[contains(text(), '{$value['altered_contact']}')]/../../td[1]/a[2]");
@@ -321,7 +324,13 @@ class WebTest_Report_LoggingReportTest extends CiviSeleniumTestCase {
     //visit the logging contact summary report
     $this->open($this->sboxPath . "civicrm/report/logging/contact/summary?reset=1");
     $this->waitForPageToLoad($this->getTimeoutMsec());
-    $this->type('altered_contact_value', $alteredContact);
+    foreach ($filters as $type => $filter) {
+      if ($type == 'text' ) {
+        foreach ($filter as $filterName => $filterValue) {
+          $this->type($filterName, $filterValue);
+        }
+      }
+    }
     $this->click("_qf_LoggingSummary_submit");
     $this->waitForPageToLoad($this->getTimeoutMsec());  
     }
