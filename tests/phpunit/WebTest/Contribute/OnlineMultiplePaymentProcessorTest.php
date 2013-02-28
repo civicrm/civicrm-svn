@@ -120,7 +120,7 @@ class WebTest_Contribute_OnlineMultiplePaymentProcessorTest extends CiviSelenium
     
   }
 
-  function testOnlineMultpiplePaymentProcessorWithPayLater() {
+  function testOnlineMultiplePaymentProcessorWithPayLater() {
     $this->open($this->sboxPath);
 
     // Log in using webtestLogin() method
@@ -211,16 +211,12 @@ class WebTest_Contribute_OnlineMultiplePaymentProcessorTest extends CiviSelenium
     $this->click("xpath=//div[@id='contributionSearch']//table//tbody/tr[1]/td[11]/span/a[text()='View']");
     $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent('_qf_ContributionView_cancel-bottom');
-    //View Contribution Record
     $expected = array(
-      2 => 'Donation',
-      7 => 'Pending : Pay Later',
-      1 => "{$firstName} {$lastName}",
+      'From'            => "{$firstName} {$lastName}",
+      'Financial Type'  => 'Donation',
+      'Contribution Status' => 'Pending : Pay Later',
     );
-
-    foreach ($expected as $value => $label) {
-      $this->verifyText("xpath=id('ContributionView')/div[2]/table[1]/tbody/tr[$value]/td[2]", preg_quote($label));
-    }
+    $this->webtestVerifyTabularData($expected);
     $this->click('_qf_ContributionView_cancel-bottom');
   }
 }
