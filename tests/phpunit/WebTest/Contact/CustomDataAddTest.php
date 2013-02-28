@@ -148,10 +148,6 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
     // Go to the URL to create an Individual contact.
     $this->openCiviPage("contact/add", "reset=1&ct=Individual");
 
-    //create Individual contact
-    $this->click("//div[@id='root-menu-div']/div[5]/ul/li[1]/div/a");
-    $this->waitForPageToLoad($this->getTimeoutMsec());
-
     //expand all tabs
     $this->click("expand");
     $this->waitForElementPresent("address_1_street_address");
@@ -236,9 +232,7 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
     $customFieldsetId =  $customFieldsetId[1];
 
     //create Individual contact
-    $this->click("//ul[@id='civicrm-menu']/li[4]");
-    $this->click("//div[@id='root-menu-div']/div[6]/ul/li[1]/div/a");
-    $this->waitForPageToLoad($this->getTimeoutMsec());
+    $this->openCiviPage("contact/add", "reset=1&ct=Individual");
 
     //expand all tabs
     $this->click("expand");
