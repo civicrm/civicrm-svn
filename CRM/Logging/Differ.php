@@ -234,9 +234,19 @@ AND (id = (select activity_id FROM civicrm_activity_target WHERE target_contact_
           'state_province_id' => CRM_Core_PseudoConstant::stateProvince(),
           'suffix_id' => CRM_Core_PseudoConstant::individualSuffix(),
           'website_type_id' => CRM_Core_PseudoConstant::websiteType(),
-          'status_id' => CRM_Case_PseudoConstant::caseStatus('label', FALSE),
+          'activity_type_id' => CRM_Core_PseudoConstant::activityType(TRUE, TRUE, FALSE, 'label', TRUE),
           'case_type_id' => CRM_Case_PseudoConstant::caseType('label', FALSE),
         );
+
+        // for columns that appear in more than 1 table
+        switch ($table) {
+          case 'civicrm_case':
+            $values[$table]['status_id'] = CRM_Case_PseudoConstant::caseStatus('label', FALSE);
+            break;
+          case 'civicrm_activity':
+            $values[$table]['status_id'] = CRM_Core_PseudoConstant::activityStatus( );
+            break;
+        }
 
         require_once str_replace('_', DIRECTORY_SEPARATOR, $daos[$table]) . '.php';
         eval("\$dao = new $daos[$table];");
