@@ -33,17 +33,11 @@ class WebTest_Contact_AddressParsingTest extends CiviSeleniumTestCase {
   }
 
   function teststreetAddressParsing() {
-    // This is the path where our testing install resides.
-    // The rest of URL is defined in CiviSeleniumTestCase base class, in
-    // class attributes.
-    $this->open($this->sboxPath);
-
     // Logging in.
     $this->webtestLogin();
 
     //Go to the URL of Address Setting to enable street address parsing option
-    $this->open($this->sboxPath . "civicrm/admin/setting/preferences/address?reset=1");
-    $this->waitForPageToLoad($this->getTimeoutMsec());
+    $this->openCiviPage('admin/setting/preferences/address', 'reset=1');
 
     //check the street address parsing is already enabled
     if (!$this->isChecked("address_options[13]")) {
@@ -53,7 +47,7 @@ class WebTest_Contact_AddressParsingTest extends CiviSeleniumTestCase {
     }
 
     // Go to the URL to create an Individual contact.
-    $this->open($this->sboxPath . "civicrm/contact/add?reset=1&ct=Individual");
+    $this->openCiviPage('contact/add', array('reset' => 1, 'ct' => "Individual"));
 
     //contact details section
     $firstName = "John" . substr(sha1(rand()), 0, 7);
@@ -74,7 +68,6 @@ class WebTest_Contact_AddressParsingTest extends CiviSeleniumTestCase {
     $this->type("address_1_street_address", "121A Sherman St. Apt. 12");
     $this->type("address_1_city", "Dumfries");
     $this->type("address_1_postal_code", "1234");
-    $this->assertTrue($this->isTextPresent("- select - United States"));
     $this->select("address_1_state_province_id", "value=1019");
     $this->type("address_1_geo_code_1", "1234");
     $this->type("address_1_geo_code_2", "5678");
@@ -85,7 +78,6 @@ class WebTest_Contact_AddressParsingTest extends CiviSeleniumTestCase {
     $this->type("address_2_street_address", "121 Sherman Street #15");
     $this->type("address_2_city", "Birmingham");
     $this->type("address_2_postal_code", "3456");
-    $this->assertTrue($this->isTextPresent("- select - United States"));
     $this->select("address_2_state_province_id", "value=1002");
     $this->type("address_2_geo_code_1", "2678");
     $this->type("address_2_geo_code_2", "1456");
@@ -96,9 +88,7 @@ class WebTest_Contact_AddressParsingTest extends CiviSeleniumTestCase {
     $this->type("address_3_street_address", "121 Sherman Rd Unit 155");
     $this->type("address_3_city", "Birmingham");
     $this->type("address_3_postal_code", "3456");
-    $this->assertTrue($this->isTextPresent("- select - United States"));
     $this->select("address_3_state_province_id", "value=1002");
-
 
     //fill in address 4
     $this->click("//div[@id='addMoreAddress3']/a/span");
@@ -109,6 +99,10 @@ class WebTest_Contact_AddressParsingTest extends CiviSeleniumTestCase {
     $this->assertTrue($this->isTextPresent("- select - United States"));
     $this->select("address_4_state_province_id", "value=1002");
 
+    // Store location type of each address
+    for ($i = 1; $i <= 4; ++$i) {
+      $location[$this->getSelectedLabel("address_{$i}_location_type_id")] = $i;
+    }
 
     // Clicking save.
     $this->click("_qf_Contact_upload_view");
@@ -121,35 +115,48 @@ class WebTest_Contact_AddressParsingTest extends CiviSeleniumTestCase {
     $contactId = $matches[1];
 
     //Go to the url of edit contact
-    $this->open($this->sboxPath . "civicrm/contact/add?reset=1&action=update&cid={$contactId}");
+    $this->openCiviPage('contact/add', array('reset' => 1, 'action' => 'update', 'cid' => $contactId), 'addressBlock');
     $this->click("addressBlock");
     $this->click("//div[@id='addressBlockId']/div[1]");
     $this->waitForElementPresent("address_1_street_address");
     $this->waitForElementPresent("address_4_street_address");
 
-    $this->click("link=Edit Address Elements");
-    $this->click("//a[@onclick=\"processAddressFields( 'addressElements' , '2', 1 );return false;\"]");
-    $this->click("//a[@onclick=\"processAddressFields( 'addressElements' , '3', 1 );return false;\"]");
-    $this->click("//a[@onclick=\"processAddressFields( 'addressElements' , '4', 1 );return false;\"]");
+    // Match addresses by location type since the order may have changed
+    for ($i = 1; $i <= 4; ++$i) {
+      $address[$i] = $location[$this->getSelectedLabel("address_{$i}_location_type_id")];
+      // Open "Edit Address Elements"
+      $this->click("//table[@id='address_{$i}']//a[@href='#']");
+    }
 
     //verify all the address fields whether parsed correctly
     $verifyData = array(
-      'address_1_street_number' => '121A',
-      'address_1_street_name' => 'Sherman St.',
-      'address_1_street_unit' => 'Apt. 12',
-      'address_2_street_number' => '121',
-      'address_2_street_name' => 'Sherman Street',
-      'address_2_street_unit' => '#15',
-      'address_3_street_number' => '121',
-      'address_3_street_name' => 'Sherman Rd',
-      'address_3_street_unit' => 'Unit 155',
-      'address_4_street_number' => '121',
-      'address_4_street_name' => 'SW Sherman Way',
-      'address_4_street_unit' => 'Suite 15',
+      1 => array(
+        'street_number' => '121A',
+        'street_name' => 'Sherman St.',
+        'street_unit' => 'Apt. 12',
+      ),
+      2 => array(
+        'street_number' => '121',
+        'street_name' => 'Sherman Street',
+        'street_unit' => '#15',
+      ),
+      3 => array(
+        'street_number' => '121',
+        'street_name' => 'Sherman Rd',
+        'street_unit' => 'Unit 155',
+      ),
+      4 => array(
+        'street_number' => '121',
+        'street_name' => 'SW Sherman Way',
+        'street_unit' => 'Suite 15',
+      )
     );
-    foreach ($verifyData as $key => $expectedvalue) {
-      $actualvalue = $this->getValue($key);
-      $this->assertEquals($expectedvalue, $actualvalue);
+    foreach ($verifyData as $loc => $values) {
+      $num = $address[$loc];
+      foreach ($values as $key => $expectedvalue) {
+        $actualvalue = $this->getValue("address_{$num}_$key");
+        $this->assertEquals($expectedvalue, $actualvalue);
+      }
     }
   }
 }

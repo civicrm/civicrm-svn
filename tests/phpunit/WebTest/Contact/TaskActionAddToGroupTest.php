@@ -35,20 +35,15 @@ class WebTest_Contact_TaskActionAddToGroupTest extends CiviSeleniumTestCase {
   function testAddContactsToGroup() {
 
     // Create a new group with a random name; included test provides login
-    include_once ('WebTest/Contact/GroupAddTest.php');
     $newGroupName = 'Group_' . substr(sha1(rand()), 0, 7);
-    WebTest_Contact_GroupAddTest::testGroupAdd(array('name' => $newGroupName));
+    $this->WebtestAddGroup($newGroupName);
 
     // Create two new contacts with a common random string in email address
-    include_once ('WebTest/Contact/AddTest.php');
     $emailString = substr(sha1(rand()), 0, 7) . '@example.com_';
     $cids = array();
     for ($i = 0; $i < 2; $i++) {
-      // logout before calling included test, to avoid impossible repeated login
-      $this->open($this->sboxPath . "civicrm/logout?reset=1");
-
       // create new contact
-      WebTest_Contact_AddTest::testIndividualAdd();
+      $this->webtestAddContact();
 
       // get cid of new contact
       $queryParams = $this->parseURL();
@@ -90,10 +85,7 @@ class WebTest_Contact_TaskActionAddToGroupTest extends CiviSeleniumTestCase {
     $this->assertTrue($this->isTextPresent("2 contacts added to group "));
 
     // Search by group membership in newly created group
-    // Use class names for menu items since li array can change based on which components are enabled
-    $this->click("css=ul#civicrm-menu li.crm-Search");
-    $this->click("css=ul#civicrm-menu li.crm-Advanced_Search a");
-    $this->waitForPageToLoad($this->getTimeoutMsec());
+    $this->openCiviPage('contact/search/advanced', 'reset=1');
     $this->select("crmasmSelect1", "label=" . $newGroupName);
     $this->click("_qf_Advanced_refresh");
     $this->waitForPageToLoad($this->getTimeoutMsec());
@@ -111,14 +103,10 @@ class WebTest_Contact_TaskActionAddToGroupTest extends CiviSeleniumTestCase {
   }
 
   function testMultiplePageContactSearchAddContactsToGroup() {
-    include_once ('WebTest/Contact/GroupAddTest.php');
     $newGroupName = 'Group_' . substr(sha1(rand()), 0, 7);
-    WebTest_Contact_GroupAddTest::testGroupAdd(array('name' => $newGroupName));
+    $this->WebtestAddGroup($newGroupName);
 
-    $this->open($this->sboxPath . 'civicrm/contact/search?reset=1');
-    $this->click("css=ul#civicrm-menu li.crm-Search");
-    $this->click("css=ul#civicrm-menu li.crm-Find_Contacts a");
-    $this->waitForPageToLoad($this->getTimeoutMsec());
+    $this->openCiviPage('contact/search', 'reset=1');
     $this->click("_qf_Basic_refresh");
     $this->waitForPageToLoad($this->getTimeoutMsec());
 
@@ -142,16 +130,10 @@ class WebTest_Contact_TaskActionAddToGroupTest extends CiviSeleniumTestCase {
     $this->assertTrue($this->isTextPresent("Added Contacts to {$newGroupName}"));
     $this->assertTrue($this->isTextPresent("50 contacts added to group"));
 
-    $this->click("css=ul#civicrm-menu li.crm-Search");
-    $this->click("css=ul#civicrm-menu li.crm-Advanced_Search a");
-    $this->waitForPageToLoad($this->getTimeoutMsec());
+    $this->openCiviPage('contact/search/advanced', 'reset=1');
     $this->select("crmasmSelect1", "label=" . $newGroupName);
     $this->click("_qf_Advanced_refresh");
     $this->waitForPageToLoad($this->getTimeoutMsec());
-
-    if (!$this->isTextPresent("50 Contacts")) {
-       die("nothing found for group $newGroupName");
-    }
 
     $this->assertTrue($this->isTextPresent("50 Contacts"), 'Looking for 50 results belonging to group: ' . $newGroupName);
   }
