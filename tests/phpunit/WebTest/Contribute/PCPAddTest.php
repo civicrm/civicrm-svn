@@ -130,7 +130,14 @@ class WebTest_Contribute_PCPAddTest extends CiviSeleniumTestCase {
     $this->type("first_name", $firstName);
     $this->type("last_name", $lastName);
     $this->type("email-Primary", $email);
+    if ($this->isElementPresent("cms_pass")) {
+      $pass = 'myBigPassword';
+      $this->type("cms_pass", $pass);      
+      $this->type("cms_confirm_pass", $pass);      
+    }
+//    sleep(20);
     $this->click("_qf_PCPAccount_next-bottom");
+
     $this->waitForElementPresent("_qf_Campaign_upload-bottom");
 
     $pcpTitle = 'PCPTitle' . substr(sha1(rand()), 0, 7);
@@ -201,25 +208,21 @@ class WebTest_Contribute_PCPAddTest extends CiviSeleniumTestCase {
     $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_ContributionView_cancel-bottom");
 
-    //View Contribution Record
+    // View Contribution Record and test for expected values
     $expected = array(
-      2 => 'Donation',
-      3 => $contributionAmount,
-                           8  => 'Completed', 
-      1 => "{$donorFirstName} {$donorLastName}",
+      'From'             => "{$donorFirstName} {$donorLastName}",
+      'Financial Type'   => 'Donation',
+      'Total Amount'     => $contributionAmount,
+      'Contribution Status' => 'Completed',
     );
-    foreach ($expected as $value => $label) {
-      $this->verifyText("xpath=id('ContributionView')/div[2]/table[1]/tbody/tr[$value]/td[2]",
-        preg_quote($label)
-      );
-    }
+    $this->webtestVerifyTabularData($expected);
 
     //Check for SoftCredit
     $this->verifyText("xpath=id('PCPView')//div[@class='crm-accordion-body']/table/tbody/tr[1]/td[2]/a[text()]", preg_quote($pcpTitle));
     $this->verifyText("xpath=id('PCPView')//div[@class='crm-accordion-body']/table/tbody/tr[2]/td[2]/a[text()]", preg_quote("{$firstName} {$lastName}"));
 
     // Check PCP Summary Report
-    $this->open($this->sboxPath . "civicrm/report/instance/15?reset=1");
+    $this->openCiviPage('report/instance/15', 'reset=1');
     $this->verifyText("PCP", preg_quote($pcpTitle));
     $this->verifyText("PCP", preg_quote("{$lastName}, {$firstName}"));
   }
