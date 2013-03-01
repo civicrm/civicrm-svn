@@ -375,9 +375,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser {
       /* If it's a dupe,external Identifier  */
 
       if ($externalDupe = CRM_Utils_Array::value($externalID, $this->_allExternalIdentifiers)) {
-        $errorMessage = ts('External Identifier conflicts with record %1', array(
-            1 => $externalDupe,
-          ));
+        $errorMessage = ts('External Identifier conflicts with record %1', array(1 => $externalDupe));
         array_unshift($values, $errorMessage);
         $importRecordParams = array(
           $statusFieldName => 'ERROR',
@@ -788,9 +786,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser {
               )) && CRM_Utils_Array::value('id', $params[$key])) {
             $relatedContactType = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $params[$key]['id'], 'contact_type');
             if (!$relatedContactType) {
-              $errorMessage = ts("No contact found for this related contact ID: %1", array(
-                1 => $params[$key]['id'],
-              ));
+              $errorMessage = ts("No contact found for this related contact ID: %1", array(1 => $params[$key]['id']));
               array_unshift($values, $errorMessage);
               return CRM_Import_Parser::NO_MATCH;
             }
@@ -804,9 +800,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser {
 
               if (!empty($relatedCsType) && (!CRM_Contact_BAO_ContactType::isAllowEdit($params[$key]['id'], $relatedCsType) && 
                 $relatedCsType != CRM_Utils_Array::value('contact_sub_type', $formatting))) {
-                $errorMessage = ts("Mismatched or Invalid contact subtype found for this related contact ID: %1", array(
-                  1 => $params[$key]['id'],
-                ));
+                $errorMessage = ts("Mismatched or Invalid contact subtype found for this related contact ID: %1", array(1 => $params[$key]['id']));
                 array_unshift($values, $errorMessage);
                 return CRM_Import_Parser::NO_MATCH;
               }

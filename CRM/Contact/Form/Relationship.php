@@ -580,10 +580,10 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form {
       CRM_Core_Session::setStatus(ts('New relationship created.', array('count' => $valid, 'plural' => '%count new relationships created.')), ts('Saved'), 'success');
     }
     if ($invalid) {
-      CRM_Core_Session::setStatus(ts('%count relationship record was not created due to an invalid target contact type.', array('count' => $invalid, 'plural' => '%count relationship records were not created due to invalid target contact types.')), ts('%count invalid', array('count' => $invalid)));
+      CRM_Core_Session::setStatus(ts('%count relationship record was not created due to an invalid target contact type.', array('count' => $invalid, 'plural' => '%count relationship records were not created due to invalid target contact types.')), ts('%count invalid relationship record', array('count' => $invalid, 'plural' => '%count invalid relationship records')));
     }
     if ($duplicate) {
-      CRM_Core_Session::setStatus(ts('One relationship was not created because it already exists.', array('count' => $duplicate, 'plural' => '%count relationships were not created because they already exist.')), ts('%count duplicate', array('count' => $duplicate)));
+      CRM_Core_Session::setStatus(ts('One relationship was not created because it already exists.', array('count' => $duplicate, 'plural' => '%count relationships were not created because they already exist.')), ts('%count duplicate relationship', array('count' => $duplicate, 'plural' => '%count duplicate relationships')));
     }
     if ($saved) {
       CRM_Core_Session::setStatus(ts('Relationship record has been updated.'), ts('Saved'), 'success');

@@ -287,16 +287,16 @@ LEFT JOIN  civicrm_contribution on (civicrm_contribution.contact_id = civicrm_co
           CRM_Member_PseudoConstant::membershipStatus()
         );
         if ($updatedStatusName == 'Cancelled') {
-          $statusMsg .= ts("<br />Membership for %1 has been Cancelled.", array(1 => $userDisplayName));
+          $statusMsg .= "<br />" . ts("Membership for %1 has been Cancelled.", array(1 => $userDisplayName));
         }
         elseif ($updatedStatusName == 'Expired') {
-          $statusMsg .= ts("<br />Membership for %1 has been Expired.", array(1 => $userDisplayName));
+          $statusMsg .= "<br />" . ts("Membership for %1 has been Expired.", array(1 => $userDisplayName));
         }
         elseif ($endDate = CRM_Utils_Array::value('membership_end_date', $updateResult)) {
-          $statusMsg .= ts("<br />Membership for %1 has been updated. The membership End Date is %2.",
+          $statusMsg .= "<br />" . ts("Membership for %1 has been updated. The membership End Date is %2.",
             array(
               1 => $userDisplayName,
-              2 => $endDate,
+              2 => $endDate
             )
           );
         }
@@ -307,10 +307,10 @@ LEFT JOIN  civicrm_contribution on (civicrm_contribution.contact_id = civicrm_co
           CRM_Event_PseudoConstant::participantStatus()
         );
         if ($updatedStatusName == 'Cancelled') {
-          $statusMsg .= ts("<br />Event Registration for %1 has been Cancelled.", array(1 => $userDisplayName));
+          $statusMsg .= "<br />" . ts("Event Registration for %1 has been Cancelled.", array(1 => $userDisplayName));
         }
         elseif ($updatedStatusName == 'Registered') {
-          $statusMsg .= ts("<br />Event Registration for %1 has been updated.", array(1 => $userDisplayName));
+          $statusMsg .= "<br />" . ts("Event Registration for %1 has been updated.", array(1 => $userDisplayName));
         }
       }
 
@@ -319,13 +319,13 @@ LEFT JOIN  civicrm_contribution on (civicrm_contribution.contact_id = civicrm_co
           CRM_Contribute_PseudoConstant::contributionStatus(NULL, 'name')
         );
         if ($updatedStatusName == 'Cancelled') {
-          $statusMsg .= ts("<br />Pledge Payment for %1 has been Cancelled.", array(1 => $userDisplayName));
+          $statusMsg .= "<br />" . ts("Pledge Payment for %1 has been Cancelled.", array(1 => $userDisplayName));
         }
         elseif ($updatedStatusName == 'Failed') {
-          $statusMsg .= ts("<br />Pledge Payment for %1 has been Failed.", array(1 => $userDisplayName));
+          $statusMsg .= "<br />" . ts("Pledge Payment for %1 has been Failed.", array(1 => $userDisplayName));
         }
         elseif ($updatedStatusName == 'Completed') {
-          $statusMsg .= ts("<br />Pledge Payment for %1 has been updated.", array(1 => $userDisplayName));
+          $statusMsg .= "<br />" . ts("Pledge Payment for %1 has been updated.", array(1 => $userDisplayName));
         }
       }
     }

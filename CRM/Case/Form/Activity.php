@@ -699,7 +699,7 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity {
           1 => $this->_activityTypeName,
           2 => $recordStatus,
           3 => $followupStatus,
-          4 => $mailStatus,
+          4 => $mailStatus
         )
       ), 'info');
   }

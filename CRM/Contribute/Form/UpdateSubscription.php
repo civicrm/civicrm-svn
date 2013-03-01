@@ -218,7 +218,7 @@ class CRM_Contribute_Form_UpdateSubscription extends CRM_Core_Form {
                      array(1 => CRM_Utils_Money::format($params['amount'], $this->_subscriptionDetails->currency),
                            2 => $this->_subscriptionDetails->frequency_interval,
                            3 => $this->_subscriptionDetails->frequency_unit,
-                           4 => $params['installments'],
+                           4 => $params['installments']
                            )
                      );
 
@@ -228,11 +228,15 @@ class CRM_Contribute_Form_UpdateSubscription extends CRM_Core_Form {
         $contactID = $this->_subscriptionDetails->contact_id;
 
         if ($this->_subscriptionDetails->amount != $params['amount']) {
-            $message .= "<br /> Recurring contribution amount has been updated from " . CRM_Utils_Money::format($this->_subscriptionDetails->amount, $this->_subscriptionDetails->currency) . ' to ' . CRM_Utils_Money::format($params['amount'], $this->_subscriptionDetails->currency) . 'for this subscription. ';
+            $message .= "<br /> " . ts("Recurring contribution amount has been updated from %1 to %2 for this subscription.",
+              array(
+                1 => CRM_Utils_Money::format($this->_subscriptionDetails->amount, $this->_subscriptionDetails->currency),
+                2 => CRM_Utils_Money::format($params['amount'], $this->_subscriptionDetails->currency)
+              )) . ' ';
         }
 
         if ($this->_subscriptionDetails->installments != $params['installments']) {
-            $message .= "<br /> Recurring contribution installments have been updated from {$this->_subscriptionDetails->installments} to {$params['installments']} for this subscription. ";
+            $message .= "<br /> " . ts("Recurring contribution installments have been updated from %1 to %2 for this subscription.", array(1 => $this->_subscriptionDetails->installments, 2 => $params['installments'])) . ' ';
         }
 
         $activityParams = array(
