@@ -1168,7 +1168,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Is status message correct?
-    $this->assertElementContainsText('crm-notification-container', "The Group '$groupName' has been saved.");
+    $this->assertElementContainsText('crm-notification-container', "$groupName");
     return $groupName;
   }
 
