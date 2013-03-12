@@ -373,6 +373,7 @@ WHERE  inst.report_id = %1";
           'sessionVar' => 'instanceId',
           'default' => 'null',
         ));
+      $arguments['ignoreKey'] = TRUE;
       $messages[] = $wrapper->run($templateInfo['name'], NULL, $arguments);
     }
     else {
