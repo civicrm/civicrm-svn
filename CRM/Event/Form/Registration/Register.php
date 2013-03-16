@@ -154,7 +154,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
       return;
     }
 
-    $contactID = parent::getContactID();        
+    $contactID = parent::getContactID();
     if ($contactID) {
       $names = array(
         'first_name', 'middle_name', 'last_name',
@@ -190,14 +190,14 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
     if (!CRM_Utils_Array::value("billing_country_id-{$this->_bltID}", $this->_defaults)) {
       $this->_defaults["billing_country_id-{$this->_bltID}"] = $config->defaultContactCountry;
     }
-    
+
     // now fix all state country selectors
     CRM_Core_BAO_Address::fixAllStateSelects($this, $this->_defaults);
-    
+
     if ($this->_ppType) {
       return $this->_defaults;
     }
-    
+
     if ($contactID) {
       $options = array();
       $fields = array();
@@ -324,7 +324,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
     if (!empty($getDefaults)) {
       $this->_defaults = array_merge($this->_defaults, $getDefaults);
     }
-     
+
     return $this->_defaults;
   }
 
@@ -1016,12 +1016,6 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
     if ($params['is_pay_later']) {
       $this->assign('pay_later_text', $this->_values['event']['pay_later_text']);
       $this->assign('pay_later_receipt', $this->_values['event']['pay_later_receipt']);
-    }
-    if (!$this->_allowConfirmation) {
-      // check if the participant is already registered
-      if (!$this->_skipDupeRegistrationCheck) {
-        $params['contact_id'] = self::checkRegistration($params, $this, FALSE, TRUE);
-      }
     }
 
     if (CRM_Utils_Array::value('image_URL', $params)) {
