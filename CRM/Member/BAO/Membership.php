@@ -582,7 +582,7 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
     $membershipActivities = array('Membership Signup', 'Membership Renewal', 'Change Membership Status', 'Change Membership Type', 'Membership Renewal Reminder');
     foreach($membershipActivities as $membershipActivity) {
       $activityId = array_search($membershipActivity, $activityTypes);
-      if ($activityId) { 
+      if ($activityId) {
         $params['activity_type_id'][] = $activityId;
         $deleteActivity = true;
       }
@@ -1756,7 +1756,8 @@ AND civicrm_membership.is_test = %2";
       CRM_Utils_Array::value('start_date', $currentMembership),
       CRM_Utils_Array::value('end_date', $currentMembership),
       CRM_Utils_Array::value('join_date', $currentMembership),
-      $today
+      $today,
+      TRUE
     );
 
     if (empty($status) ||
