@@ -1018,6 +1018,13 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
       $this->assign('pay_later_receipt', $this->_values['event']['pay_later_receipt']);
     }
 
+    if (!$this->_allowConfirmation) {
+      // check if the participant is already registered
+      if (!$this->_skipDupeRegistrationCheck) {
+        $params['contact_id'] = self::checkRegistration($params, $this, FALSE, TRUE, TRUE);
+      }
+    }
+
     if (CRM_Utils_Array::value('image_URL', $params)) {
       CRM_Contact_BAO_Contact::processImageParams($params);
     }
@@ -1399,7 +1406,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
    * @return void
    * @access public
    */
-  function checkRegistration($fields, &$self, $isAdditional = FALSE, $returnContactId = FALSE) {
+  function checkRegistration($fields, &$self, $isAdditional = FALSE, $returnContactId = FALSE, $useDedupeRules = FALSE) {
     // CRM-3907, skip check for preview registrations
     // CRM-4320 participant need to walk wizard
     if (!$returnContactId &&
@@ -1418,11 +1425,10 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
       is_array($fields) &&
       !empty($fields)
     ) {
-
       //CRM-6996
       //as we are allowing w/ same email address,
       //lets check w/ other contact params.
-      if ($self->_values['event']['allow_same_participant_emails']) {
+      if ($self->_values['event']['allow_same_participant_emails'] || $useDedupeRules) {
         $params = $fields;
         $level = ($isAdditional) ? 'Fuzzy' : 'Strict';
 
