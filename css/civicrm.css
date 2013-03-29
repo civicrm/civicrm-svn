@@ -1954,6 +1954,8 @@ div.grippie {
   border-top: 1px solid #ffffff
 }
 
+#crm-container .customFieldGroup div.crm-label { clear: left; }
+
 #crm-container div.crm-content {
   background-color: #F4F4ED;
   padding: 4px 0px 5px 4px;
