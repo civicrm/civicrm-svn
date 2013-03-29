@@ -54,6 +54,9 @@
 {elseif $onbehalf}
    {include file=CRM/Contribute/Form/Contribution/OnBehalfOf.tpl}
 {else}
+  {* CRM-12149 *}
+  {capture assign=infoMessage}{ts}This page requires Javascript. Please enable Javascript in your web browser preferences and refresh the page.{/ts}{/capture}
+  <noscript>{include file="CRM/common/info.tpl"}</noscript>
 {literal}
 <script type="text/javascript">
 
